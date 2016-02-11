@@ -50,7 +50,179 @@ class Timer {
 	/**
 	 * @var array
 	 */
-	private static $timers = [];
+	public static $timers = [];
+
+	/**
+	 * @param string|null $name
+	 * @param array       $data
+	 */
+	private static function add($name = null, $data = []) {
+		// If no name is given
+		if (is_null($name)) {
+			// Set name to file and line in backtrace
+			$backtrace = debug_backtrace();
+			$name      = $backtrace[1]['file'] . ' line ' . $backtrace[1]['line'];
+			$name      = str_replace('\\', '/', $name);
+			if (!empty(self::$documentRoot)) {
+				$name = substr($name, strlen(self::$documentRoot));
+			}
+			$name = trim($name, '/');
+		}
+
+		// If name is allready in use
+		if (self::exists($name)) {
+			// Set correct name for the original timer
+			if (strpos(self::$timers[$name]['name'], '#') === false) {
+				self::$timers[$name]['name'] = $name . ' #1';
+			}
+
+			// Make sure name is unique
+			$originalName = $name;
+			$i            = 1;
+			while (isset(self::$timers[$name])) {
+				$name = $originalName . ' #' . ($i + 1);
+				$i++;
+			}
+		}
+
+		// Merge data
+		$timerData = array_merge([
+			'index' => count(self::$timers),
+			'name'  => $name
+		], $data);
+		if (!isset($timerData['parent'])) {
+			$timerData['parent'] = self::getLastTimerName('started');
+		}
+		if (!isset($timerData['level'])) {
+			$timerData['level'] = 0;
+			if (isset($timerData['parent']) && $parentTimer = self::get($timerData['parent'])) {
+				$timerData['level'] = ($parentTimer['level'] + 1);
+			}
+		}
+
+		// Add timer
+		self::$timers[$name] = $timerData;
+	}
+
+	/**
+	 * @param string $name
+	 * @param array  $data
+	 */
+	private static function update($name, $data = []) {
+		if (self::exists($name)) {
+			self::$timers[$name] = array_merge(self::$timers[$name], $data);
+		}
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
+	private static function exists($name) {
+		// Return if timer exists
+		return isset(self::$timers[$name]);
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
+	private static function get($name) {
+		// Return timer if it exists
+		if (self::exists($name)) {
+			return self::$timers[$name];
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param string|null $name
+	 */
+	private static function clear($name = null) {
+		if (is_null($name)) {
+			self::$timers = [];
+		} elseif (self::exists($name)) {
+			unset(self::$timers[$name]);
+		}
+	}
+
+	/**
+	 * @param string|null $name
+	 *
+	 * @return bool
+	 */
+	public static function start($name = null) {
+		// Get time
+		$time = microtime(true);
+
+		// Add new time
+		self::add($name, ['start' => $time]);
+
+		// Return true
+		return true;
+	}
+
+	/**
+	 * @param string|null $name
+	 *
+	 * @return bool
+	 */
+	public static function stop($name = null) {
+		// Get time
+		$time = microtime(true);
+
+		// If no name is given
+		if (is_null($name)) {
+			// Get name of the last started timer
+			$name = self::getLastTimerName('started');
+		}
+
+		// Check for name duplicates, and find the first one not stopped
+		$originalName = $name;
+		$i            = 1;
+		while (isset(self::$timers[$name])) {
+			if (empty(self::$timers[$name]['stop'])) {
+				break;
+			}
+
+			$name = $originalName . ' #' . ($i + 1);
+
+			$i++;
+		}
+
+		// If timer exists
+		if (self::exists($name)) {
+			// Update the timer
+			self::update($name, ['stop' => $time]);
+		}
+	}
+
+	/**
+	 * @param string|null $name
+	 * @param int|null    $start
+	 * @param int|null    $stop
+	 *
+	 * @return bool
+	 */
+	public static function custom($name = null, $start = null, $stop = null) {
+		// Set data for the timer
+		$data = [
+			'parent' => false,
+			'level'  => 0
+		];
+		if (!is_null($start)) {
+			$data['start'] = $start;
+		}
+		if (!is_null($stop)) {
+			$data['stop'] = $stop;
+		}
+
+		// Add timer
+		self::add($name, $data);
+	}
 
 	/**
 	 * @param string|null           $name
@@ -91,6 +263,7 @@ class Timer {
 			} elseif (is_object($callback) && $callback instanceof \Closure) {
 				$name = 'closure';
 			}
+			$name = 'custom: ' . $name;
 		}
 
 		// Start timer
@@ -109,9 +282,9 @@ class Timer {
 		if (strpos($callbackOutput, 'call_user_func_array() expects parameter 1 to be a valid callback') !== false) {
 			// Show error message
 			echo '<pre>';
-			echo 'Invalid callback sent to Timer::timeThis:';
+			echo 'Invalid callback sent to Timer::callback:';
 			echo "\n";
-			echo strip_tags($callbackOutput);
+			echo trim(strip_tags($callbackOutput));
 			echo '</pre>';
 
 			// Clear the timer
@@ -132,175 +305,6 @@ class Timer {
 
 	/**
 	 * @param string|null $name
-	 *
-	 * @return bool
-	 */
-	public static function start($name = null) {
-		// Get time
-		$time = self::getTime();
-
-		// If no name is given
-		if (is_null($name)) {
-			// Set name to file and line in backtrace
-			$backtrace = debug_backtrace();
-			$name      = $backtrace[0]['file'] . ' line ' . $backtrace[0]['line'];
-			$name      = str_replace('\\', '/', $name);
-			$name      = substr($name, strlen(self::getDocumentRoot()));
-			$name      = trim($name, '/');
-		}
-
-		// If name is allready in use
-		if (isset(self::$timers[$name])) {
-			// Set correct name for the original timer
-			if (strpos(self::$timers[$name]['name'], '#') === false) {
-				self::$timers[$name]['name'] = $name . ' #1';
-			}
-
-			// Make sure name is unique
-			$originalName = $name;
-			$i            = 1;
-			while (isset(self::$timers[$name])) {
-				$name = $originalName . ' #' . ($i + 1);
-				$i++;
-			}
-		}
-
-		// Get parent timer name
-		$parentTimerName = self::getLastStartedTimerName();
-
-		// Get parent timer
-		$parentTimer = false;
-		if ($parentTimerName) {
-			$parentTimer = self::$timers[$parentTimerName];
-		}
-
-		// Add timer with start
-		self::$timers[$name] = [
-			'index'  => count(self::$timers),
-			'name'   => $name,
-			'parent' => $parentTimerName,
-			'level'  => (!$parentTimer ? 0 : ($parentTimer['level'] + 1)),
-			'start'  => $time
-		];
-
-		// Return true
-		return true;
-	}
-
-	/**
-	 * @param string|null $name
-	 *
-	 * @return bool
-	 */
-	public static function stop($name = null) {
-		// Get time
-		$time = self::getTime();
-
-		// If no name is given
-		if (is_null($name)) {
-			// Get name of the last started timer
-			$name = self::getLastStartedTimerName();
-		}
-
-		// Check for name duplicates, and find the first one not stopped
-		$originalName = $name;
-		$i            = 1;
-		while (isset(self::$timers[$name])) {
-			if (empty(self::$timers[$name]['stop'])) {
-				break;
-			}
-
-			$name = $originalName . ' #' . ($i + 1);
-
-			$i++;
-		}
-
-		// If no name is given or timer does not exist
-		if (!$name || !isset(self::$timers[$name])) {
-			// Return false
-			return false;
-		}
-
-		// Add stop to timer
-		self::$timers[$name]['stop'] = $time;
-
-		// Return true
-		return true;
-	}
-
-	/**
-	 * @param string $name
-	 *
-	 * @return bool
-	 */
-	public static function clear($name) {
-		// Remove timer
-		unset(self::$timers[$name]);
-
-		// Return true
-		return true;
-	}
-
-	/**
-	 * @param string|null $name
-	 * @param int|null    $start
-	 * @param int|null    $stop
-	 *
-	 * @return bool
-	 */
-	public static function add($name = null, $start = null, $stop = null) {
-		// If no name is given
-		if (is_null($name)) {
-			// Set name to file and line in backtrace
-			$backtrace = debug_backtrace();
-			$name      = $backtrace[0]['file'] . ' line ' . $backtrace[0]['line'];
-			if (isset($_SERVER['DOCUMENT_ROOT'])) {
-				$name = substr($name, strlen($_SERVER['DOCUMENT_ROOT']));
-			}
-			$name = str_replace('\\', '/', $name);
-			$name = trim($name, '/');
-		}
-
-		// If name is allready in use
-		if (isset(self::$timers[$name])) {
-			// Set correct name for the original timer
-			if (strpos(self::$timers[$name]['name'], '#') === false) {
-				self::$timers[$name]['name'] = $name . ' #1';
-			}
-
-			// Make sure name is unique
-			$originalName = $name;
-			$i            = 1;
-			while (isset(self::$timers[$name])) {
-				$name = $originalName . ' #' . ($i + 1);
-				$i++;
-			}
-		}
-
-		// Add timer
-		self::$timers[$name] = [
-			'index'  => count(self::$timers),
-			'name'   => $name,
-			'parent' => false,
-			'level'  => 0
-		];
-
-		// Add start for the timer, if given
-		if (!is_null($start)) {
-			self::$timers[$name]['start'] = $start;
-		}
-
-		// Add stop for the timer, if given
-		if (!is_null($stop)) {
-			self::$timers[$name]['stop'] = $stop;
-		}
-
-		// Return true
-		return true;
-	}
-
-	/**
-	 * @param string|null $name
 	 * @param array       $options
 	 *
 	 * @return float|int
@@ -312,12 +316,11 @@ class Timer {
 		// If no name is given
 		if (is_null($name)) {
 			// Get name of the last stopped timer
-			$name = self::getLastStoppedTimerName();
+			$name = self::getLastTimerName('stopped');
 		}
 
 		// If no name is given or timer does not exist or have start and stop
 		if (!$name || !isset(self::$timers[$name]['start']) || !isset(self::$timers[$name]['stop'])) {
-			// Return 0 (zero)
 			return 0;
 		}
 
@@ -431,21 +434,18 @@ class Timer {
 		// If no name is given
 		if (is_null($name)) {
 			// Get name of the last stopped timer
-			$name = self::getLastStoppedTimerName();
+			$name = self::getLastTimerName('stopped');
 		}
 
 		// Variable for output
 		$output = '';
 
-		if (!$name) {
-			// No name given
-			$output .= 'No timer name given';
-		} elseif (!isset(self::$timers[$name])) {
+		if (!self::exists($name)) {
 			// Non-exiting timer
 			$output .= 'Unknow timer: ' . $name;
 		} else {
 			// Get timer
-			$timer = self::$timers[$name];
+			$timer = self::get($name);
 
 			// Get timer start
 			$timerStart = 'N/A';
@@ -517,68 +517,26 @@ class Timer {
 	}
 
 	/**
-	 * @return array
-	 */
-	public static function getTimers() {
-		return self::$timers;
-	}
-
-	/**
-	 * @return float
-	 */
-	private static function getTime() {
-		// Return current time
-		return microtime(true);
-	}
-
-	/**
-	 * @return string
-	 */
-	private static function getDocumentRoot() {
-		if (is_null(self::$documentRoot)) {
-			$documentRoot = '';
-
-			if (isset($_SERVER['DOCUMENT_ROOT'])) {
-				$documentRoot = $_SERVER['DOCUMENT_ROOT'];
-			}
-
-			self::$documentRoot = $documentRoot;
-		}
-
-		return str_replace('\\', '/', self::$documentRoot);
-	}
-
-	/**
+	 * @param string $type
+	 *
 	 * @return bool|string
 	 */
-	private static function getLastStartedTimerName() {
+	public static function getLastTimerName($type = '') {
 		// Set default name
 		$name = false;
 
 		// Loop throug timers reversed and get the last one with a start and no stop
 		$timerNames = array_reverse(array_keys(self::$timers));
 		foreach ($timerNames as $timerName) {
-			if (isset(self::$timers[$timerName]['start']) && !isset(self::$timers[$timerName]['stop'])) {
+			if ($type == 'started' && isset(self::$timers[$timerName]['start']) && !isset(self::$timers[$timerName]['stop'])) {
 				$name = $timerName;
 				break;
 			}
-		}
-
-		// Return the name
-		return $name;
-	}
-
-	/**
-	 * @return bool|string
-	 */
-	private static function getLastStoppedTimerName() {
-		// Set default name
-		$name = false;
-
-		// Loop throug timers reversed and get the last one with a start and a stop
-		$timerNames = array_reverse(array_keys(self::$timers));
-		foreach ($timerNames as $timerName) {
-			if (isset(self::$timers[$timerName]['start']) && isset(self::$timers[$timerName]['stop'])) {
+			if ($type == 'stopped' && isset(self::$timers[$timerName]['start']) && isset(self::$timers[$timerName]['stop'])) {
+				$name = $timerName;
+				break;
+			}
+			if ($type == '') {
 				$name = $timerName;
 				break;
 			}

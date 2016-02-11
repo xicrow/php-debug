@@ -1,3 +1,8 @@
+<?php
+require_once('../src/Timer.php');
+
+use \Xicrow\DebugTools\Timer;
+?>
 <html>
 	<head>
 		<meta charset="UTF-8">
@@ -13,12 +18,7 @@
 
 	<body>
 		<?php
-		require_once('../src/Timer.php');
-
-		use \Xicrow\DebugTools\Timer;
-
-		#Timer::$documentRoot = 'Set project root';
-
+		// Set default options
 		Timer::$defaultOptions['getStats']['nested']         = true;
 		Timer::$defaultOptions['getStats']['oneline']        = true;
 		Timer::$defaultOptions['getStats']['oneline_length'] = 50;
@@ -26,12 +26,16 @@
 		// Start "Total" timer
 		Timer::start('Total');
 
-		// Sleep test
+		// No name test
+		Timer::start();
+		Timer::stop();
+
+		// Default timers
 		Timer::start('Sleep');
 		sleep(1);
 		Timer::stop();
 
-		// Loop test
+		// Loop timers
 		for ($i = 1; $i <= 2; $i++) {
 			Timer::start('Loop level 1');
 			for ($j = 1; $j <= 2; $j++) {
@@ -46,46 +50,28 @@
 			Timer::stop();
 		}
 
-		// No name test
-		Timer::start();
-		Timer::stop();
-
-		// Test callbacks
-		class TimerTest {
-			public function objectOriented() {
-				return 'objectOriented';
-			}
-
-			public static function objectOrientedStatic() {
-				return 'objectOrientedStatic';
-			}
-		}
-
-		$timerTest = new TimerTest();
-
+		// Callback timers
 		Timer::callback(null, 'strpos', 'Hello world', 'world');
 		Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, [$timerTest, 'objectOriented']);
-		Timer::callback(null, ['TimerTest', 'objectOrientedStatic']);
-		#Timer::callback(null, ['TimerTest', 'nonExistingMethod']);
-		#Timer::callback(null, ['nonExistingClass', 'nonExistingMethod']);
+		Timer::callback(null, ['nonExistingClass', 'nonExistingMethod'], 'param1', 'param2');
 		Timer::callback(null, function () {
 			return 'closure';
 		});
 
+		// Custom timers
+		Timer::custom('-5 minutes', strtotime('-5minutes'), time());
+		Timer::custom('+5 minutes', time(), strtotime('+5minutes'));
+
 		// Stop "Total" timer
 		Timer::stop();
-
-		// Add custom timers
-		Timer::add('-5 minutes', strtotime('-5minutes'), time());
-		Timer::add('+5 minutes', time(), strtotime('+5minutes'));
 
 		// Show all timers
 		Timer::showAll();
 
-		#echo '<pre>' . print_r(Timer::getTimers(), true) . '</pre>';
+		echo '<hr />';
+		echo '<pre>' . print_r(Timer::$timers, true) . '</pre>';
 		?>
 	</body>
 </html>
