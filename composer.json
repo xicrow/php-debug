@@ -1,0 +1,39 @@
+{
+	"name"        : "xicrow/DebugTools",
+	"description" : "Debugging tools for PHP",
+	"version"     : "0.0.1",
+	"type"        : "library",
+	"keywords"    : [
+		"debug",
+		"tools",
+		"php"
+	],
+	"license"     : "MIT",
+	"authors"     : [
+		{
+			"name"    : "Jan Ebsen",
+			"email"   : "xicrow@gmail.com",
+			"homepage": "http://jan-ebsen.dk",
+			"role"    : "developer"
+		}
+	],
+	"support"     : {
+		"issues": "https://github.com/xicrow/DebugTools/issues"
+	},
+	"require"     : {
+		"php": ">=5.4"
+	},
+	"require-dev" : {
+		"phpunit/phpunit": "~4.0"
+	},
+	"autoload"    : {
+		"psr-4": {
+			"DebugTools\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"DebugTools\\Test\\": "tests"
+		}
+	}
+}
