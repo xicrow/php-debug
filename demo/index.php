@@ -19,6 +19,7 @@ use \Xicrow\DebugTools\Timer;
 	<body>
 		<?php
 		// Set default options
+		Timer::$defaultOptions['getStats']['timestamp']      = false;
 		Timer::$defaultOptions['getStats']['nested']         = true;
 		Timer::$defaultOptions['getStats']['oneline']        = true;
 		Timer::$defaultOptions['getStats']['oneline_length'] = 50;

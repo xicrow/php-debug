@@ -25,8 +25,8 @@ class Timer {
 		],
 		// Options for getStats()
 		'getStats' => [
-			// Include start and stop times (boolean)
-			'start_stop'     => true,
+			// Show timestamp (boolean)
+			'timestamp'     => true,
 			// Show nested (boolean)
 			'nested'         => false,
 			// Prefix for nested items (string)
@@ -486,7 +486,7 @@ class Timer {
 				$output .= str_pad($outputName, $options['oneline_length'], ' ');
 				$output .= ' | ';
 				$output .= str_pad($timerElapsed, 20, ' ', ($timerElapsed == 'N/A' ? STR_PAD_RIGHT : STR_PAD_LEFT));
-				if ($options['start_stop']) {
+				if ($options['timestamp']) {
 					$output .= ' | ';
 					$output .= str_pad($timerStart, 19, ' ');
 					$output .= ' | ';
@@ -495,7 +495,7 @@ class Timer {
 			} else {
 				// Add timer stats
 				$output .= 'Timer   : ' . $timer['name'];
-				if ($options['start_stop']) {
+				if ($options['timestamp']) {
 					$output .= "\n";
 					$output .= 'Start   : ' . $timerStart;
 					$output .= "\n";
