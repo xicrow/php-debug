@@ -26,7 +26,7 @@ class Timer {
 		// Options for getStats()
 		'getStats' => [
 			// Show timestamp (boolean)
-			'timestamp'     => true,
+			'timestamp'      => true,
 			// Show nested (boolean)
 			'nested'         => false,
 			// Prefix for nested items (string)
@@ -53,20 +53,36 @@ class Timer {
 	public static $timers = [];
 
 	/**
+	 * @param int $index
+	 *
+	 * @return string
+	 */
+	private static function getCalledFileAndLine($index = 1) {
+		$backtrace = debug_backtrace();
+
+		if (isset($backtrace[$index])) {
+			$fileAndLine = $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
+			$fileAndLine = str_replace('\\', '/', $fileAndLine);
+			if (!empty(self::$documentRoot)) {
+				$fileAndLine = substr($fileAndLine, strlen(self::$documentRoot));
+			}
+			$fileAndLine = trim($fileAndLine, '/');
+		} else {
+			$fileAndLine = 'Unknown trace with index ' . $index;
+		}
+
+		return $fileAndLine;
+	}
+
+	/**
 	 * @param string|null $name
 	 * @param array       $data
 	 */
 	private static function add($name = null, $data = []) {
 		// If no name is given
 		if (is_null($name)) {
-			// Set name to file and line in backtrace
-			$backtrace = debug_backtrace();
-			$name      = $backtrace[1]['file'] . ' line ' . $backtrace[1]['line'];
-			$name      = str_replace('\\', '/', $name);
-			if (!empty(self::$documentRoot)) {
-				$name = substr($name, strlen(self::$documentRoot));
-			}
-			$name = trim($name, '/');
+			// Set name to file and line
+			$name = self::getCalledFileAndLine(2);
 		}
 
 		// If name is allready in use
@@ -159,7 +175,10 @@ class Timer {
 		$time = microtime(true);
 
 		// Add new time
-		self::add($name, ['start' => $time]);
+		self::add($name, [
+			'start'     => $time,
+			'start_pos' => self::getCalledFileAndLine()
+		]);
 
 		// Return true
 		return true;
@@ -196,7 +215,10 @@ class Timer {
 		// If timer exists
 		if (self::exists($name)) {
 			// Update the timer
-			self::update($name, ['stop' => $time]);
+			self::update($name, [
+				'stop'     => $time,
+				'stop_pos' => self::getCalledFileAndLine()
+			]);
 		}
 	}
 
@@ -214,10 +236,12 @@ class Timer {
 			'level'  => 0
 		];
 		if (!is_null($start)) {
-			$data['start'] = $start;
+			$data['start']     = $start;
+			$data['start_pos'] = self::getCalledFileAndLine();
 		}
 		if (!is_null($stop)) {
-			$data['stop'] = $stop;
+			$data['stop']     = $stop;
+			$data['stop_pos'] = self::getCalledFileAndLine();
 		}
 
 		// Add timer
@@ -263,7 +287,7 @@ class Timer {
 			} elseif (is_object($callback) && $callback instanceof \Closure) {
 				$name = 'closure';
 			}
-			$name = 'custom: ' . $name;
+			$name = 'callback: ' . $name;
 		}
 
 		// Start timer
@@ -281,11 +305,7 @@ class Timer {
 		// If callback was not found
 		if (strpos($callbackOutput, 'call_user_func_array() expects parameter 1 to be a valid callback') !== false) {
 			// Show error message
-			echo '<pre>';
-			echo 'Invalid callback sent to Timer::callback:';
-			echo "\n";
-			echo trim(strip_tags($callbackOutput));
-			echo '</pre>';
+			echo '<pre>Invalid callback sent to Timer::callback in ' . self::getCalledFileAndLine() . '</pre>';
 
 			// Clear the timer
 			self::clear($name);
