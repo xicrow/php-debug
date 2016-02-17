@@ -18,6 +18,9 @@ use \Xicrow\DebugTools\Timer;
 
 	<body>
 		<?php
+		// Set project document root
+		Timer::$documentRoot = 'E:\\GitHub\\';
+
 		// Set default options
 		Timer::$defaultOptions['getStats']['timestamp']      = false;
 		Timer::$defaultOptions['getStats']['nested']         = true;
