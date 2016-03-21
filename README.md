@@ -9,7 +9,7 @@ The recommended way to install is though [Composer](https://getcomposer.org/).
 ```JSON
 {
     "require": {
-        "xicrow/DebugTools": "~0.0"
+        "xicrow/DebugTools": "~1.0"
     }
 }
 ```
