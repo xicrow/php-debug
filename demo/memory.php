@@ -3,8 +3,8 @@ require_once('../src/Debugger.php');
 require_once('../src/Collection.php');
 require_once('../src/Memory.php');
 
-use \Xicrow\DebugTools\Memory;
-use \Xicrow\DebugTools\Debugger;
+use \Xicrow\Debug\Memory;
+use \Xicrow\Debug\Debugger;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
@@ -48,7 +48,7 @@ function memoryShowAll($options = []) {
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Xicrow/DebugTools/Memory</title>
+		<title>Xicrow/Debug/Memory</title>
 		<style type="text/css">
 			pre {
 				margin: 5px;
@@ -97,7 +97,7 @@ function memoryShowAll($options = []) {
 		Memory::callback(null, 'array_rand', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Memory::callback(null, ['Xicrow\DebugTools\Debugger', 'debug'], [1, 2, 3]);
+		Memory::callback(null, ['Xicrow\Debug\Debugger', 'debug'], [1, 2, 3]);
 		Memory::callback(null, function () {
 			return true;
 		});

@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\DebugTools;
+namespace Xicrow\Debug;
 
 /**
  * Class Memory
  *
- * @package Xicrow\DebugTools
+ * @package Xicrow\Debug
  */
 class Memory {
 	/**

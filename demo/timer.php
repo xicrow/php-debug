@@ -7,8 +7,8 @@ require_once('../src/Collection.php');
 require_once('../src/Timer.php');
 $requireStop = microtime(true);
 
-use \Xicrow\DebugTools\Timer;
-use \Xicrow\DebugTools\Debugger;
+use \Xicrow\Debug\Timer;
+use \Xicrow\Debug\Debugger;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
@@ -52,7 +52,7 @@ function timerShowAll($options = []) {
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Xicrow/DebugTools/Timer</title>
+		<title>Xicrow/Debug/Timer</title>
 		<style type="text/css">
 			pre {
 				margin: 5px;
@@ -95,7 +95,7 @@ function timerShowAll($options = []) {
 		Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, ['Xicrow\DebugTools\Debugger', 'debug'], [1, 2, 3]);
+		Timer::callback(null, ['Xicrow\Debug\Debugger', 'debug'], [1, 2, 3]);
 		Timer::callback(null, function () {
 			return true;
 		});

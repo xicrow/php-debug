@@ -1,12 +1,12 @@
 <?php
-namespace Xicrow\DebugTools;
+namespace Xicrow\Debug;
 
 use \Iterator;
 
 /**
  * Class Collection
  *
- * @package Xicrow\DebugTools
+ * @package Xicrow\Debug
  */
 class Collection implements Iterator {
 	/**

@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\DebugTools;
+namespace Xicrow\Debug;
 
 /**
  * Class Timer
  *
- * @package Xicrow\DebugTools
+ * @package Xicrow\Debug
  */
 class Timer {
 	/**

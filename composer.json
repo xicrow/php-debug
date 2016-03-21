@@ -1,5 +1,5 @@
 {
-	"name"        : "xicrow/DebugTools",
+	"name"        : "xicrow/Debug",
 	"description" : "Debugging tools for PHP",
 	"version"     : "0.0.1",
 	"type"        : "library",
@@ -18,7 +18,7 @@
 		}
 	],
 	"support"     : {
-		"issues": "https://github.com/xicrow/DebugTools/issues"
+		"issues": "https://github.com/xicrow/Debug/issues"
 	},
 	"require"     : {
 		"php": ">=5.4"
@@ -28,12 +28,12 @@
 	},
 	"autoload"    : {
 		"psr-4": {
-			"DebugTools\\": "src"
+			"Debug\\": "src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"DebugTools\\Test\\": "tests"
+			"Debug\\Test\\": "tests"
 		}
 	}
 }

@@ -13,8 +13,8 @@ require_once('../src/Collection.php');
 require_once('../src/Timer.php');
 $requireStop = microtime(true);
 
-use \Xicrow\DebugTools\Timer;
-use \Xicrow\DebugTools\Debugger;
+use \Xicrow\Debug\Timer;
+use \Xicrow\Debug\Debugger;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
@@ -58,7 +58,7 @@ function timerShowAll($options = []) {
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Xicrow/DebugTools/Timer</title>
+		<title>Xicrow/Debug/Timer</title>
 		<style type="text/css">
 			pre {
 				margin: 5px;
@@ -101,7 +101,7 @@ function timerShowAll($options = []) {
 		Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, ['Xicrow\DebugTools\Debugger', 'debug'], [1, 2, 3]);
+		Timer::callback(null, ['Xicrow\Debug\Debugger', 'debug'], [1, 2, 3]);
 		Timer::callback(null, function () {
 			return true;
 		});
@@ -123,7 +123,7 @@ ALL                                                 |             4.41 ms. | 201
 |-- PHP bootstrap                                   |             1.80 ms. | 2016-03-21 09:06:09.6820 | 2016-03-21 09:06:09.6838
 |-- script                                          |             2.68 ms. | 2016-03-21 09:06:09.6838 | 2016-03-21 09:06:09.6865
 |-- |-- require files                               |             1.23 ms. | 2016-03-21 09:06:09.6838 | 2016-03-21 09:06:09.6850
-|-- |-- DebugTools/demo/timer.php line 76           |             0.03 ms. | 2016-03-21 09:06:09.6852 | 2016-03-21 09:06:09.6852
+|-- |-- Debug/demo/timer.php line 76           |             0.03 ms. | 2016-03-21 09:06:09.6852 | 2016-03-21 09:06:09.6852
 |-- |-- Loop level 1 #1                             |             0.29 ms. | 2016-03-21 09:06:09.6852 | 2016-03-21 09:06:09.6855
 |-- |-- |-- Loop level 2 #1                         |             0.11 ms. | 2016-03-21 09:06:09.6852 | 2016-03-21 09:06:09.6853
 |-- |-- |-- |-- Loop level 3 #1                     |             0.02 ms. | 2016-03-21 09:06:09.6853 | 2016-03-21 09:06:09.6853
@@ -142,7 +142,7 @@ ALL                                                 |             4.41 ms. | 201
 |-- |-- callback: array_sum                         |             0.04 ms. | 2016-03-21 09:06:09.6860 | 2016-03-21 09:06:09.6860
 |-- |-- callback: min                               |             0.04 ms. | 2016-03-21 09:06:09.6860 | 2016-03-21 09:06:09.6860
 |-- |-- callback: max                               |             0.04 ms. | 2016-03-21 09:06:09.6861 | 2016-03-21 09:06:09.6861
-|-- |-- callback: Xicrow\DebugTools\Debugger::debug |             0.05 ms. | 2016-03-21 09:06:09.6861 | 2016-03-21 09:06:09.6862
+|-- |-- callback: Xicrow\Debug\Debugger::debug |             0.05 ms. | 2016-03-21 09:06:09.6861 | 2016-03-21 09:06:09.6862
 |-- |-- callback: closure                           |             0.04 ms. | 2016-03-21 09:06:09.6862 | 2016-03-21 09:06:09.6863
 |-- |-- -5 minutes                                  |       300,000.00 ms. | 2016-03-21 09:01:09.0000 | 2016-03-21 09:06:09.0000
 |-- |-- +5 minutes                                  |       300,000.00 ms. | 2016-03-21 09:06:09.0000 | 2016-03-21 09:11:09.0000

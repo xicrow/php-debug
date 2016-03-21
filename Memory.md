@@ -9,8 +9,8 @@ require_once('../src/Debugger.php');
 require_once('../src/Collection.php');
 require_once('../src/Memory.php');
 
-use \Xicrow\DebugTools\Memory;
-use \Xicrow\DebugTools\Debugger;
+use \Xicrow\Debug\Memory;
+use \Xicrow\Debug\Debugger;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
@@ -54,7 +54,7 @@ function memoryShowAll($options = []) {
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Xicrow/DebugTools/Memory</title>
+		<title>Xicrow/Debug/Memory</title>
 		<style type="text/css">
 			pre {
 				margin: 5px;
@@ -103,7 +103,7 @@ function memoryShowAll($options = []) {
 		Memory::callback(null, 'array_rand', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Memory::callback(null, ['Xicrow\DebugTools\Debugger', 'debug'], [1, 2, 3]);
+		Memory::callback(null, ['Xicrow\Debug\Debugger', 'debug'], [1, 2, 3]);
 		Memory::callback(null, function () {
 			return true;
 		});
@@ -124,7 +124,7 @@ Output
 ```
 Total                                              |         581,408.00 B
 |-- Data generation: 0.52 MB                       |         549,664.00 B
-|-- DebugTools/demo/memory.php line 77             |             832.00 B
+|-- Debug/demo/memory.php line 77             |             832.00 B
 |-- Loop level 1 #1                                |           7,104.00 B
 |-- |-- Loop level 2 #1                            |           2,904.00 B
 |-- |-- |-- Loop level 3 #1                        |             776.00 B
@@ -144,7 +144,7 @@ Total                                              |         581,408.00 B
 |-- callback: array_rand                           |           1,416.00 B
 |-- callback: min                                  |           1,400.00 B
 |-- callback: max                                  |           1,400.00 B
-|-- callback: Xicrow\DebugTools\Debugger::debug    |           1,384.00 B
+|-- callback: Xicrow\Debug\Debugger::debug    |           1,384.00 B
 |-- callback: closure                              |             768.00 B
 |-- 5 KB                                           |           5,120.00 B
 |-- 5 MB                                           |       5,242,880.00 B
