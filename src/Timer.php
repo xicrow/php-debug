@@ -8,17 +8,12 @@ namespace Xicrow\DebugTools;
  */
 class Timer {
 	/**
-	 * @var string|null
-	 */
-	public static $documentRoot = null;
-
-	/**
 	 * @var array
 	 */
-	public static $defaultOptions = [
+	public static $options = [
 		// Options for showAll()
 		'showAll'  => [
-			// Sort timers or false to disable (index|name|start|stop|elapsed) (string|boolean)
+			// Sort timers or false to disable (index|key|start|stop|elapsed) (string|boolean)
 			'sort'       => false,
 			// Sort order for timers (asc|desc) (string)
 			'sort_order' => false
@@ -28,13 +23,13 @@ class Timer {
 			// Show timestamp (boolean)
 			'timestamp'      => true,
 			// Show nested (boolean)
-			'nested'         => false,
+			'nested'         => true,
 			// Prefix for nested items (string)
 			'nested_prefix'  => '|-- ',
 			// Show in one line (boolean)
-			'oneline'        => false,
-			// If oneline, max name length (int)
-			'oneline_length' => 50
+			'oneline'        => true,
+			// If oneline, max key length (int)
+			'oneline_length' => 100
 		],
 		// Options for elapsed()
 		'elapsed'  => [
@@ -48,136 +43,64 @@ class Timer {
 	];
 
 	/**
-	 * @var array
+	 * @var Collection
 	 */
-	public static $timers = [];
+	public static $collection = null;
 
 	/**
-	 * @param int $index
 	 *
-	 * @return string
 	 */
-	private static function getCalledFileAndLine($index = 1) {
-		$backtrace = debug_backtrace();
-
-		if (isset($backtrace[$index])) {
-			$fileAndLine = $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
-			$fileAndLine = str_replace('\\', '/', $fileAndLine);
-			if (!empty(self::$documentRoot)) {
-				$fileAndLine = substr($fileAndLine, strlen(self::$documentRoot));
-			}
-			$fileAndLine = trim($fileAndLine, '/');
-		} else {
-			$fileAndLine = 'Unknown trace with index ' . $index;
+	public static function init() {
+		if (is_null(self::$collection)) {
+			self::$collection = new Collection();
 		}
-
-		return $fileAndLine;
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 * @param array       $data
 	 */
-	private static function add($name = null, $data = []) {
-		// If no name is given
-		if (is_null($name)) {
-			// Set name to file and line
-			$name = self::getCalledFileAndLine(2);
+	private static function add($key = null, $data = []) {
+		self::init();
+
+		// If no key is given
+		if (is_null($key)) {
+			// Set key to file and line
+			$key = Debugger::getCalledFileAndLine(2);
 		}
 
-		// If name is allready in use
-		if (self::exists($name)) {
-			// Set correct name for the original timer
-			if (strpos(self::$timers[$name]['name'], '#') === false) {
-				self::$timers[$name]['name'] = $name . ' #1';
-			}
-
-			// Make sure name is unique
-			$originalName = $name;
-			$i            = 1;
-			while (isset(self::$timers[$name])) {
-				$name = $originalName . ' #' . ($i + 1);
-				$i++;
-			}
+		// Make sure parent is set
+		if (!isset($data['parent'])) {
+			$data['parent'] = self::getLastTimerName('started');
 		}
 
-		// Merge data
-		$timerData = array_merge([
-			'index' => count(self::$timers),
-			'name'  => $name
-		], $data);
-		if (!isset($timerData['parent'])) {
-			$timerData['parent'] = self::getLastTimerName('started');
-		}
-		if (!isset($timerData['level'])) {
-			$timerData['level'] = 0;
-			if (isset($timerData['parent']) && $parentTimer = self::get($timerData['parent'])) {
-				$timerData['level'] = ($parentTimer['level'] + 1);
+		// Make sure level is set
+		if (!isset($data['level'])) {
+			$data['level'] = 0;
+			if (isset($data['parent']) && $parentTimer = self::$collection->get($data['parent'])) {
+				$data['level'] = ($parentTimer['level'] + 1);
 			}
 		}
 
 		// Add timer
-		self::$timers[$name] = $timerData;
+		self::$collection->add($key, $data);
 	}
 
 	/**
-	 * @param string $name
-	 * @param array  $data
-	 */
-	private static function update($name, $data = []) {
-		if (self::exists($name)) {
-			self::$timers[$name] = array_merge(self::$timers[$name], $data);
-		}
-	}
-
-	/**
-	 * @param string $name
+	 * @param string|null $key
 	 *
 	 * @return bool
 	 */
-	private static function exists($name) {
-		// Return if timer exists
-		return isset(self::$timers[$name]);
-	}
-
-	/**
-	 * @param string $name
-	 *
-	 * @return bool
-	 */
-	private static function get($name) {
-		// Return timer if it exists
-		if (self::exists($name)) {
-			return self::$timers[$name];
-		}
-
-		return false;
-	}
-
-	/**
-	 * @param string|null $name
-	 */
-	private static function clear($name = null) {
-		if (is_null($name)) {
-			self::$timers = [];
-		} elseif (self::exists($name)) {
-			unset(self::$timers[$name]);
-		}
-	}
-
-	/**
-	 * @param string|null $name
-	 *
-	 * @return bool
-	 */
-	public static function start($name = null) {
+	public static function start($key = null) {
 		// Get time
 		$time = microtime(true);
 
+		self::init();
+
 		// Add new time
-		self::add($name, [
+		self::add($key, [
 			'start'     => $time,
-			'start_pos' => self::getCalledFileAndLine()
+			'start_pos' => Debugger::getCalledFileAndLine()
 		]);
 
 		// Return true
@@ -185,119 +108,122 @@ class Timer {
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 *
 	 * @return bool
 	 */
-	public static function stop($name = null) {
+	public static function stop($key = null) {
 		// Get time
 		$time = microtime(true);
 
-		// If no name is given
-		if (is_null($name)) {
-			// Get name of the last started timer
-			$name = self::getLastTimerName('started');
+		self::init();
+
+		// If no key is given
+		if (is_null($key)) {
+			// Get key of the last started timer
+			$key = self::getLastTimerName('started');
 		}
 
-		// Check for name duplicates, and find the first one not stopped
-		$originalName = $name;
+		// Check for key duplicates, and find the first one not stopped
+		$originalName = $key;
 		$i            = 1;
-		while (isset(self::$timers[$name])) {
-			if (empty(self::$timers[$name]['stop'])) {
+		while (self::$collection->exists($key)) {
+			if (empty(self::$collection->get($key)['stop'])) {
 				break;
 			}
 
-			$name = $originalName . ' #' . ($i + 1);
+			$key = $originalName . ' #' . ($i + 1);
 
 			$i++;
 		}
 
 		// If timer exists
-		if (self::exists($name)) {
+		if (self::$collection->exists($key)) {
 			// Update the timer
-			self::update($name, [
+			self::$collection->update($key, [
 				'stop'     => $time,
-				'stop_pos' => self::getCalledFileAndLine()
+				'stop_pos' => Debugger::getCalledFileAndLine()
 			]);
 		}
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 * @param int|null    $start
 	 * @param int|null    $stop
 	 *
 	 * @return bool
 	 */
-	public static function custom($name = null, $start = null, $stop = null) {
+	public static function custom($key = null, $start = null, $stop = null) {
+		self::init();
+
 		// Set data for the timer
-		$data = [
-			'parent' => false,
-			'level'  => 0
-		];
+		$data = [];
 		if (!is_null($start)) {
 			$data['start']     = $start;
-			$data['start_pos'] = self::getCalledFileAndLine();
+			$data['start_pos'] = Debugger::getCalledFileAndLine();
 		}
 		if (!is_null($stop)) {
 			$data['stop']     = $stop;
-			$data['stop_pos'] = self::getCalledFileAndLine();
+			$data['stop_pos'] = Debugger::getCalledFileAndLine();
 		}
 
 		// Add timer
-		self::add($name, $data);
+		self::add($key, $data);
 	}
 
 	/**
-	 * @param string|null           $name
+	 * @param string|null           $key
 	 * @param string|array|\Closure $callback
 	 *
 	 * @return bool|mixed
 	 */
-	public static function callback($name = null, $callback) {
+	public static function callback($key = null, $callback) {
+		self::init();
+
 		// Start output buffer to capture any output
 		ob_start();
 
 		// Get callback parameters
 		$callbackParams = array_slice(func_get_args(), 2);
 
-		// Get name if no name is given
-		if (is_null($name)) {
+		// Get key if no key is given
+		if (is_null($key)) {
 			if (is_string($callback)) {
-				$name = $callback;
+				$key = $callback;
 			} elseif (is_array($callback)) {
-				$nameArr = [];
+				$keyArr = [];
 				foreach ($callback as $k => $v) {
 					if (is_string($v)) {
-						$nameArr[] = $v;
+						$keyArr[] = $v;
 					} elseif (is_object($v)) {
-						$nameArr[] = get_class($v);
+						$keyArr[] = get_class($v);
 					}
 				}
 
-				if (count($nameArr) > 1) {
-					$method = array_pop($nameArr);
-					$name   = implode('/', $nameArr);
-					$name .= '::' . $method;
+				if (count($keyArr) > 1) {
+					$method = array_pop($keyArr);
+					$key    = implode('/', $keyArr);
+					$key .= '::' . $method;
 				} else {
-					$name = implode('', $nameArr);
+					$key = implode('', $keyArr);
 				}
 
-				unset($nameArr, $method);
+				unset($keyArr, $method);
 			} elseif (is_object($callback) && $callback instanceof \Closure) {
-				$name = 'closure';
+				$key = 'closure';
 			}
-			$name = 'callback: ' . $name;
+			$key = 'callback: ' . $key;
 		}
 
 		// Start timer
-		self::start($name);
+		self::start($key);
 
 		// Execute callback, and get result
 		$callbackResult = call_user_func_array($callback, $callbackParams);
 
 		// Stop timer
-		self::stop($name);
+		self::stop($key);
 
 		// Get and clean output buffer
 		$callbackOutput = ob_get_clean();
@@ -305,10 +231,10 @@ class Timer {
 		// If callback was not found
 		if (strpos($callbackOutput, 'call_user_func_array() expects parameter 1 to be a valid callback') !== false) {
 			// Show error message
-			echo '<pre>Invalid callback sent to Timer::callback in ' . self::getCalledFileAndLine() . '</pre>';
+			Debugger::debug('Invalid callback sent to Timer::callback: ' . str_replace('callback: ', '', $key));
 
 			// Clear the timer
-			self::clear($name);
+			self::$collection->clear($key);
 
 			// Return false
 			return false;
@@ -324,28 +250,47 @@ class Timer {
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 * @param array       $options
 	 *
 	 * @return float|int
 	 */
-	public static function elapsed($name = null, $options = []) {
-		// Merge options with default options
-		$options = array_merge(self::$defaultOptions['elapsed'], $options);
+	public static function elapsed($key = null, $options = []) {
+		self::init();
 
-		// If no name is given
-		if (is_null($name)) {
-			// Get name of the last stopped timer
-			$name = self::getLastTimerName('stopped');
+		// Merge options with default options
+		$options = array_merge(self::$options['elapsed'], $options);
+
+		// If no key is given
+		if (is_null($key)) {
+			// Get key of the last stopped timer
+			$key = self::getLastTimerName('stopped');
 		}
 
-		// If no name is given or timer does not exist or have start and stop
-		if (!$name || !isset(self::$timers[$name]['start']) || !isset(self::$timers[$name]['stop'])) {
+		// If timer does not exist
+		if (!self::$collection->exists($key)) {
 			return 0;
 		}
 
+		// Get timer
+		$timer = self::$collection->get($key);
+
+		// If timer is not started
+		if (!isset($timer['start'])) {
+			return 0;
+		}
+
+		// If timer is not stopped
+		if (!isset($timer['stop'])) {
+			// Stop the timer
+			self::stop($key);
+
+			// Get timer again
+			$timer = self::$collection->get($key);
+		}
+
 		// Get elapsed time
-		$elapsed = (self::$timers[$name]['stop'] - self::$timers[$name]['start']);
+		$elapsed = ($timer['stop'] - $timer['start']);
 
 		if ($options['miliseconds']) {
 			$elapsed = ($elapsed * 1000);
@@ -364,142 +309,137 @@ class Timer {
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 * @param array       $options
+	 *
+	 * @return bool
 	 */
-	public static function show($name = null, $options = []) {
-		// Output HTML ?
-		$html = true;
-		if (php_sapi_name() == 'cli') {
-			$html = false;
+	public static function show($key = null, $options = []) {
+		self::init();
+
+		$output = self::getStats($key, $options);
+
+		if (!empty($output)) {
+			Debugger::debug($output);
 		}
 
-		if ($html) {
-			echo '<pre>';
-		}
-
-		echo self::getStats($name, $options);
-
-		if ($html) {
-			echo '</pre>';
-		}
+		return true;
 	}
 
 	/**
 	 * @param array $options
+	 *
+	 * @return bool
 	 */
 	public static function showAll($options = []) {
+		self::init();
+
 		// Merge options with default options
-		$options = array_merge(self::$defaultOptions['showAll'], $options);
+		$options = array_merge(self::$options['showAll'], $options);
 
 		// Available sort options
-		$sortOptions = ['index', 'name', 'start', 'stop', 'elapsed'];
+		$sortOptions = ['index', 'key', 'start', 'stop', 'elapsed'];
 
-		// Get copy of timers
-		$timers = self::$timers;
+		// Get copy of collection
+		$collection = clone self::$collection;
 
-		if (is_string($options['sort']) && in_array($options['sort'], $sortOptions)) {
-			// Add elapsed to timers if needed
-			if ($options['sort'] == 'elapsed') {
-				foreach ($timers as $name => $timer) {
-					$timers[$name]['elapsed'] = self::elapsed($name, ['format' => false]);
-				}
-			}
-
-			// Sort timers
-			uasort($timers, function ($a, $b) use ($options) {
-				$aValue = 0;
-				if (isset($a[$options['sort']])) {
-					$aValue = $a[$options['sort']];
-				}
-
-				$bValue = 0;
-				if (isset($a[$options['sort']])) {
-					$bValue = $b[$options['sort']];
-				}
-
-				if ($aValue == $bValue) {
-					return 0;
-				}
-
-				return ($aValue < $bValue) ? -1 : 1;
-			});
-
-			// If sorting should be reversed
-			if (strtolower($options['sort_order']) == 'desc') {
-				$timers = array_reverse($timers);
+		// Add elapsed to timers if needed
+		foreach ($collection as $key => $item) {
+			if (!isset($item['elapsed'])) {
+				$collection->update($key, ['elapsed' => self::elapsed($key, ['format' => false])]);
 			}
 		}
 
-		// Get list of timer names
-		$timerNames = array_keys($timers);
-		unset($timers);
+		// If valid sort option is given
+		if (is_string($options['sort']) && in_array($options['sort'], $sortOptions)) {
+			// Sort collection
+			$collection->sort($options['sort'], $options['sort_order']);
+		}
 
 		// Output timers
-		foreach ($timerNames as $timerName) {
-			self::show($timerName, $options);
+		$output = '';
+		foreach ($collection as $key => $item) {
+			if (!empty($output)) {
+				$output .= "\n";
+			}
+			$output .= self::getStats($key, $options);
 		}
+		Debugger::debug($output);
+
+		return true;
 	}
 
 	/**
-	 * @param string|null $name
+	 * @param string|null $key
 	 * @param array       $options
 	 *
 	 * @return string
 	 */
-	public static function getStats($name = null, $options = []) {
-		// Merge options with default options
-		$options = array_merge(self::$defaultOptions['getStats'], $options);
+	public static function getStats($key = null, $options = []) {
+		self::init();
 
-		// If no name is given
-		if (is_null($name)) {
-			// Get name of the last stopped timer
-			$name = self::getLastTimerName('stopped');
+		// Merge options with default options
+		$options = array_merge(self::$options['getStats'], $options);
+
+		// If no key is given
+		if (is_null($key)) {
+			// Get key of the last stopped timer
+			$key = self::getLastTimerName('stopped');
 		}
 
 		// Variable for output
 		$output = '';
 
-		if (!self::exists($name)) {
+		if (!self::$collection->exists($key)) {
 			// Non-exiting timer
-			$output .= 'Unknow timer: ' . $name;
+			$output .= 'Unknow timer: ' . $key;
 		} else {
 			// Get timer
-			$timer = self::get($name);
+			$timer = self::$collection->get($key);
 
 			// Get timer start
 			$timerStart = 'N/A';
 			if (isset($timer['start'])) {
-				$timerStart = date('Y-m-d H:i:s', $timer['start']);
+				$timerStart  = date('Y-m-d H:i:s', $timer['start']);
+				$miliseconds = 0;
+				if (strpos($timer['start'], '.') !== false) {
+					$miliseconds = substr($timer['start'], (strpos($timer['start'], '.') + 1));
+				}
+				$timerStart .= '.' . str_pad($miliseconds, 4, '0', STR_PAD_RIGHT);
 			}
 
 			// Get timer stop
 			$timerStop = 'N/A';
 			if (isset($timer['stop'])) {
-				$timerStop = date('Y-m-d H:i:s', $timer['stop']);
+				$timerStop   = date('Y-m-d H:i:s', $timer['stop']);
+				$miliseconds = 0;
+				if (strpos($timer['stop'], '.') !== false) {
+					$miliseconds = substr($timer['stop'], (strpos($timer['stop'], '.') + 1));
+				}
+				$timerStop .= '.' . str_pad($miliseconds, 4, '0', STR_PAD_RIGHT);
 			}
 
 			// Get timer elapsed
 			$timerElapsed = 'N/A';
 			if (isset($timer['start']) && isset($timer['stop'])) {
-				$timerElapsed = self::elapsed($name, $options);
+				$timerElapsed = self::elapsed($key, $options);
 				if (isset($options['miliseconds'])) {
 					$timerElapsed .= ($options['miliseconds'] ? ' ms.' : ' sec');
 				} else {
-					$timerElapsed .= (self::$defaultOptions['elapsed']['miliseconds'] ? ' ms.' : ' sec');
+					$timerElapsed .= (self::$options['elapsed']['miliseconds'] ? ' ms.' : ' sec');
 				}
 			}
 
 			// Set output
 			if ($options['oneline']) {
-				// Prep name for output
+				// Prep key for output
 				$outputName = '';
 				if ($options['nested']) {
 					$outputName .= str_repeat($options['nested_prefix'], $timer['level']);
 				}
-				$outputName .= $timer['name'];
+				$outputName .= $timer['key'];
 				if (strlen($outputName) > $options['oneline_length']) {
-					$outputName = '~' . substr($timer['name'], -($options['oneline_length'] - 1));
+					$outputName = '~' . substr($timer['key'], -($options['oneline_length'] - 1));
 				}
 
 				// Add timer stats
@@ -514,7 +454,7 @@ class Timer {
 				}
 			} else {
 				// Add timer stats
-				$output .= 'Timer   : ' . $timer['name'];
+				$output .= 'Timer   : ' . $timer['key'];
 				if ($options['timestamp']) {
 					$output .= "\n";
 					$output .= 'Start   : ' . $timerStart;
@@ -542,27 +482,31 @@ class Timer {
 	 * @return bool|string
 	 */
 	public static function getLastTimerName($type = '') {
-		// Set default name
-		$name = false;
+		self::init();
+
+		// Set default key
+		$key = false;
+
+		$timers = self::$collection->getAll();
 
 		// Loop throug timers reversed and get the last one with a start and no stop
-		$timerNames = array_reverse(array_keys(self::$timers));
-		foreach ($timerNames as $timerName) {
-			if ($type == 'started' && isset(self::$timers[$timerName]['start']) && !isset(self::$timers[$timerName]['stop'])) {
-				$name = $timerName;
+		$timerKeys = array_reverse(array_keys($timers));
+		foreach ($timerKeys as $timerKey) {
+			if ($type == 'started' && isset($timers[$timerKey]['start']) && !isset($timers[$timerKey]['stop'])) {
+				$key = $timerKey;
 				break;
 			}
-			if ($type == 'stopped' && isset(self::$timers[$timerName]['start']) && isset(self::$timers[$timerName]['stop'])) {
-				$name = $timerName;
+			if ($type == 'stopped' && isset($timers[$timerKey]['start']) && isset($timers[$timerKey]['stop'])) {
+				$key = $timerKey;
 				break;
 			}
 			if ($type == '') {
-				$name = $timerName;
+				$key = $timerKey;
 				break;
 			}
 		}
 
-		// Return the name
-		return $name;
+		// Return the key
+		return $key;
 	}
 }
