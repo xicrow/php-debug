@@ -1,7 +1,53 @@
 <?php
+$scriptStart = microtime(true);
+
+$requireStart = microtime(true);
+require_once('../src/Debugger.php');
+require_once('../src/Collection.php');
 require_once('../src/Timer.php');
+$requireStop = microtime(true);
 
 use \Xicrow\DebugTools\Timer;
+use \Xicrow\DebugTools\Debugger;
+
+// Set debugger options
+Debugger::$documentRoot   = 'E:\\GitHub\\';
+Debugger::$showCalledFrom = false;
+
+/**
+ * Debugger utility functions
+ */
+function debug($data) {
+	return Debugger::debug($data);
+}
+
+/**
+ * Timer utility functions
+ */
+function timerStart($key = null) {
+	return Timer::start($key);
+}
+
+function timerStop($key = null) {
+	return Timer::stop($key);
+}
+
+function timerCustom($key = null, $start = null, $stop = null) {
+	return Timer::custom($key, $start, $stop);
+}
+
+function timerCallback($key = null, $callback) {
+	return Timer::callback($key, $callback);
+}
+
+function timerShow($key = null, $options = []) {
+	return Timer::show($key, $options);
+}
+
+function timerShowAll($options = []) {
+	return Timer::showAll($options);
+}
+
 ?>
 <html>
 	<head>
@@ -18,25 +64,16 @@ use \Xicrow\DebugTools\Timer;
 
 	<body>
 		<?php
-		// Set project document root
-		Timer::$documentRoot = 'E:\\GitHub\\';
-
-		// Set default options
-		Timer::$defaultOptions['getStats']['timestamp']      = false;
-		Timer::$defaultOptions['getStats']['nested']         = true;
-		Timer::$defaultOptions['getStats']['oneline']        = true;
-		Timer::$defaultOptions['getStats']['oneline_length'] = 50;
-
-		// Start "Total" timer
-		Timer::start('Total');
+		// Only add "ALL" and "PHP boostrap" timer, if we have request time in float, otherwise it is unusable
+		if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+			Timer::custom('ALL', $_SERVER['REQUEST_TIME_FLOAT']);
+			Timer::custom('PHP bootstrap', $_SERVER['REQUEST_TIME_FLOAT'], $scriptStart);
+		}
+		Timer::custom('script', $scriptStart);
+		Timer::custom('require files', $requireStart, $requireStop);
 
 		// No name test
 		Timer::start();
-		Timer::stop();
-
-		// Default timers
-		Timer::start('Sleep');
-		sleep(1);
 		Timer::stop();
 
 		// Loop timers
@@ -46,7 +83,6 @@ use \Xicrow\DebugTools\Timer;
 				Timer::start('Loop level 2');
 				for ($k = 1; $k <= 2; $k++) {
 					Timer::start('Loop level 3');
-
 					Timer::stop();
 				}
 				Timer::stop();
@@ -59,23 +95,17 @@ use \Xicrow\DebugTools\Timer;
 		Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, ['nonExistingClass', 'nonExistingMethod'], 'param1', 'param2');
+		Timer::callback(null, ['Xicrow\DebugTools\Debugger', 'debug'], [1, 2, 3]);
 		Timer::callback(null, function () {
-			return 'closure';
+			return true;
 		});
 
 		// Custom timers
 		Timer::custom('-5 minutes', strtotime('-5minutes'), time());
 		Timer::custom('+5 minutes', time(), strtotime('+5minutes'));
 
-		// Stop "Total" timer
-		Timer::stop();
-
 		// Show all timers
 		Timer::showAll();
-
-		echo '<hr />';
-		echo '<pre>' . print_r(Timer::$timers, true) . '</pre>';
 		?>
 	</body>
 </html>
