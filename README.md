@@ -1,15 +1,15 @@
 # Debug
 Debugging tools for PHP
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xicrow/Debug/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xicrow/Debug/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/xicrow/Debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/Debug/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xicrow/debug/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/xicrow/debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/build-status/master)
 
 ## Installation
 The recommended way to install is though [Composer](https://getcomposer.org/).
 ```JSON
 {
     "require": {
-        "xicrow/Debug": "~1.0"
+        "xicrow/debug": "~1.0"
     }
 }
 ```
