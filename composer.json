@@ -1,7 +1,6 @@
 {
 	"name"        : "xicrow/debug",
 	"description" : "Debugging tools for PHP",
-	"version"     : "1.0.0",
 	"type"        : "library",
 	"keywords"    : [
 		"debug",
