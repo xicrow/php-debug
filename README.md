@@ -22,8 +22,9 @@ See the examples in the `demo` folder.
 	*Implemented, available in `Debugger` class*
 - ~~Collection class for Timer::$timers, and maybe others~~
 	*Implemented, available in `Collection` class*
-- Memory class for measuring memory usage
-	*Work in progress*
+- ~~Memory class for measuring memory usage~~
+	*Implemented, available in `Memory` class*
+- Improve Debugger, foldable tree of objects
 
 ## License
 Copyright &copy; 2016 Jan Ebsen
