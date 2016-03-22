@@ -340,7 +340,7 @@ class Debugger {
 	 * @return string
 	 */
 	public static function getDebugInformationInteger($data) {
-		return $data;
+		return (string) $data;
 	}
 
 	/**
@@ -349,7 +349,7 @@ class Debugger {
 	 * @return string
 	 */
 	public static function getDebugInformationDouble($data) {
-		return $data;
+		return (string) $data;
 	}
 
 	/**
