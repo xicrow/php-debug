@@ -313,6 +313,8 @@ class Timer {
 	 * @param array       $options
 	 *
 	 * @return bool
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function show($key = null, $options = []) {
 		self::init();
@@ -330,6 +332,8 @@ class Timer {
 	 * @param array $options
 	 *
 	 * @return bool
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function showAll($options = []) {
 		self::init();

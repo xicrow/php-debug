@@ -161,6 +161,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Iterator::rewind
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function rewind() {
 		return reset($this->items);
@@ -169,6 +171,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Iterator::current
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function current() {
 		return current($this->items);
@@ -177,6 +181,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Iterator::key
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function key() {
 		return key($this->items);
@@ -185,6 +191,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Iterator::next
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function next() {
 		return next($this->items);
@@ -193,6 +201,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Iterator::valid
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function valid() {
 		return key($this->items) !== null;
@@ -201,6 +211,8 @@ class Collection implements \Iterator, \Countable {
 	/**
 	 * @inheritdoc
 	 * @see Countable::count
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public function count() {
 		return count($this->items);

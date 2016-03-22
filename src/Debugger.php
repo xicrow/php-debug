@@ -24,6 +24,8 @@ class Debugger {
 
 	/**
 	 * @param $data
+	 *
+	 * @codeCoverageIgnore
 	 */
 	private static function output($data) {
 		if (!self::$output) {
@@ -57,6 +59,8 @@ class Debugger {
 
 	/**
 	 * @param mixed $data
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function debug($data) {
 		self::output(self::getDebugInformation($data));
@@ -119,7 +123,7 @@ class Debugger {
 	}
 
 	/**
-	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function showTrace() {
 		$output = '';
@@ -139,23 +143,29 @@ class Debugger {
 	}
 
 	/**
-	 * @param $class
+	 * @param string $class
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function showReflectClass($class) {
 		self::output(self::reflectClass($class));
 	}
 
 	/**
-	 * @param $class
-	 * @param $property
+	 * @param string $class
+	 * @param string $property
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function showreflectClassProperty($class, $property) {
 		self::output(self::reflectClassProperty($class, $property));
 	}
 
 	/**
-	 * @param $class
-	 * @param $method
+	 * @param string $class
+	 * @param string $method
+	 *
+	 * @codeCoverageIgnore
 	 */
 	public static function showReflectClassMethod($class, $method) {
 		self::output(self::reflectClassMethod($class, $method));
