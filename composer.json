@@ -17,7 +17,7 @@
 		}
 	],
 	"support"     : {
-		"issues": "https://github.com/xicrow/Debug/issues"
+		"issues": "https://github.com/xicrow/debug/issues"
 	},
 	"require"     : {
 		"php": ">=5.4"
