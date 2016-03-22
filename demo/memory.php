@@ -35,11 +35,11 @@ function memoryCallback($key = null, $callback) {
 }
 
 function memoryShow($key = null, $options = []) {
-	return Memory::show($key, $options);
+	Memory::show($key, $options);
 }
 
 function memoryShowAll($options = []) {
-	return Memory::showAll($options);
+	Memory::showAll($options);
 }
 
 ?>

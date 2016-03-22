@@ -37,11 +37,11 @@ function timerCallback($key = null, $callback) {
 }
 
 function timerShow($key = null, $options = []) {
-	return Timer::show($key, $options);
+	Timer::show($key, $options);
 }
 
 function timerShowAll($options = []) {
-	return Timer::showAll($options);
+	Timer::showAll($options);
 }
 
 ?>
