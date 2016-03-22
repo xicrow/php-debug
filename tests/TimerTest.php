@@ -4,7 +4,8 @@ use Xicrow\Debug\Timer;
 /**
  * Class TimerTest
  *
- * @covers \Xicrow\Debug\Timer::init
+ * Missing tests:
+ *
  * @covers \Xicrow\Debug\Timer::start
  * @covers \Xicrow\Debug\Timer::stop
  * @covers \Xicrow\Debug\Timer::custom
@@ -14,6 +15,23 @@ use Xicrow\Debug\Timer;
  * @covers \Xicrow\Debug\Timer::getLastTimerName
  */
 class TimerTest extends PHPUnit_Framework_TestCase {
-	public function test() {
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Timer::init
+	 */
+	public function testInit() {
+		$expected = 'null';
+		$result   = Timer::$collection;
+		$this->assertInternalType($expected, $result);
+
+		Timer::init();
+
+		$expected = 'object';
+		$result   = Timer::$collection;
+		$this->assertInternalType($expected, $result);
+
+		$expected = '\Xicrow\Debug\Collection';
+		$result   = Timer::$collection;
+		$this->assertInstanceOf($expected, $result);
 	}
 }
