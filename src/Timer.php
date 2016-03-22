@@ -33,20 +33,9 @@ class Timer extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	protected function getMetricResult($key) {
-		// Get item
-		$item = self::$collection->get($key);
-
-		// If item is not started
-		if ($item === false || !isset($item['start_value']) || !isset($item['stop_value'])) {
-			return 0;
-		}
-
-		// Get result in miliseconds
-		$result = (($item['stop_value'] - $item['start_value']) * 1000);
-
-		// Return result
-		return $result;
+	protected function getMetricResult($start, $stop) {
+		// Return result in miliseconds
+		return (($start - $stop) * 1000);
 	}
 
 	/**

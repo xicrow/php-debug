@@ -34,11 +34,12 @@ abstract class Profiler {
 	protected abstract function getMetricFormatted($metric);
 
 	/**
-	 * @param string|null $key
+	 * @param int|float $start
+	 * @param int|float $stop
 	 *
 	 * @return float|int
 	 */
-	protected abstract function getMetricResult($key);
+	protected abstract function getMetricResult($start, $stop);
 
 	/**
 	 * @param float|int $result
@@ -297,7 +298,7 @@ abstract class Profiler {
 					static::stop($key);
 				}
 
-				$collection->update($key, ['result' => static::getMetricResult($key)]);
+				$collection->update($key, ['result' => static::getMetricResult($item['start_value'], $item['stop_value'])]);
 			}
 		}
 
@@ -360,7 +361,7 @@ abstract class Profiler {
 			$itemStop = (isset($item['stop_time']) ? static::formatDateTime($item['stop_time']) : 'N/A');
 
 			// Get item result
-			$itemResult = (isset($item['start_value']) && isset($item['stop_value']) ? static::getMetricResult($key) : 'N/A');
+			$itemResult = (isset($item['start_value']) && isset($item['stop_value']) ? static::getMetricResult($item['start_value'], $item['stop_value']) : 'N/A');
 
 			// Set output
 			if ($options['oneline']) {
