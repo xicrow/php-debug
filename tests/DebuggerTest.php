@@ -27,11 +27,11 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains($expected, $result, '', true);
 
 		$expected = 'int(123)';
-		$result   = Debugger::getDebugInformation(123);
+		$result   = Debugger::getDebugInformation((int) 123);
 		$this->assertContains($expected, $result);
 
 		$expected = 'float(123.123)';
-		$result   = Debugger::getDebugInformation(123.123);
+		$result   = Debugger::getDebugInformation((float) 123.123);
 		$this->assertContains($expected, $result);
 
 		$expected = 'string';
