@@ -227,7 +227,7 @@ abstract class Profiler {
 		// If callback was not found
 		if (strpos($callbackOutput, 'call_user_func_array() expects parameter 1 to be a valid callback') !== false) {
 			// Show error message
-			Debugger::debug('Invalid callback sent to Profiler::callback: ' . str_replace('callback: ', '', $key));
+			Debugger::output('Invalid callback sent to Profiler::callback: ' . str_replace('callback: ', '', $key));
 
 			// Clear the item from the collection
 			static::$collection->clear($key);
@@ -257,7 +257,7 @@ abstract class Profiler {
 		$output = static::getStats($key, $options);
 
 		if (!empty($output)) {
-			Debugger::debug($output);
+			Debugger::output($output);
 		}
 	}
 
@@ -316,7 +316,7 @@ abstract class Profiler {
 			$output .= (!empty($output) ? "\n" : '');
 			$output .= static::getStats($key, $options);
 		}
-		Debugger::debug($output);
+		Debugger::output($output);
 	}
 
 	/**
