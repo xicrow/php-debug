@@ -18,22 +18,21 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$result   = Debugger::getDebugInformation(123);
 		$this->assertInternalType($expected, $result);
 
-		$expected = 'null';
+		$expected = 'NULL';
 		$result   = Debugger::getDebugInformation(null);
-		$this->assertContains($expected, $result, '', true);
+		$this->assertContains($expected, $result);
 
-		$expected = 'false';
+		$expected = 'FALSE';
 		$result   = Debugger::getDebugInformation(false);
-		$this->assertContains($expected, $result, '', true);
+		$this->assertContains($expected, $result);
 
-		$expected = 'int(123)';
+		$expected = '(int) 123';
 		$result   = Debugger::getDebugInformation(123);
 		$this->assertContains($expected, $result);
 
-		// Some servers return float() others double(), hence the regEx below instead of assertContains()
-		$expected = '#double|float' . preg_quote('(123.123)', '#') . '#';
+		$expected = '(float) 123.123';
 		$result   = Debugger::getDebugInformation(123.123);
-		$this->assertRegExp($expected, $result);
+		$this->assertContains($expected, $result);
 
 		$expected = 'string';
 		$result   = Debugger::getDebugInformation('string');

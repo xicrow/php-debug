@@ -84,12 +84,10 @@ class Debugger {
 		}
 
 		if (is_numeric($data)) {
-			if (is_int($data)) {
+			if (is_int($data) || is_long($data)) {
 				$data = '(int) ' . $data;
-			} elseif (is_float($data)) {
+			} elseif (is_float($data) || is_double($data) || is_real($data)) {
 				$data = '(float) ' . $data;
-			} elseif (is_double($data)) {
-				$data = '(double) ' . $data;
 			}
 		}
 
