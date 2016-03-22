@@ -69,11 +69,17 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Debugger::reflectClass
 	 */
 	public function testReflectClass() {
-		$result = Debugger::reflectClass('\Xicrow\Debug\Debugger');
-		$this->assertContains('class Xicrow\Debug\Debugger', $result);
-		$this->assertContains('public static $output', $result);
-		$this->assertContains('private static function output(', $result);
-		$this->assertContains('public static function debug(', $result);
+		$expected = 'class Xicrow\Debug\Debugger';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
+		$this->assertContains($expected, $result);
+
+		$expected = 'public static $output';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
+		$this->assertContains($expected, $result);
+
+		$expected = 'public static function debug(';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
+		$this->assertContains($expected, $result);
 	}
 
 	/**
@@ -81,9 +87,13 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
 	 */
 	public function testReflectClassProperty() {
-		$result = Debugger::reflectClassProperty('\Xicrow\Debug\Debugger', 'output');
-		$this->assertContains('@var bool', $result);
-		$this->assertContains('public static $output', $result);
+		$expected = '@var bool';
+		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Debugger', 'output');
+		$this->assertContains($expected, $result);
+
+		$expected = 'public static $output';
+		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Debugger', 'output');
+		$this->assertContains($expected, $result);
 	}
 
 	/**
@@ -91,8 +101,12 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClassMethod() {
-		$result = Debugger::reflectClassMethod('\Xicrow\Debug\Debugger', 'debug');
-		$this->assertContains('@param mixed $data', $result);
-		$this->assertContains('public static function debug(', $result);
+		$expected = '@param mixed $data';
+		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Debugger', 'debug');
+		$this->assertContains($expected, $result);
+
+		$expected = 'public static function debug(';
+		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Debugger', 'debug');
+		$this->assertContains($expected, $result);
 	}
 }
