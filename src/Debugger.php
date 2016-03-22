@@ -27,8 +27,8 @@ class Debugger {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	private static function output($data) {
-		if (!self::$output) {
+	public static function output($data) {
+		if (!self::$output || !is_string($data)) {
 			return;
 		}
 
@@ -67,68 +67,6 @@ class Debugger {
 	 */
 	public static function debug($data) {
 		self::output(self::getDebugInformation($data));
-	}
-
-	/**
-	 * @param mixed $data
-	 *
-	 * @return string
-	 */
-	public static function getDebugInformation($data) {
-		if (is_null($data)) {
-			$data = 'NULL';
-		}
-
-		if (is_bool($data)) {
-			$data = ($data ? 'TRUE' : 'FALSE');
-		}
-
-		if (is_numeric($data)) {
-			if (is_int($data) || is_long($data)) {
-				$data = '(int) ' . $data;
-			} elseif (is_float($data) || is_double($data) || is_real($data)) {
-				$data = '(float) ' . $data;
-			}
-		}
-
-		if (is_array($data) || is_object($data) || is_resource($data)) {
-			$data = print_r($data, true);
-		}
-
-		return (string) $data;
-	}
-
-	/**
-	 * @param int $index
-	 *
-	 * @return string
-	 */
-	public static function getCalledFrom($index = 1) {
-		$backtrace = debug_backtrace();
-
-		if (!isset($backtrace[$index])) {
-			return 'Unknown trace with index: ' . $index;
-		}
-
-		$calledFrom = '';
-		if (isset($backtrace[$index]['file'])) {
-			// Get file and line number
-			$calledFrom .= $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
-
-			// Cleanup
-			$calledFrom = str_replace('\\', '/', $calledFrom);
-			$calledFrom = (!empty(self::$documentRoot) ? substr($calledFrom, strlen(self::$documentRoot)) : $calledFrom);
-			$calledFrom = trim($calledFrom, '/');
-		} elseif (isset($backtrace[$index]['function'])) {
-			// Get function call
-			$calledFrom .= (isset($backtrace[$index]['class']) ? $backtrace[$index]['class'] : '');
-			$calledFrom .= (isset($backtrace[$index]['type']) ? $backtrace[$index]['type'] : '');
-			$calledFrom .= $backtrace[$index]['function'];
-		} else {
-			$calledFrom = 'Trace has no file or function !';
-		}
-
-		return $calledFrom;
 	}
 
 	/**
@@ -318,5 +256,166 @@ class Debugger {
 		$output .= ') {}';
 
 		return $output;
+	}
+
+	/**
+	 * @param int $index
+	 *
+	 * @return string
+	 */
+	public static function getCalledFrom($index = 1) {
+		$backtrace = debug_backtrace();
+
+		if (!isset($backtrace[$index])) {
+			return 'Unknown trace with index: ' . $index;
+		}
+
+		$calledFrom = '';
+		if (isset($backtrace[$index]['file'])) {
+			// Get file and line number
+			$calledFrom .= $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
+
+			// Cleanup
+			$calledFrom = str_replace('\\', '/', $calledFrom);
+			$calledFrom = (!empty(self::$documentRoot) ? substr($calledFrom, strlen(self::$documentRoot)) : $calledFrom);
+			$calledFrom = trim($calledFrom, '/');
+		} elseif (isset($backtrace[$index]['function'])) {
+			// Get function call
+			$calledFrom .= (isset($backtrace[$index]['class']) ? $backtrace[$index]['class'] : '');
+			$calledFrom .= (isset($backtrace[$index]['type']) ? $backtrace[$index]['type'] : '');
+			$calledFrom .= $backtrace[$index]['function'];
+		} else {
+			$calledFrom = 'Trace has no file or function !';
+		}
+
+		return $calledFrom;
+	}
+
+	/**
+	 * @param mixed $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformation($data, $indent = false) {
+		$dataType = gettype($data);
+
+		$methodName = 'getDebugInformation' . ucfirst(strtolower($dataType));
+
+		if ($dataType == 'string') {
+			$result = (string) '"' . $data . '"';
+		} elseif (method_exists('\Xicrow\Debug\Debugger', $methodName)) {
+			$result = (string) self::$methodName($data);
+		} else {
+			$result = 'No method found supporting data type: ' . $dataType;
+		}
+
+		if ($indent > 0) {
+			$result = str_replace("\n", "\n\t", $result);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param null $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationNull($data) {
+		return 'NULL';
+	}
+
+	/**
+	 * @param boolean $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationBoolean($data) {
+		return ($data ? 'TRUE' : 'FALSE');
+	}
+
+	/**
+	 * @param integer $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationInteger($data) {
+		return $data;
+	}
+
+	/**
+	 * @param double $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationDouble($data) {
+		return $data;
+	}
+
+	/**
+	 * @param array|object|resource $data
+	 * @param string                $prefix
+	 * @param string                $suffix
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationIterable($data, $prefix = '', $suffix = '') {
+		$debugInfo = '';
+		$debugInfo .= $prefix;
+
+		$keys = [];
+
+		$i = 0;
+		foreach ($data as $k => $v) {
+			$key   = self::getDebugInformation($k);
+			$value = self::getDebugInformation($v, true);
+
+			$keys[] = $key;
+
+			$debugInfo .= ($i > 0 ? ',' : '');
+			$debugInfo .= "\n\t" . $key . ' => ' . $value;
+
+			$i++;
+		}
+
+		$debugInfo .= ($i > 0 ? "\n" : '');
+		$debugInfo .= $suffix;
+
+		if (count($keys)) {
+			$padLength = max(array_map('strlen', $keys));
+			foreach ($keys as $key) {
+				$keyPadded = str_pad($key, $padLength, ' ', STR_PAD_RIGHT);
+				$debugInfo = str_replace($key . ' =>', $keyPadded . ' =>', $debugInfo);
+			}
+		}
+
+		return $debugInfo;
+	}
+
+	/**
+	 * @param array $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationArray($data) {
+		return self::getDebugInformationIterable($data, '[', ']');
+	}
+
+	/**
+	 * @param object $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationObject($data) {
+		return self::getDebugInformationIterable($data, get_class($data) . ' {', '}');
+	}
+
+	/**
+	 * @param resource $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformationResource($data) {
+		return self::getDebugInformationIterable($data, get_class($data) . ' {', '}');
 	}
 }
