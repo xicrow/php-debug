@@ -12,7 +12,7 @@ Debugger::$showCalledFrom = false;
  * Debugger utility functions
  */
 function debug($data) {
-	return Debugger::debug($data);
+	Debugger::debug($data);
 }
 
 /**
