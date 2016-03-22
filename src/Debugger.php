@@ -74,7 +74,9 @@ class Debugger {
 	public static function getDebugInformation($data) {
 		if (is_null($data) || is_bool($data) || is_numeric($data)) {
 			ob_start();
+			// @codingStandardsIgnoreStart
 			var_dump($data);
+			// @codingStandardsIgnoreEnd
 			$data = trim(ob_get_clean(), "\n");
 		}
 
