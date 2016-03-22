@@ -64,7 +64,7 @@ class Memory {
 		// If no key is given
 		if (is_null($key)) {
 			// Set key to file and line
-			$key = Debugger::getCalledFileAndLine(2);
+			$key = Debugger::getCalledFrom(2);
 		}
 
 		// Make sure parent is set
@@ -98,7 +98,7 @@ class Memory {
 		// Add new memory
 		self::add($key, [
 			'start'     => $memory,
-			'start_pos' => Debugger::getCalledFileAndLine()
+			'start_pos' => Debugger::getCalledFrom()
 		]);
 
 		// Return true
@@ -140,7 +140,7 @@ class Memory {
 			// Update the memory
 			self::$collection->update($key, [
 				'stop'     => $memory,
-				'stop_pos' => Debugger::getCalledFileAndLine()
+				'stop_pos' => Debugger::getCalledFrom()
 			]);
 		}
 	}
@@ -159,11 +159,11 @@ class Memory {
 		$data = [];
 		if (!is_null($start)) {
 			$data['start']     = $start;
-			$data['start_pos'] = Debugger::getCalledFileAndLine();
+			$data['start_pos'] = Debugger::getCalledFrom();
 		}
 		if (!is_null($stop)) {
 			$data['stop']     = $stop;
-			$data['stop_pos'] = Debugger::getCalledFileAndLine();
+			$data['stop_pos'] = Debugger::getCalledFrom();
 		}
 
 		// Add memory

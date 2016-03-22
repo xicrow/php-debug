@@ -66,7 +66,7 @@ class Timer {
 		// If no key is given
 		if (is_null($key)) {
 			// Set key to file and line
-			$key = Debugger::getCalledFileAndLine(2);
+			$key = Debugger::getCalledFrom(2);
 		}
 
 		// Make sure parent is set
@@ -100,7 +100,7 @@ class Timer {
 		// Add new time
 		self::add($key, [
 			'start'     => $time,
-			'start_pos' => Debugger::getCalledFileAndLine()
+			'start_pos' => Debugger::getCalledFrom()
 		]);
 
 		// Return true
@@ -142,7 +142,7 @@ class Timer {
 			// Update the timer
 			self::$collection->update($key, [
 				'stop'     => $time,
-				'stop_pos' => Debugger::getCalledFileAndLine()
+				'stop_pos' => Debugger::getCalledFrom()
 			]);
 		}
 	}
@@ -161,11 +161,11 @@ class Timer {
 		$data = [];
 		if (!is_null($start)) {
 			$data['start']     = $start;
-			$data['start_pos'] = Debugger::getCalledFileAndLine();
+			$data['start_pos'] = Debugger::getCalledFrom();
 		}
 		if (!is_null($stop)) {
 			$data['stop']     = $stop;
-			$data['stop_pos'] = Debugger::getCalledFileAndLine();
+			$data['stop_pos'] = Debugger::getCalledFrom();
 		}
 
 		// Add timer
