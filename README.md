@@ -17,6 +17,8 @@ The recommended way to install is though [Composer](https://getcomposer.org/).
 ## Example
 See the examples in the `demo` folder.
 
+View the seperate readme for [Timer](Timer.md) and [Memory](Memory.md) in their respective files.
+
 ## TODO
 - ~~Debug functions for displaying variable information, pr(), vd(), etc.~~
 	*Implemented, available in `Debugger` class*
