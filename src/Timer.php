@@ -8,41 +8,6 @@ namespace Xicrow\Debug;
  */
 class Timer {
 	/**
-	 * @var array
-	 */
-	public static $options = [
-		// Options for showAll()
-		'showAll'  => [
-			// Sort timers or false to disable (index|key|start|stop|elapsed) (string|boolean)
-			'sort'       => false,
-			// Sort order for timers (asc|desc) (string)
-			'sort_order' => false
-		],
-		// Options for getStats()
-		'getStats' => [
-			// Show timestamp (boolean)
-			'timestamp'      => true,
-			// Show nested (boolean)
-			'nested'         => true,
-			// Prefix for nested items (string)
-			'nested_prefix'  => '|-- ',
-			// Show in one line (boolean)
-			'oneline'        => true,
-			// If oneline, max key length (int)
-			'oneline_length' => 100
-		],
-		// Options for elapsed()
-		'elapsed'  => [
-			// Show times in miliseconds instead of seconds (boolean)
-			'miliseconds' => true,
-			// Precision of the time returned (int)
-			'precision'   => 2,
-			// Format the time (boolean)
-			'format'      => true
-		]
-	];
-
-	/**
 	 * @var Collection
 	 */
 	public static $collection = null;
@@ -259,7 +224,14 @@ class Timer {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['elapsed'], $options);
+		$options = array_merge([
+			// Show times in miliseconds instead of seconds (boolean)
+			'miliseconds' => true,
+			// Precision of the time returned (int)
+			'precision'   => 2,
+			// Format the time (boolean)
+			'format'      => true
+		], $options);
 
 		// If no key is given
 		if (is_null($key)) {
@@ -339,7 +311,12 @@ class Timer {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['showAll'], $options);
+		$options = array_merge([
+			// Sort timers or false to disable (index|key|start|stop|elapsed) (string|boolean)
+			'sort'       => false,
+			// Sort order for timers (asc|desc) (string)
+			'sort_order' => false
+		], $options);
 
 		// Available sort options
 		$sortOptions = ['index', 'key', 'start', 'stop', 'elapsed'];
@@ -383,7 +360,20 @@ class Timer {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['getStats'], $options);
+		$options = array_merge([
+			// Show times in miliseconds instead of seconds (boolean)
+			'miliseconds'    => true,
+			// Show timestamp (boolean)
+			'timestamp'      => true,
+			// Show nested (boolean)
+			'nested'         => true,
+			// Prefix for nested items (string)
+			'nested_prefix'  => '|-- ',
+			// Show in one line (boolean)
+			'oneline'        => true,
+			// If oneline, max key length (int)
+			'oneline_length' => 100
+		], $options);
 
 		// If no key is given
 		if (is_null($key)) {
@@ -430,7 +420,7 @@ class Timer {
 				if (isset($options['miliseconds'])) {
 					$timerElapsed .= ($options['miliseconds'] ? ' ms.' : ' sec');
 				} else {
-					$timerElapsed .= (self::$options['elapsed']['miliseconds'] ? ' ms.' : ' sec');
+					$timerElapsed .= ($options['miliseconds'] ? ' ms.' : ' sec');
 				}
 			}
 

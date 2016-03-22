@@ -8,39 +8,6 @@ namespace Xicrow\Debug;
  */
 class Memory {
 	/**
-	 * @var array
-	 */
-	public static $options = [
-		// Options for showAll()
-		'showAll'  => [
-			// Sort memory or false to disable (index|key|start|stop|usage) (string|boolean)
-			'sort'       => false,
-			// Sort order for memory (asc|desc) (string)
-			'sort_order' => false
-		],
-		// Options for getStats()
-		'getStats' => [
-			// Show nested (boolean)
-			'nested'         => true,
-			// Prefix for nested items (string)
-			'nested_prefix'  => '|-- ',
-			// Show in one line (boolean)
-			'oneline'        => true,
-			// If oneline, max key length (int)
-			'oneline_length' => 100
-		],
-		// Options for usage()
-		'usage'    => [
-			// Size to show memory in (B|KB|MB|GB)
-			'size'      => 'B',
-			// Precision of the memory usage returned (int)
-			'precision' => 2,
-			// Format the memory usage (boolean)
-			'format'    => true
-		]
-	];
-
-	/**
 	 * @var Collection
 	 */
 	public static $collection = null;
@@ -257,7 +224,14 @@ class Memory {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['usage'], $options);
+		$options = array_merge([
+			// Size to show memory in (B|KB|MB|GB)
+			'size'      => 'B',
+			// Precision of the memory usage returned (int)
+			'precision' => 2,
+			// Format the memory usage (boolean)
+			'format'    => true
+		], $options);
 
 		// If no key is given
 		if (is_null($key)) {
@@ -347,7 +321,12 @@ class Memory {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['showAll'], $options);
+		$options = array_merge([
+			// Sort memory or false to disable (index|key|start|stop|usage) (string|boolean)
+			'sort'       => false,
+			// Sort order for memory (asc|desc) (string)
+			'sort_order' => false
+		], $options);
 
 		// Available sort options
 		$sortOptions = ['index', 'key', 'start', 'stop', 'usage'];
@@ -391,7 +370,18 @@ class Memory {
 		self::init();
 
 		// Merge options with default options
-		$options = array_merge(self::$options['getStats'], $options);
+		$options = array_merge([
+			// Size to show memory in (B|KB|MB|GB)
+			'size'           => 'B',
+			// Show nested (boolean)
+			'nested'         => true,
+			// Prefix for nested items (string)
+			'nested_prefix'  => '|-- ',
+			// Show in one line (boolean)
+			'oneline'        => true,
+			// If oneline, max key length (int)
+			'oneline_length' => 100
+		], $options);
 
 		// If no key is given
 		if (is_null($key)) {
@@ -412,7 +402,7 @@ class Memory {
 			// Get memory usage
 			$memoryUsage = 'N/A';
 			if (isset($memory['start']) && isset($memory['stop'])) {
-				$memoryUsage = self::usage($key, $options) . ' ' . self::$options['usage']['size'];
+				$memoryUsage = self::usage($key, $options) . ' ' . $options['size'];
 			}
 
 			// Set output
