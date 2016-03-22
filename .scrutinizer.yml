@@ -10,6 +10,11 @@ checks:
         code_rating: true
         duplication: true
 
+filter:
+    paths:
+        - src/*
+        - tests/*
+
 tools:
     sensiolabs_security_checker: true
     external_code_coverage: false
