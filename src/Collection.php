@@ -1,14 +1,12 @@
 <?php
 namespace Xicrow\Debug;
 
-use \Iterator;
-
 /**
  * Class Collection
  *
  * @package Xicrow\Debug
  */
-class Collection implements Iterator {
+class Collection implements \Iterator, \Countable {
 	/**
 	 * @var array
 	 */
@@ -32,9 +30,9 @@ class Collection implements Iterator {
 	public function add($key, $data = []) {
 		// If key is allready in use
 		if ($this->exists($key)) {
-			// Set correct key for the original timer
-			$timer = $this->get($key);
-			if (strpos($timer['key'], '#') === false) {
+			// Set correct key for the original item
+			$item = $this->get($key);
+			if (strpos($item['key'], '#') === false) {
 				$this->update($key, [
 					'key' => $key . ' #1'
 				]);
@@ -60,11 +58,17 @@ class Collection implements Iterator {
 	/**
 	 * @param string $key
 	 * @param array  $data
+	 *
+	 * @return bool
 	 */
 	public function update($key, $data = []) {
 		if ($this->exists($key)) {
 			$this->items[$key] = array_merge($this->items[$key], $data);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -73,17 +77,17 @@ class Collection implements Iterator {
 	 * @return bool
 	 */
 	public function exists($key) {
-		// Return if timer exists
+		// Return if item exists
 		return isset($this->items[$key]);
 	}
 
 	/**
 	 * @param string $key
 	 *
-	 * @return bool
+	 * @return array|bool
 	 */
 	public function get($key) {
-		// Return timer if it exists
+		// Return item if it exists
 		if ($this->exists($key)) {
 			return $this->items[$key];
 		}
@@ -100,20 +104,21 @@ class Collection implements Iterator {
 
 	/**
 	 * @param string|null $key
+	 *
+	 * @return bool
 	 */
 	public function clear($key = null) {
 		if (is_null($key)) {
 			$this->items = [];
+
+			return true;
 		} elseif (self::exists($key)) {
 			unset($this->items[$key]);
-		}
-	}
 
-	/**
-	 * @return mixed
-	 */
-	public function count() {
-		return count($this->items);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -154,52 +159,50 @@ class Collection implements Iterator {
 	}
 
 	/**
-	 * Rewind the list of items
-	 * Required by Iterator
-	 *
-	 * @return mixed
+	 * @inheritdoc
+	 * @see Iterator::rewind
 	 */
 	public function rewind() {
 		return reset($this->items);
 	}
 
 	/**
-	 * Get current item
-	 * Required by Iterator
-	 *
-	 * @return mixed
+	 * @inheritdoc
+	 * @see Iterator::current
 	 */
 	public function current() {
 		return current($this->items);
 	}
 
 	/**
-	 * Get current key
-	 * Required by Iterator
-	 *
-	 * @return mixed
+	 * @inheritdoc
+	 * @see Iterator::key
 	 */
 	public function key() {
 		return key($this->items);
 	}
 
 	/**
-	 * Get next item
-	 * Required by Iterator
-	 *
-	 * @return mixed
+	 * @inheritdoc
+	 * @see Iterator::next
 	 */
 	public function next() {
 		return next($this->items);
 	}
 
 	/**
-	 * Is valid item
-	 * Required by Iterator
-	 *
-	 * @return mixed
+	 * @inheritdoc
+	 * @see Iterator::valid
 	 */
 	public function valid() {
 		return key($this->items) !== null;
+	}
+
+	/**
+	 * @inheritdoc
+	 * @see Countable::count
+	 */
+	public function count() {
+		return count($this->items);
 	}
 }
