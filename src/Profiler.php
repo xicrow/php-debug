@@ -24,14 +24,14 @@ abstract class Profiler {
 	/**
 	 * @return int|float
 	 */
-	public abstract function getMetric();
+	abstract public function getMetric();
 
 	/**
 	 * @param int|float $metric
 	 *
 	 * @return mixed
 	 */
-	public abstract function getMetricFormatted($metric);
+	abstract public function getMetricFormatted($metric);
 
 	/**
 	 * @param int|float $start
@@ -39,14 +39,14 @@ abstract class Profiler {
 	 *
 	 * @return float|int
 	 */
-	public abstract function getMetricResult($start, $stop);
+	abstract public function getMetricResult($start, $stop);
 
 	/**
 	 * @param float|int $result
 	 *
 	 * @return mixed
 	 */
-	public abstract function getMetricResultFormatted($result);
+	abstract public function getMetricResultFormatted($result);
 
 	/**
 	 * @param string|null $key
