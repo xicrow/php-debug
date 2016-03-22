@@ -418,22 +418,32 @@ abstract class Profiler {
 		// Set default key
 		$key = false;
 
+		// Get collection items
 		$items = static::$collection->getAll();
 
-		// Loop throug items reversed and get the last one matching the given type
+		// Get reverse list of item keys
 		$itemKeys = array_reverse(array_keys($items));
-		foreach ($itemKeys as $itemKey) {
-			if ($type == 'started' && isset($items[$itemKey]['start_time']) === true && isset($items[$itemKey]['stop_time']) === false) {
-				$key = $itemKey;
-				break;
-			}
-			if ($type == 'stopped' && isset($items[$itemKey]['start_time']) === true && isset($items[$itemKey]['stop_time']) === true) {
-				$key = $itemKey;
-				break;
-			}
-			if ($type == '') {
-				$key = $itemKey;
-				break;
+
+		// If unknown type is given
+		if ($type != 'started' && $type != 'stopped') {
+			// Get current/last key
+			$key = current($itemKeys);
+		} else {
+			// Loop throug items reversed and get the last one matching the given type
+			foreach ($itemKeys as $itemKey) {
+				if (isset($items[$itemKey]['start_time'])) {
+					if (isset($items[$itemKey]['stop_time'])) {
+						if ($type == 'stopped') {
+							$key = $itemKey;
+							break;
+						}
+					} else {
+						if ($type == 'started') {
+							$key = $itemKey;
+							break;
+						}
+					}
+				}
 			}
 		}
 
