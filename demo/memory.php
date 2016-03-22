@@ -1,47 +1,7 @@
 <?php
-require_once('../src/autoload.php');
+require_once('../src/bootstrap.php');
 
-use \Xicrow\Debug\Debugger;
 use \Xicrow\Debug\Memory;
-
-// Set debugger options
-Debugger::$documentRoot   = 'E:\\GitHub\\';
-Debugger::$showCalledFrom = false;
-
-/**
- * Debugger utility functions
- */
-function debug($data) {
-	Debugger::debug($data);
-}
-
-/**
- * Memory utility functions
- */
-function memoryStart($key = null) {
-	return Memory::start($key);
-}
-
-function memoryStop($key = null) {
-	return Memory::stop($key);
-}
-
-function memoryCustom($key = null, $start = null, $stop = null) {
-	return Memory::custom($key, $start, $stop);
-}
-
-function memoryCallback($key = null, $callback) {
-	return Memory::callback($key, $callback);
-}
-
-function memoryShow($key = null, $options = []) {
-	Memory::show($key, $options);
-}
-
-function memoryShowAll($options = []) {
-	Memory::showAll($options);
-}
-
 ?>
 <html>
 	<head>

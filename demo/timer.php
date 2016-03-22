@@ -1,49 +1,9 @@
 <?php
-require_once('../src/autoload.php');
+require_once('../src/bootstrap.php');
 
-use \Xicrow\Debug\Debugger;
 use \Xicrow\Debug\Timer;
 
-// Set debugger options
-Debugger::$documentRoot   = 'E:\\GitHub\\';
-Debugger::$showCalledFrom = false;
-
 $scriptStart = microtime(true);
-
-/**
- * Debugger utility functions
- */
-function debug($data) {
-	Debugger::debug($data);
-}
-
-/**
- * Timer utility functions
- */
-function timerStart($key = null) {
-	return Timer::start($key);
-}
-
-function timerStop($key = null) {
-	return Timer::stop($key);
-}
-
-function timerCustom($key = null, $start = null, $stop = null) {
-	return Timer::custom($key, $start, $stop);
-}
-
-function timerCallback($key = null, $callback) {
-	return Timer::callback($key, $callback);
-}
-
-function timerShow($key = null, $options = []) {
-	Timer::show($key, $options);
-}
-
-function timerShowAll($options = []) {
-	Timer::showAll($options);
-}
-
 ?>
 <html>
 	<head>
