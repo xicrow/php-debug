@@ -23,7 +23,7 @@ class Debugger {
 	public static $documentRoot = null;
 
 	/**
-	 * @param mixed $data
+	 * @param string $data
 	 *
 	 * @codeCoverageIgnore
 	 */
