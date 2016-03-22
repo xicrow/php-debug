@@ -400,10 +400,7 @@ class Memory {
 			$memory = self::$collection->get($key);
 
 			// Get memory usage
-			$memoryUsage = 'N/A';
-			if (isset($memory['start']) && isset($memory['stop'])) {
-				$memoryUsage = self::usage($key, $options) . ' ' . $options['size'];
-			}
+			$memoryUsage = (isset($memory['start']) && isset($memory['stop']) ? self::usage($key, $options) . ' ' . $options['size'] : 'N/A');
 
 			// Set output
 			if ($options['oneline']) {

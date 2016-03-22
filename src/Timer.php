@@ -392,37 +392,13 @@ class Timer {
 			$timer = self::$collection->get($key);
 
 			// Get timer start
-			$timerStart = 'N/A';
-			if (isset($timer['start'])) {
-				$timerStart  = date('Y-m-d H:i:s', $timer['start']);
-				$miliseconds = 0;
-				if (strpos($timer['start'], '.') !== false) {
-					$miliseconds = substr($timer['start'], (strpos($timer['start'], '.') + 1));
-				}
-				$timerStart .= '.' . str_pad($miliseconds, 4, '0', STR_PAD_RIGHT);
-			}
+			$timerStart = (isset($timer['start']) ? self::formatDateTime($timer['start']) : 'N/A');
 
 			// Get timer stop
-			$timerStop = 'N/A';
-			if (isset($timer['stop'])) {
-				$timerStop   = date('Y-m-d H:i:s', $timer['stop']);
-				$miliseconds = 0;
-				if (strpos($timer['stop'], '.') !== false) {
-					$miliseconds = substr($timer['stop'], (strpos($timer['stop'], '.') + 1));
-				}
-				$timerStop .= '.' . str_pad($miliseconds, 4, '0', STR_PAD_RIGHT);
-			}
+			$timerStop = (isset($timer['stop']) ? self::formatDateTime($timer['stop']) : 'N/A');
 
 			// Get timer elapsed
-			$timerElapsed = 'N/A';
-			if (isset($timer['start']) && isset($timer['stop'])) {
-				$timerElapsed = self::elapsed($key, $options);
-				if (isset($options['miliseconds'])) {
-					$timerElapsed .= ($options['miliseconds'] ? ' ms.' : ' sec');
-				} else {
-					$timerElapsed .= ($options['miliseconds'] ? ' ms.' : ' sec');
-				}
-			}
+			$timerElapsed = (isset($timer['start']) && isset($timer['stop']) ? self::elapsed($key, $options) . ($options['miliseconds'] ? ' ms.' : ' sec') : 'N/A');
 
 			// Set output
 			if ($options['oneline']) {
@@ -502,5 +478,26 @@ class Timer {
 
 		// Return the key
 		return $key;
+	}
+
+	/**
+	 * @param int|float $unixTimestamp
+	 * @param bool      $showMiliseconds
+	 *
+	 * @return string
+	 */
+	private static function formatDateTime($unixTimestamp, $showMiliseconds = true) {
+		$formatted = date('Y-m-d H:i:s', $unixTimestamp);
+
+		if ($showMiliseconds) {
+			$miliseconds = 0;
+			if (strpos($unixTimestamp, '.') !== false) {
+				$miliseconds = substr($unixTimestamp, (strpos($unixTimestamp, '.') + 1));
+			}
+
+			$formatted .= '.' . str_pad($miliseconds, 4, '0', STR_PAD_RIGHT);
+		}
+
+		return $formatted;
 	}
 }
