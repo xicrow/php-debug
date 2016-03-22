@@ -24,14 +24,14 @@ abstract class Profiler {
 	/**
 	 * @return int|float
 	 */
-	protected abstract function getMetric();
+	public abstract function getMetric();
 
 	/**
 	 * @param int|float $metric
 	 *
 	 * @return mixed
 	 */
-	protected abstract function getMetricFormatted($metric);
+	public abstract function getMetricFormatted($metric);
 
 	/**
 	 * @param int|float $start
@@ -39,20 +39,20 @@ abstract class Profiler {
 	 *
 	 * @return float|int
 	 */
-	protected abstract function getMetricResult($start, $stop);
+	public abstract function getMetricResult($start, $stop);
 
 	/**
 	 * @param float|int $result
 	 *
 	 * @return mixed
 	 */
-	protected abstract function getMetricResultFormatted($result);
+	public abstract function getMetricResultFormatted($result);
 
 	/**
 	 * @param string|null $key
 	 * @param array       $data
 	 */
-	protected static function add($key = null, $data = []) {
+	public static function add($key = null, $data = []) {
 		static::init();
 
 		// If no key is given
@@ -296,6 +296,8 @@ abstract class Profiler {
 				if (!isset($item['stop_value'])) {
 					// Stop the item
 					static::stop($key);
+
+					$item = static::$collection->get($key);
 				}
 
 				$collection->update($key, ['result' => static::getMetricResult($item['start_value'], $item['stop_value'])]);
@@ -445,7 +447,7 @@ abstract class Profiler {
 	 *
 	 * @return string
 	 */
-	protected static function formatDateTime($unixTimestamp, $showMiliseconds = true) {
+	public static function formatDateTime($unixTimestamp, $showMiliseconds = true) {
 		$formatted = date('Y-m-d H:i:s', $unixTimestamp);
 
 		if ($showMiliseconds) {
@@ -461,42 +463,6 @@ abstract class Profiler {
 	}
 
 	/**
-	 * @param      $value
-	 * @param int  $precision
-	 * @param null $forceUnit
-	 *
-	 * @return string
-	 */
-	protected static function formatMiliseconds($value, $precision = 2, $forceUnit = null) {
-		return static::formatForUnits([
-			'MS' => 1,
-			'S'  => 1000,
-			'M'  => 60,
-			'H'  => 60,
-			'D'  => 24,
-			'W'  => 7
-		], $value, $precision, $forceUnit);
-	}
-
-	/**
-	 * @param      $value
-	 * @param int  $precision
-	 * @param null $forceUnit
-	 *
-	 * @return string
-	 */
-	protected static function formatBytes($value, $precision = 2, $forceUnit = null) {
-		return static::formatForUnits([
-			'B'  => 1,
-			'KB' => 1024,
-			'MB' => 1024,
-			'GB' => 1024,
-			'TB' => 1024,
-			'PB' => 1024
-		], $value, $precision, $forceUnit);
-	}
-
-	/**
 	 * @param array     $units
 	 * @param int|float $number
 	 * @param int       $precision
@@ -504,7 +470,7 @@ abstract class Profiler {
 	 *
 	 * @return string
 	 */
-	protected static function formatForUnits($units = [], $number = 0, $precision = 2, $forceUnit = null) {
+	public static function formatForUnits($units = [], $number = 0, $precision = 2, $forceUnit = null) {
 		$value = $number;
 		if (!empty($forceUnit) && array_key_exists($forceUnit, $units)) {
 			$unit = $forceUnit;
@@ -527,5 +493,41 @@ abstract class Profiler {
 		}
 
 		return sprintf('%0.' . $precision . 'f', $value) . ' ' . str_pad($unit, 2, ' ', STR_PAD_RIGHT);
+	}
+
+	/**
+	 * @param      $value
+	 * @param int  $precision
+	 * @param null $forceUnit
+	 *
+	 * @return string
+	 */
+	public static function formatMiliseconds($value, $precision = 2, $forceUnit = null) {
+		return self::formatForUnits([
+			'MS' => 1,
+			'S'  => 1000,
+			'M'  => 60,
+			'H'  => 60,
+			'D'  => 24,
+			'W'  => 7
+		], $value, $precision, $forceUnit);
+	}
+
+	/**
+	 * @param      $value
+	 * @param int  $precision
+	 * @param null $forceUnit
+	 *
+	 * @return string
+	 */
+	public static function formatBytes($value, $precision = 2, $forceUnit = null) {
+		return self::formatForUnits([
+			'B'  => 1,
+			'KB' => 1024,
+			'MB' => 1024,
+			'GB' => 1024,
+			'TB' => 1024,
+			'PB' => 1024
+		], $value, $precision, $forceUnit);
 	}
 }

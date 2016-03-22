@@ -17,7 +17,7 @@ class Memory extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	protected function getMetric() {
+	public function getMetric() {
 		// Return current memory usage
 		return memory_get_usage();
 	}
@@ -25,24 +25,24 @@ class Memory extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	protected function getMetricFormatted($metric) {
+	public function getMetricFormatted($metric) {
 		// Return formatted metric
-		return self::formatBytes($metric, 4, static::$forceDisplayUnit);
+		return self::formatBytes($metric, 4, self::$forceDisplayUnit);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	protected function getMetricResult($start, $stop) {
+	public function getMetricResult($start, $stop) {
 		// Return result in bytes
-		return ($start - $stop);
+		return ($stop - $start);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	protected function getMetricResultFormatted($result) {
+	public function getMetricResultFormatted($result) {
 		// Return formatted result
-		return self::formatBytes($result, 4, static::$forceDisplayUnit);
+		return self::formatBytes($result, 4, self::$forceDisplayUnit);
 	}
 }
