@@ -78,7 +78,7 @@ class Debugger {
 		if (is_null($data)) {
 			$data = 'NULL';
 		}
-		
+
 		if (is_bool($data)) {
 			$data = ($data ? 'TRUE' : 'FALSE');
 		}
@@ -108,30 +108,26 @@ class Debugger {
 	public static function getCalledFrom($index = 1) {
 		$backtrace = debug_backtrace();
 
-		$calledFrom = '';
-		if (isset($backtrace[$index])) {
-			if (isset($backtrace[$index]['file'])) {
-				// Get file and line number
-				$calledFrom .= $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
+		if (!isset($backtrace[$index])) {
+			return 'Unknown trace with index: ' . $index;
+		}
 
-				// Cleanup
-				$calledFrom = str_replace('\\', '/', $calledFrom);
-				if (!empty(self::$documentRoot)) {
-					$calledFrom = substr($calledFrom, strlen(self::$documentRoot));
-				}
-				$calledFrom = trim($calledFrom, '/');
-			} elseif (isset($backtrace[$index]['function'])) {
-				// Get function call
-				if (isset($backtrace[$index]['class'])) {
-					$calledFrom .= $backtrace[$index]['class'];
-				}
-				if (isset($backtrace[$index]['type'])) {
-					$calledFrom .= $backtrace[$index]['type'];
-				}
-				$calledFrom .= $backtrace[$index]['function'];
-			}
+		$calledFrom = '';
+		if (isset($backtrace[$index]['file'])) {
+			// Get file and line number
+			$calledFrom .= $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
+
+			// Cleanup
+			$calledFrom = str_replace('\\', '/', $calledFrom);
+			$calledFrom = (!empty(self::$documentRoot) ? substr($calledFrom, strlen(self::$documentRoot)) : $calledFrom);
+			$calledFrom = trim($calledFrom, '/');
+		} elseif (isset($backtrace[$index]['function'])) {
+			// Get function call
+			$calledFrom .= (isset($backtrace[$index]['class']) ? $backtrace[$index]['class'] : '');
+			$calledFrom .= (isset($backtrace[$index]['type']) ? $backtrace[$index]['type'] : '');
+			$calledFrom .= $backtrace[$index]['function'];
 		} else {
-			$calledFrom = 'Unknown trace with index: ' . $index;
+			$calledFrom = 'Trace has no file or function !';
 		}
 
 		return $calledFrom;
