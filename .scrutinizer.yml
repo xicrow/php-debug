@@ -15,10 +15,12 @@ tools:
     external_code_coverage: false
 
 build:
+    environment:
+        php: 5.6
     tests:
         override:
             -
-                command: 'phpunit --coverage-clover=code-coverage'
+                command: 'phpunit --coverage-clover=code-coverage-file'
                 coverage:
-                    file: 'code-coverage'
+                    file: 'code-coverage-file'
                     format: 'php-clover'
