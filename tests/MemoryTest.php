@@ -2,15 +2,15 @@
 /**
  * Class MemoryTest
  *
- * @covers Memory::init
- * @covers Memory::start
- * @covers Memory::stop
- * @covers Memory::custom
- * @covers Memory::callback
- * @covers Memory::usage
- * @covers Memory::getStats
- * @covers Memory::getLastMemoryName
+ * @covers \Xicrow\Debug\Memory::init
+ * @covers \Xicrow\Debug\Memory::start
+ * @covers \Xicrow\Debug\Memory::stop
+ * @covers \Xicrow\Debug\Memory::custom
+ * @covers \Xicrow\Debug\Memory::callback
+ * @covers \Xicrow\Debug\Memory::usage
+ * @covers \Xicrow\Debug\Memory::getStats
+ * @covers \Xicrow\Debug\Memory::getLastMemoryName
  */
 class MemoryTest extends PHPUnit_Framework_TestCase {
-	
+
 }

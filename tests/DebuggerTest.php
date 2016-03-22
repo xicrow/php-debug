@@ -2,12 +2,12 @@
 /**
  * Class DebuggerTest
  *
- * @covers Debugger::debug
- * @covers Debugger::getCalledFileAndLine
- * @covers Debugger::reflectClass
- * @covers Debugger::reflectClassProperty
- * @covers Debugger::reflectClassMethod
+ * @covers \Xicrow\Debug\Debugger::debug
+ * @covers \Xicrow\Debug\Debugger::getCalledFileAndLine
+ * @covers \Xicrow\Debug\Debugger::reflectClass
+ * @covers \Xicrow\Debug\Debugger::reflectClassProperty
+ * @covers \Xicrow\Debug\Debugger::reflectClassMethod
  */
 class DebuggerTest extends PHPUnit_Framework_TestCase {
-	
+
 }

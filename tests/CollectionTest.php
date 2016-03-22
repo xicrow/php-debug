@@ -21,7 +21,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::add
+	 * @covers \Xicrow\Debug\Collection::add
 	 */
 	public function testAdd() {
 		$expected = true;
@@ -65,7 +65,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::clear
+	 * @covers \Xicrow\Debug\Collection::clear
 	 */
 	public function testClear() {
 		$expected = 0;
@@ -123,7 +123,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::count
+	 * @covers \Xicrow\Debug\Collection::count
 	 */
 	public function testCount() {
 		$expected = 0;
@@ -147,7 +147,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::exists
+	 * @covers \Xicrow\Debug\Collection::exists
 	 */
 	public function testExists() {
 		$expected = false;
@@ -165,8 +165,8 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::get
-	 * @covers Collection::getAll
+	 * @covers \Xicrow\Debug\Collection::get
+	 * @covers \Xicrow\Debug\Collection::getAll
 	 */
 	public function testGet() {
 		$expected = false;
@@ -196,7 +196,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::sort
+	 * @covers \Xicrow\Debug\Collection::sort
 	 */
 	public function testSort() {
 		$this->collection->add('key1');
@@ -267,7 +267,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers Collection::update
+	 * @covers \Xicrow\Debug\Collection::update
 	 */
 	public function testUpdate() {
 		$this->collection->add('key', ['foo' => 'bar']);
