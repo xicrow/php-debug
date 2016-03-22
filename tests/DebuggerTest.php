@@ -30,11 +30,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$result   = Debugger::getDebugInformation(123);
 		$this->assertContains($expected, $result);
 
-		// Some servers return float() others double(), hence the regEx below
-		//		$expected = 'float(123.123)';
-		//		$result   = Debugger::getDebugInformation(123.123);
-		//		$this->assertContains($expected, $result);
-
+		// Some servers return float() others double(), hence the regEx below instead of assertContains()
 		$expected = '#double|float' . preg_quote('(123.123)', '#') . '#';
 		$result   = Debugger::getDebugInformation(123.123);
 		$this->assertRegExp($expected, $result);
