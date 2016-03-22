@@ -26,11 +26,11 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$result   = Debugger::getDebugInformation(false);
 		$this->assertContains($expected, $result);
 
-		$expected = '(int) 123';
+		$expected = '123';
 		$result   = Debugger::getDebugInformation(123);
 		$this->assertContains($expected, $result);
 
-		$expected = '(float) 123.123';
+		$expected = '123.123';
 		$result   = Debugger::getDebugInformation(123.123);
 		$this->assertContains($expected, $result);
 
@@ -39,12 +39,24 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains($expected, $result);
 
 		$data     = [1, 2, 3];
-		$expected = print_r($data, true);
+		$expected = <<<EXPECT
+[
+	0 => 1,
+	1 => 2,
+	2 => 3
+]
+EXPECT;
 		$result   = Debugger::getDebugInformation($data);
 		$this->assertContains($expected, $result);
 
-		$data     = new DateTime();
-		$expected = print_r($data, true);
+		$data     = new DateTime('2016-01-01');
+		$expected = <<<EXPECT
+DateTime {
+	"date"          => "2016-01-01 00:00:00.000000",
+	"timezone_type" => 3,
+	"timezone"      => "Europe/Berlin"
+}
+EXPECT;
 		$result   = Debugger::getDebugInformation($data);
 		$this->assertContains($expected, $result);
 	}
