@@ -271,9 +271,9 @@ abstract class Profiler {
 
 		// Merge options with default options
 		$options = array_merge([
-			// Sort field (index|key|start|stop|result) (string|boolean)
+			// Sort field: index|key|start|stop|result
 			'sort'       => 'index',
-			// Sort order (asc|desc) (string)
+			// Sort order: asc|desc
 			'sort_order' => 'asc'
 		], $options);
 
