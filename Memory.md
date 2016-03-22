@@ -1,16 +1,14 @@
 # Memory
 
 ## Example
-See examples in `demo/memory.php`.
+See example in `demo/memory.php`.
 
 ```PHP
 <?php
-require_once('../src/Debugger.php');
-require_once('../src/Collection.php');
-require_once('../src/Memory.php');
+require_once('../src/autoload.php');
 
-use \Xicrow\Debug\Memory;
 use \Xicrow\Debug\Debugger;
+use \Xicrow\Debug\Memory;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
@@ -122,31 +120,31 @@ function memoryShowAll($options = []) {
 
 Output
 ```
-Total                                              |         581,408.00 B
-|-- Data generation: 0.52 MB                       |         549,664.00 B
-|-- Debug/demo/memory.php line 77             |             832.00 B
-|-- Loop level 1 #1                                |           7,104.00 B
-|-- |-- Loop level 2 #1                            |           2,904.00 B
-|-- |-- |-- Loop level 3 #1                        |             776.00 B
-|-- |-- |-- Loop level 3 #2                        |             776.00 B
-|-- |-- Loop level 2 #2                            |           2,856.00 B
-|-- |-- |-- Loop level 3 #3                        |             808.00 B
-|-- |-- |-- Loop level 3 #4                        |             776.00 B
-|-- Loop level 1 #2                                |           6,976.00 B
-|-- |-- Loop level 2 #3                            |           2,824.00 B
-|-- |-- |-- Loop level 3 #5                        |             776.00 B
-|-- |-- |-- Loop level 3 #6                        |             776.00 B
-|-- |-- Loop level 2 #4                            |           2,888.00 B
-|-- |-- |-- Loop level 3 #7                        |             776.00 B
-|-- |-- |-- Loop level 3 #8                        |             840.00 B
-|-- callback: strpos                               |             920.00 B
-|-- callback: array_sum                            |           1,408.00 B
-|-- callback: array_rand                           |           1,416.00 B
-|-- callback: min                                  |           1,400.00 B
-|-- callback: max                                  |           1,400.00 B
-|-- callback: Xicrow\Debug\Debugger::debug    |           1,384.00 B
-|-- callback: closure                              |             768.00 B
-|-- 5 KB                                           |           5,120.00 B
-|-- 5 MB                                           |       5,242,880.00 B
-|-- 5 GB                                           |   5,368,709,120.00 B
+Total                                      |         579,496.00 B
+|-- Data generation: 0.5 MB                |         528,696.00 B
+|-- debug/demo/memory.php line 75          |             816.00 B
+|-- Loop level 1 #1                        |           7,000.00 B
+|-- |-- Loop level 2 #1                    |           2,864.00 B
+|-- |-- |-- Loop level 3 #1                |             768.00 B
+|-- |-- |-- Loop level 3 #2                |             768.00 B
+|-- |-- Loop level 2 #2                    |           2,816.00 B
+|-- |-- |-- Loop level 3 #3                |             800.00 B
+|-- |-- |-- Loop level 3 #4                |             768.00 B
+|-- Loop level 1 #2                        |           6,872.00 B
+|-- |-- Loop level 2 #3                    |           2,784.00 B
+|-- |-- |-- Loop level 3 #5                |             768.00 B
+|-- |-- |-- Loop level 3 #6                |             768.00 B
+|-- |-- Loop level 2 #4                    |           2,848.00 B
+|-- |-- |-- Loop level 3 #7                |             768.00 B
+|-- |-- |-- Loop level 3 #8                |             832.00 B
+|-- callback: strpos                       |             912.00 B
+|-- callback: array_sum                    |           1,400.00 B
+|-- callback: array_rand                   |           1,408.00 B
+|-- callback: min                          |           1,392.00 B
+|-- callback: max                          |           1,392.00 B
+|-- callback: Xicrow\Debug\Debugger::debug |           1,384.00 B
+|-- callback: closure                      |             760.00 B
+|-- 5 KB                                   |           5,120.00 B
+|-- 5 MB                                   |       5,242,880.00 B
+|-- 5 GB                                   |   5,368,709,120.00 B
 ```
