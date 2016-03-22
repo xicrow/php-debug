@@ -24,7 +24,9 @@ See the examples in the `demo` folder.
 	*Implemented, available in `Collection` class*
 - ~~Memory class for measuring memory usage~~
 	*Implemented, available in `Memory` class*
-- Improve Debugger, foldable tree of objects
+- Add PHPunit tests
+- Improve Timer and Memory, perhaps a Profiler class
+- Improve Debugger, foldable tree of arrays/objects
 
 ## License
 Copyright &copy; 2016 Jan Ebsen
