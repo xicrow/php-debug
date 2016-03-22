@@ -1,4 +1,6 @@
 <?php
+use Xicrow\Debug\Timer;
+
 /**
  * Class TimerTest
  *
@@ -12,5 +14,6 @@
  * @covers \Xicrow\Debug\Timer::getLastTimerName
  */
 class TimerTest extends PHPUnit_Framework_TestCase {
-
+	public function test() {
+	}
 }

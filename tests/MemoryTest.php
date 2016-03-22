@@ -1,4 +1,6 @@
 <?php
+use Xicrow\Debug\Memory;
+
 /**
  * Class MemoryTest
  *
@@ -12,5 +14,6 @@
  * @covers \Xicrow\Debug\Memory::getLastMemoryName
  */
 class MemoryTest extends PHPUnit_Framework_TestCase {
-
+	public function test() {
+	}
 }
