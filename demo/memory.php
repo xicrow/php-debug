@@ -1,10 +1,8 @@
 <?php
-require_once('../src/Debugger.php');
-require_once('../src/Collection.php');
-require_once('../src/Memory.php');
+require_once('../src/autoload.php');
 
-use \Xicrow\Debug\Memory;
 use \Xicrow\Debug\Debugger;
+use \Xicrow\Debug\Memory;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';

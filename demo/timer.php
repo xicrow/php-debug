@@ -1,18 +1,14 @@
 <?php
-$scriptStart = microtime(true);
+require_once('../src/autoload.php');
 
-$requireStart = microtime(true);
-require_once('../src/Debugger.php');
-require_once('../src/Collection.php');
-require_once('../src/Timer.php');
-$requireStop = microtime(true);
-
-use \Xicrow\Debug\Timer;
 use \Xicrow\Debug\Debugger;
+use \Xicrow\Debug\Timer;
 
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
 Debugger::$showCalledFrom = false;
+
+$scriptStart = microtime(true);
 
 /**
  * Debugger utility functions
@@ -70,7 +66,6 @@ function timerShowAll($options = []) {
 			Timer::custom('PHP bootstrap', $_SERVER['REQUEST_TIME_FLOAT'], $scriptStart);
 		}
 		Timer::custom('script', $scriptStart);
-		Timer::custom('require files', $requireStart, $requireStop);
 
 		// No name test
 		Timer::start();
