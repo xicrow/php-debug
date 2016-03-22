@@ -30,8 +30,10 @@ View the seperate readme for [Timer](Timer.md) and [Memory](Memory.md) in their 
 	*Implemented, available in `Collection` class*
 - ~~Memory class for measuring memory usage~~
 	*Implemented, available in `Memory` class*
-- Add PHPunit tests
-- Improve Timer and Memory, perhaps a Profiler class
+- ~~Improve Timer and Memory, perhaps a Profiler class~~
+	*Implemented, available in `Profiler` class*
+- ~~Add PHPunit tests~~
+	*Implemented, now remeber to keep them updated*
 - Improve Debugger, foldable tree of arrays/objects
 
 ## License
