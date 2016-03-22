@@ -75,12 +75,22 @@ class Debugger {
 	 * @return string
 	 */
 	public static function getDebugInformation($data) {
-		if (is_null($data) || is_bool($data) || is_numeric($data)) {
-			ob_start();
-			// @codingStandardsIgnoreStart
-			var_dump($data);
-			// @codingStandardsIgnoreEnd
-			$data = trim(ob_get_clean(), "\n");
+		if (is_null($data)) {
+			$data = 'NULL';
+		}
+		
+		if (is_bool($data)) {
+			$data = ($data ? 'TRUE' : 'FALSE');
+		}
+
+		if (is_numeric($data)) {
+			if (is_int($data)) {
+				$data = '(int) ' . $data;
+			} elseif (is_float($data)) {
+				$data = '(float) ' . $data;
+			} elseif (is_double($data)) {
+				$data = '(double) ' . $data;
+			}
 		}
 
 		if (is_array($data) || is_object($data) || is_resource($data)) {
