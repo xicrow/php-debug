@@ -146,11 +146,6 @@ class Collection implements \Iterator, \Countable {
 				$bValue = $b[$field];
 			}
 
-			if ($field == 'start' || $field == 'stop') {
-				$aValue += $a['index'];
-				$bValue += $b['index'];
-			}
-
 			if ($aValue == $bValue) {
 				return 0;
 			}
