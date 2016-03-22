@@ -22,6 +22,13 @@ class Collection implements \Iterator, \Countable {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function __toString() {
+		return print_r($this->items, true);
+	}
+
+	/**
 	 * @param string $key
 	 * @param array  $data
 	 *
