@@ -12,11 +12,22 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @inheritdoc
+	 * @covers \Xicrow\Debug\Collection::__construct
 	 */
 	public function __construct($name = null, array $data = [], $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 
 		$this->collection = new Collection();
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Collection::__toString
+	 */
+	public function testToString() {
+		$expected = print_r([], true);
+		$result   = (string) $this->collection;
+		$this->assertEquals($expected, $result);
 	}
 
 	/**
@@ -199,22 +210,25 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::sort
 	 */
 	public function testSort() {
-		$this->collection->add('key1');
-		$this->collection->add('key2');
-		$this->collection->add('key3');
+		$this->collection->add('key1', ['foo' => 'bar']);
+		$this->collection->add('key2', ['foo' => 'bar']);
+		$this->collection->add('key3', ['foo' => 'bar']);
 
 		$expected = [
 			'key1' => [
 				'index' => 0,
-				'key'   => 'key1'
+				'key'   => 'key1',
+				'foo'   => 'bar'
 			],
 			'key2' => [
 				'index' => 1,
-				'key'   => 'key2'
+				'key'   => 'key2',
+				'foo'   => 'bar'
 			],
 			'key3' => [
 				'index' => 2,
-				'key'   => 'key3'
+				'key'   => 'key3',
+				'foo'   => 'bar'
 			]
 		];
 		$result   = $this->collection->getAll();
@@ -227,15 +241,18 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = [
 			'key3' => [
 				'index' => 2,
-				'key'   => 'key3'
+				'key'   => 'key3',
+				'foo'   => 'bar'
 			],
 			'key2' => [
 				'index' => 1,
-				'key'   => 'key2'
+				'key'   => 'key2',
+				'foo'   => 'bar'
 			],
 			'key1' => [
 				'index' => 0,
-				'key'   => 'key1'
+				'key'   => 'key1',
+				'foo'   => 'bar'
 			]
 		];
 		$result   = $this->collection->getAll();
@@ -248,15 +265,42 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = [
 			'key1' => [
 				'index' => 0,
-				'key'   => 'key1'
+				'key'   => 'key1',
+				'foo'   => 'bar'
 			],
 			'key2' => [
 				'index' => 1,
-				'key'   => 'key2'
+				'key'   => 'key2',
+				'foo'   => 'bar'
 			],
 			'key3' => [
 				'index' => 2,
-				'key'   => 'key3'
+				'key'   => 'key3',
+				'foo'   => 'bar'
+			]
+		];
+		$result   = $this->collection->getAll();
+		$this->assertEquals($expected, $result);
+
+		$expected = true;
+		$result   = $this->collection->sort('foo', 'asc');
+		$this->assertEquals($expected, $result);
+
+		$expected = [
+			'key1' => [
+				'index' => 0,
+				'key'   => 'key1',
+				'foo'   => 'bar'
+			],
+			'key2' => [
+				'index' => 1,
+				'key'   => 'key2',
+				'foo'   => 'bar'
+			],
+			'key3' => [
+				'index' => 2,
+				'key'   => 'key3',
+				'foo'   => 'bar'
 			]
 		];
 		$result   = $this->collection->getAll();
