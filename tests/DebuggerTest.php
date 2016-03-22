@@ -49,8 +49,10 @@ EXPECT;
 		$result   = Debugger::getDebugInformation($data);
 		$this->assertContains($expected, $result);
 
-		$data = new DateTime('2016-01-01');
+		$data = new DateTime();
 		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$data->setDate(2016, 01, 01);
+		$data->setTime(00, 00, 00);
 		$expected = <<<EXPECT
 DateTime {
 	"date"          => "2016-01-01 00:00:00.000000",
