@@ -3,35 +3,49 @@ use Xicrow\Debug\Timer;
 
 /**
  * Class TimerTest
- *
- * Missing tests:
- *
- * @covers \Xicrow\Debug\Timer::start
- * @covers \Xicrow\Debug\Timer::stop
- * @covers \Xicrow\Debug\Timer::custom
- * @covers \Xicrow\Debug\Timer::callback
- * @covers \Xicrow\Debug\Timer::elapsed
- * @covers \Xicrow\Debug\Timer::getStats
- * @covers \Xicrow\Debug\Timer::getLastTimerName
  */
 class TimerTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Timer::init
+	 * @covers \Xicrow\Debug\Timer::getMetric
 	 */
-	public function testInit() {
-		$expected = 'null';
-		$result   = Timer::$collection;
+	public function testGetMetric() {
+		$expected = 'numeric';
+		$result   = Timer::getMetric();
+		$this->assertInternalType($expected, $result);
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Timer::getMetricFormatted
+	 */
+	public function testGetMetricFormatted() {
+		$expected = '500.0000 MS';
+		$result   = Timer::getMetricFormatted(500);
+		$this->assertContains($expected, $result);
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Timer::getMetricResult
+	 */
+	public function testGetMetricResult() {
+		$expected = 'numeric';
+		$result   = Timer::getMetricResult(500, 1000);
 		$this->assertInternalType($expected, $result);
 
-		Timer::init();
+		$expected = 500000;
+		$result   = Timer::getMetricResult(500, 1000);
+		$this->assertEquals($expected, $result);
+	}
 
-		$expected = 'object';
-		$result   = Timer::$collection;
-		$this->assertInternalType($expected, $result);
-
-		$expected = '\Xicrow\Debug\Collection';
-		$result   = Timer::$collection;
-		$this->assertInstanceOf($expected, $result);
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Timer::getMetricResultFormatted
+	 */
+	public function testGetMetricResultFormatted() {
+		$expected = '500.0000 MS';
+		$result   = Timer::getMetricResultFormatted(500);
+		$this->assertContains($expected, $result);
 	}
 }
