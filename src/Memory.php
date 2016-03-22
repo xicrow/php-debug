@@ -5,6 +5,7 @@ namespace Xicrow\Debug;
  * Class Memory
  *
  * @package Xicrow\Debug
+ * @codeCoverageIgnore
  */
 class Memory extends Profiler {
 	/**

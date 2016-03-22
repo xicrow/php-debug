@@ -5,6 +5,7 @@ namespace Xicrow\Debug;
  * Class Timer
  *
  * @package Xicrow\Debug
+ * @codeCoverageIgnore
  */
 class Timer extends Profiler {
 	/**
