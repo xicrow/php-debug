@@ -43,12 +43,15 @@ class Debugger {
 			}
 
 			$style   = [];
-			$style[] = 'margin:5px;';
-			$style[] = 'padding:5px;';
-			$style[] = 'font:12px normal \'Courier New\';';
-			$style[] = 'color:#333;';
+			$style[] = 'margin:0;';
+			$style[] = 'padding:5px 10px;';
+			$style[] = 'font-family:Consolas,​Courier,​monospace;';
+			$style[] = 'font-weight:normal;';
+			$style[] = 'font-size:15px;';
+			$style[] = 'line-height:1.3;';
+			$style[] = 'color:#555;';
 			$style[] = 'background:#F9F9F9;';
-			$style[] = 'border:1px solid #000;';
+			$style[] = 'border:1px solid #CCC;';
 			$style[] = 'display:block;';
 
 			echo '<pre style="' . implode(' ', $style) . '">';
