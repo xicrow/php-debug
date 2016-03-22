@@ -32,12 +32,12 @@ class Debugger {
 
 		if (php_sapi_name() == 'cli') {
 			if (self::$showCalledFrom) {
-				$data = self::getCalledFileAndLine(2) . "\n" . $data;
+				$data = self::getCalledFrom(2) . "\n" . $data;
 			}
 			echo $data;
 		} else {
 			if (self::$showCalledFrom) {
-				$data = '<strong>' . self::getCalledFileAndLine(2) . '</strong>' . "\n" . $data;
+				$data = '<strong>' . self::getCalledFrom(2) . '</strong>' . "\n" . $data;
 			}
 
 			$style   = [];
@@ -57,23 +57,28 @@ class Debugger {
 
 	/**
 	 * @param mixed $data
-	 *
-	 * @return bool
 	 */
 	public static function debug($data) {
-		if (is_null($data) || is_bool($data)) {
+		self::output(self::getDebugInformation($data));
+	}
+
+	/**
+	 * @param mixed $data
+	 *
+	 * @return string
+	 */
+	public static function getDebugInformation($data) {
+		if (is_null($data) || is_bool($data) || is_numeric($data)) {
 			ob_start();
 			var_dump($data);
-			$data = ob_get_clean();
+			$data = trim(ob_get_clean(), "\n");
 		}
 
-		if (is_array($data) || is_object($data)) {
+		if (is_array($data) || is_object($data) || is_resource($data)) {
 			$data = print_r($data, true);
 		}
 
-		self::output($data);
-
-		return true;
+		return (string) $data;
 	}
 
 	/**
@@ -81,21 +86,36 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getCalledFileAndLine($index = 1) {
+	public static function getCalledFrom($index = 1) {
 		$backtrace = debug_backtrace();
 
+		$calledFrom = '';
 		if (isset($backtrace[$index])) {
-			$fileAndLine = $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
-			$fileAndLine = str_replace('\\', '/', $fileAndLine);
-			if (!empty(self::$documentRoot)) {
-				$fileAndLine = substr($fileAndLine, strlen(self::$documentRoot));
+			if (isset($backtrace[$index]['file'])) {
+				// Get file and line number
+				$calledFrom .= $backtrace[$index]['file'] . ' line ' . $backtrace[$index]['line'];
+
+				// Cleanup
+				$calledFrom = str_replace('\\', '/', $calledFrom);
+				if (!empty(self::$documentRoot)) {
+					$calledFrom = substr($calledFrom, strlen(self::$documentRoot));
+				}
+				$calledFrom = trim($calledFrom, '/');
+			} elseif (isset($backtrace[$index]['function'])) {
+				// Get function call
+				if (isset($backtrace[$index]['class'])) {
+					$calledFrom .= $backtrace[$index]['class'];
+				}
+				if (isset($backtrace[$index]['type'])) {
+					$calledFrom .= $backtrace[$index]['type'];
+				}
+				$calledFrom .= $backtrace[$index]['function'];
 			}
-			$fileAndLine = trim($fileAndLine, '/');
 		} else {
-			$fileAndLine = 'Unknown trace with index ' . $index;
+			$calledFrom = 'Unknown trace with index: ' . $index;
 		}
 
-		return $fileAndLine;
+		return $calledFrom;
 	}
 
 	/**
