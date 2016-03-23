@@ -69,8 +69,8 @@ abstract class Profiler {
 		// Make sure level is set
 		if (!isset($data['level'])) {
 			$data['level'] = 0;
-			if (isset($data['parent']) && $parentTimer = static::$collection->get($data['parent'])) {
-				$data['level'] = ($parentTimer['level'] + 1);
+			if (isset($data['parent']) && $parent = static::$collection->get($data['parent'])) {
+				$data['level'] = ($parent['level'] + 1);
 			}
 		}
 
@@ -340,74 +340,92 @@ abstract class Profiler {
 			'show_start_stop' => false
 		], $options);
 
-		// If no key is given
-		if (is_null($key)) {
-			// Get key of the last stopped timer
-			$key = static::getLastItemName('stopped');
+		// Get key of the last stopped item, if no key is given
+		$key = (is_null($key) ? static::getLastItemName('stopped') : $key);
+
+		// If item does not exist
+		if (!static::$collection->exists($key)) {
+			return 'Unknow item in with key: ' . $key;
+		}
+
+		// Get item
+		$item = static::$collection->get($key);
+
+		// Return stats
+		return ($options['oneline'] ? self::getStatsOneline($item, $options) : self::getStatsMultiline($item, $options));
+	}
+
+	/**
+	 * @param array $item
+	 * @param array $options
+	 *
+	 * @return string
+	 */
+	public static function getStatsOneline($item, $options = []) {
+		// Get item result
+		$itemResult = 'N/A';
+		if (isset($item['start_value']) && isset($item['stop_value'])) {
+			$itemResult = static::getMetricResult($item['start_value'], $item['stop_value']);
 		}
 
 		// Variable for output
 		$output = '';
 
-		if (!static::$collection->exists($key)) {
-			// Non-exiting timer
-			$output .= 'Unknow timer: ' . $key;
-		} else {
-			// Get item
-			$item = static::$collection->get($key);
-
-			// Get item start time
-			$itemStart = (isset($item['start_time']) ? static::formatDateTime($item['start_time']) : 'N/A');
-
-			// Get item stop time
-			$itemStop = (isset($item['stop_time']) ? static::formatDateTime($item['stop_time']) : 'N/A');
-
-			// Get item result
-			$itemResult = (isset($item['start_value']) && isset($item['stop_value']) ? static::getMetricResult($item['start_value'], $item['stop_value']) : 'N/A');
-
-			// Set output
-			if ($options['oneline']) {
-				// Prep key for output
-				$outputName = '';
-				if ($options['nested']) {
-					$outputName .= str_repeat($options['nested_prefix'], $item['level']);
-				}
-				$outputName .= $item['key'];
-				if (strlen($outputName) > $options['oneline_length']) {
-					$outputName = '~' . substr($item['key'], -($options['oneline_length'] - 1));
-				}
-
-				// Add item stats
-				$output .= str_pad($outputName, $options['oneline_length'], ' ');
-				$output .= ' | ';
-				$output .= str_pad(static::getMetricResultFormatted($itemResult), 20, ' ', ($itemResult == 'N/A' ? STR_PAD_RIGHT : STR_PAD_LEFT));
-				if ($options['show_start_stop']) {
-					$output .= ' | ';
-					$output .= str_pad($itemStart, 19, ' ');
-					$output .= ' | ';
-					$output .= str_pad($itemStop, 19, ' ');
-				}
-			} else {
-				// Add item stats
-				$output .= 'Timer   : ' . $item['key'];
-				if ($options['show_start_stop']) {
-					$output .= "\n";
-					$output .= 'Start   : ' . $itemStart;
-					$output .= "\n";
-					$output .= 'Stop    : ' . $itemStop;
-				}
-				$output .= "\n";
-				$output .= 'Result : ' . static::getMetricResultFormatted($itemResult);
-
-				// Show as nested
-				if ($options['nested']) {
-					$output = str_repeat($options['nested_prefix'], $item['level']) . $output;
-					$output = str_replace("\n", "\n" . str_repeat($options['nested_prefix'], $item['level']), $output);
-				}
-			}
+		// Prep key for output
+		$outputName = '';
+		$outputName .= ($options['nested'] ? str_repeat($options['nested_prefix'], $item['level']) : '');
+		$outputName .= $item['key'];
+		if (strlen($outputName) > $options['oneline_length']) {
+			$outputName = '~' . substr($item['key'], -($options['oneline_length'] - 1));
 		}
 
-		// Return output
+		// Add item stats
+		$output .= str_pad($outputName, $options['oneline_length'], ' ');
+		$output .= ' | ';
+		$output .= str_pad(static::getMetricResultFormatted($itemResult), 20, ' ', ($itemResult == 'N/A' ? STR_PAD_RIGHT : STR_PAD_LEFT));
+		if ($options['show_start_stop']) {
+			$output .= ' | ';
+			$output .= str_pad((isset($item['start_time']) ? static::formatDateTime($item['start_time']) : 'N/A'), 19, ' ');
+			$output .= ' | ';
+			$output .= str_pad((isset($item['stop_time']) ? static::formatDateTime($item['stop_time']) : 'N/A'), 19, ' ');
+		}
+
+		return $output;
+	}
+
+	/**
+	 * @param array $item
+	 * @param array $options
+	 *
+	 * @return string
+	 */
+	public static function getStatsMultiline($item, $options = []) {
+		// Get item result
+		$itemResult = 'N/A';
+		if (isset($item['start_value']) && isset($item['stop_value'])) {
+			$itemResult = static::getMetricResult($item['start_value'], $item['stop_value']);
+		}
+
+		// Variable for output
+		$output = '';
+
+		// Add item stats
+		$output .= 'Item   : ' . $item['key'];
+		if ($options['show_start_stop']) {
+			$output .= "\n";
+			$output .= 'Start   : ' . (isset($item['start_time']) ? static::formatDateTime($item['start_time']) : 'N/A');
+			$output .= "\n";
+			$output .= 'Stop    : ' . (isset($item['stop_time']) ? static::formatDateTime($item['stop_time']) : 'N/A');
+		}
+		$output .= "\n";
+		$output .= 'Result : ' . static::getMetricResultFormatted($itemResult);
+
+		// Show as nested
+		if ($options['nested']) {
+			$output = str_repeat($options['nested_prefix'], $item['level']) . $output;
+			$output = str_replace("\n", "\n" . str_repeat($options['nested_prefix'], $item['level']), $output);
+		}
+
 		return $output;
 	}
 
