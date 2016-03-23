@@ -4,7 +4,6 @@
 	bootstrap="src/autoload.php"
 	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
-	checkForUnintentionallyCoveredCode="true"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
