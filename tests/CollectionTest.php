@@ -27,7 +27,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @test
 	 * @covers \Xicrow\Debug\Collection::__construct
 	 * @covers \Xicrow\Debug\Collection::add
+	 * @covers \Xicrow\Debug\Collection::count
+	 * @covers \Xicrow\Debug\Collection::exists
 	 * @covers \Xicrow\Debug\Collection::get
+	 * @covers \Xicrow\Debug\Collection::update
 	 */
 	public function testAdd() {
 		$collection = new Collection();
