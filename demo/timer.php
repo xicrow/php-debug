@@ -9,13 +9,6 @@ $scriptStart = microtime(true);
 	<head>
 		<meta charset="UTF-8">
 		<title>Xicrow/Debug/Timer</title>
-		<style type="text/css">
-			pre {
-				margin: 5px;
-				padding: 0;
-				font-family: Consolas, Courier, monospace;
-			}
-		</style>
 	</head>
 
 	<body>
@@ -46,18 +39,22 @@ $scriptStart = microtime(true);
 		}
 
 		// Callback timers
+		Timer::callback(null, 'time');
 		Timer::callback(null, 'strpos', 'Hello world', 'world');
 		Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, ['Xicrow\Debug\Debugger', 'debug'], [1, 2, 3]);
+		Timer::callback(null, ['Xicrow\Debug\Debugger', 'getDebugInformation'], [1, 2, 3]);
 		Timer::callback(null, function () {
-			return true;
+			return false;
 		});
 
 		// Custom timers
-		Timer::custom('-5 minutes', strtotime('-5minutes'), time());
-		Timer::custom('+5 minutes', time(), strtotime('+5minutes'));
+		Timer::custom('5 seconds', time(), strtotime('+5 seconds'));
+		Timer::custom('5 minutes', time(), strtotime('+5 minutes'));
+		Timer::custom('5 hours', time(), strtotime('+5 hours'));
+		Timer::custom('5 days', time(), strtotime('+5 days'));
+		Timer::custom('5 weeks', time(), strtotime('+5 weeks'));
 
 		// Show all timers
 		Timer::showAll();
