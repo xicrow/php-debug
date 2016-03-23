@@ -6,49 +6,92 @@ use Xicrow\Debug\Debugger;
  */
 class DebuggerTest extends PHPUnit_Framework_TestCase {
 	/**
-	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClass
+	 * @inheritdoc
 	 */
-	public function testReflectClass() {
-		$expected = 'class Xicrow\Debug\Debugger';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
-		$this->assertContains($expected, $result);
+	public function __construct($name = null, array $data = [], $dataName = '') {
+		parent::__construct($name, $data, $dataName);
 
-		$expected = 'public static $output';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
-		$this->assertContains($expected, $result);
-
-		$expected = 'public static function debug(';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Debugger');
-		$this->assertContains($expected, $result);
+		// Set debugger options
+		Debugger::$documentRoot   = 'E:\\GitHub\\';
+		Debugger::$showCalledFrom = false;
+		Debugger::$output         = false;
 	}
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformation
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationNull
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationBoolean
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationInteger
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationDouble
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationIterable
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationArray
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationObject
+	 * @covers \Xicrow\Debug\Debugger::getDebugInformationResource
 	 */
-	public function testReflectClassProperty() {
-		$expected = '@var bool';
-		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Debugger', 'output');
+	public function testGetDebugInformation() {
+		// Make sure string is allways returned
+		$expected = 'string';
+		$result   = Debugger::getDebugInformation('string');
+		$this->assertInternalType($expected, $result);
+
+		$expected = 'string';
+		$result   = Debugger::getDebugInformation(123);
+		$this->assertInternalType($expected, $result);
+
+		// Test all PHP data types
+		$expected = 'NULL';
+		$result   = Debugger::getDebugInformation(null);
 		$this->assertContains($expected, $result);
 
-		$expected = 'public static $output';
-		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Debugger', 'output');
-		$this->assertContains($expected, $result);
-	}
+		$expected = 'TRUE';
+		$result   = Debugger::getDebugInformation(true);
+		$this->assertEquals($expected, $result);
 
-	/**
-	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
-	 */
-	public function testReflectClassMethod() {
-		$expected = '@param mixed $data';
-		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Debugger', 'debug');
-		$this->assertContains($expected, $result);
+		$expected = 'FALSE';
+		$result   = Debugger::getDebugInformation(false);
+		$this->assertEquals($expected, $result);
 
-		$expected = 'public static function debug(';
-		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Debugger', 'debug');
-		$this->assertContains($expected, $result);
+		$expected = '123';
+		$result   = Debugger::getDebugInformation(123);
+		$this->assertEquals($expected, $result);
+
+		$expected = '123.123';
+		$result   = Debugger::getDebugInformation(123.123);
+		$this->assertEquals($expected, $result);
+
+		$expected = '"string"';
+		$result   = Debugger::getDebugInformation('string');
+		$this->assertEquals($expected, $result);
+
+		$data     = [1, 2, 3];
+		$expected = <<<EXPECT
+[
+	0 => 1,
+	1 => 2,
+	2 => 3
+]
+EXPECT;
+		$result   = Debugger::getDebugInformation($data);
+		$this->assertEquals($expected, $result);
+
+		$data = new DateTime();
+		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$data->setDate(2016, 01, 01);
+		$data->setTime(00, 00, 00);
+		$expected = <<<EXPECT
+DateTime {
+	"date"          => "2016-01-01 00:00:00.000000",
+	"timezone_type" => 3,
+	"timezone"      => "Europe/Copenhagen"
+}
+EXPECT;
+		$result   = Debugger::getDebugInformation($data);
+		$this->assertEquals($expected, $result);
+
+		$expected = '#Resource id \#[0-9]+ \(stream\)#';
+		$result   = Debugger::getDebugInformation(fopen(realpath(__DIR__ . '/../README.md'), 'r'));
+		$this->assertRegExp($expected, $result);
 	}
 
 	/**
@@ -62,7 +105,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$this->assertInternalType($expected, $result);
 
 		$expected = 'DebuggerTest->testGetCalledFrom';
-		$result   = Debugger::getCalledFrom();
+		$result   = Debugger::getCalledFrom(1);
 		$this->assertContains($expected, $result);
 
 		$expected = 'Unknown trace with index: 99';
@@ -87,124 +130,47 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformation
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationNull
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationBoolean
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationInteger
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationDouble
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationIterable
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationArray
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationObject
+	 * @covers \Xicrow\Debug\Debugger::reflectClass
 	 */
-	public function testGetDebugInformation() {
-		$expected = 'string';
-		$result   = Debugger::getDebugInformation('string');
-		$this->assertInternalType($expected, $result);
-
-		$expected = 'string';
-		$result   = Debugger::getDebugInformation(123);
-		$this->assertInternalType($expected, $result);
-
-		$expected = 'NULL';
-		$result   = Debugger::getDebugInformation(null);
+	public function testReflectClass() {
+		$expected = 'class Xicrow\Debug\Collection';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
 		$this->assertContains($expected, $result);
 
-		$expected = 'FALSE';
-		$result   = Debugger::getDebugInformation(false);
+		$expected = 'private $items';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
 		$this->assertContains($expected, $result);
 
-		$expected = '123';
-		$result   = Debugger::getDebugInformation(123);
+		$expected = 'public function __construct(';
+		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
+		$this->assertContains($expected, $result);
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
+	 */
+	public function testReflectClassProperty() {
+		$expected = '@var array';
+		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
 		$this->assertContains($expected, $result);
 
-		$expected = '123.123';
-		$result   = Debugger::getDebugInformation(123.123);
+		$expected = 'private $items';
+		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
+		$this->assertContains($expected, $result);
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
+	 */
+	public function testReflectClassMethod() {
+		$expected = '@param array $items';
+		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
 		$this->assertContains($expected, $result);
 
-		$expected = 'string';
-		$result   = Debugger::getDebugInformation('string');
+		$expected = 'public function __construct(';
+		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
 		$this->assertContains($expected, $result);
-
-		$data     = [1, 2, 3];
-		$expected = <<<EXPECT
-[
-	0 => 1,
-	1 => 2,
-	2 => 3
-]
-EXPECT;
-		$result   = Debugger::getDebugInformation($data);
-		$this->assertContains($expected, $result);
-
-		$data = new DateTime();
-		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
-		$data->setDate(2016, 01, 01);
-		$data->setTime(00, 00, 00);
-		$expected = <<<EXPECT
-DateTime {
-	"date"          => "2016-01-01 00:00:00.000000",
-	"timezone_type" => 3,
-	"timezone"      => "Europe/Copenhagen"
-}
-EXPECT;
-		$result   = Debugger::getDebugInformation($data);
-		$this->assertContains($expected, $result);
-
-		// Test each specific debug information methods
-		$expected = 'NULL';
-		$result   = Debugger::getDebugInformationNull();
-		$this->assertEquals($expected, $result);
-
-		$expected = 'TRUE';
-		$result   = Debugger::getDebugInformationBoolean(true);
-		$this->assertEquals($expected, $result);
-
-		$expected = 'FALSE';
-		$result   = Debugger::getDebugInformationBoolean(false);
-		$this->assertEquals($expected, $result);
-
-		$expected = '123';
-		$result   = Debugger::getDebugInformationInteger(123);
-		$this->assertEquals($expected, $result);
-
-		$expected = '123.123';
-		$result   = Debugger::getDebugInformationDouble(123.123);
-		$this->assertEquals($expected, $result);
-
-		$data     = [1, 2, 3];
-		$expected = <<<EXPECT
-[
-	0 => 1,
-	1 => 2,
-	2 => 3
-]
-EXPECT;
-		$result   = Debugger::getDebugInformationIterable($data, '[', ']');
-		$this->assertEquals($expected, $result);
-
-		$data     = [1, 2, 3];
-		$expected = <<<EXPECT
-[
-	0 => 1,
-	1 => 2,
-	2 => 3
-]
-EXPECT;
-		$result   = Debugger::getDebugInformationArray($data);
-		$this->assertEquals($expected, $result);
-
-		$data = new DateTime();
-		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
-		$data->setDate(2016, 01, 01);
-		$data->setTime(00, 00, 00);
-		$expected = <<<EXPECT
-DateTime {
-	"date"          => "2016-01-01 00:00:00.000000",
-	"timezone_type" => 3,
-	"timezone"      => "Europe/Copenhagen"
-}
-EXPECT;
-		$result   = Debugger::getDebugInformationObject($data);
-		$this->assertEquals($expected, $result);
 	}
 }
