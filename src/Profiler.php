@@ -93,7 +93,7 @@ abstract class Profiler {
 		static::add($key, [
 			'start_value'       => $metric,
 			'start_time'        => microtime(true),
-			'start_called_from' => Debugger::getCalledFrom()
+			'start_called_from' => Debugger::getCalledFrom(1)
 		]);
 
 		// Return true
@@ -136,7 +136,7 @@ abstract class Profiler {
 			static::$collection->update($key, [
 				'stop_value'       => $metric,
 				'stop_time'        => microtime(true),
-				'stop_called_from' => Debugger::getCalledFrom()
+				'stop_called_from' => Debugger::getCalledFrom(1)
 			]);
 		}
 	}
@@ -156,12 +156,12 @@ abstract class Profiler {
 		if (!is_null($startValue)) {
 			$data['start_value']       = $startValue;
 			$data['start_time']        = microtime(true);
-			$data['start_called_from'] = Debugger::getCalledFrom();
+			$data['start_called_from'] = Debugger::getCalledFrom(1);
 		}
 		if (!is_null($stopValue)) {
 			$data['stop_value']       = $stopValue;
 			$data['stop_time']        = microtime(true);
-			$data['stop_called_from'] = Debugger::getCalledFrom();
+			$data['stop_called_from'] = Debugger::getCalledFrom(1);
 		}
 
 		// Add item to collection
