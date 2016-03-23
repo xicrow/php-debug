@@ -142,7 +142,10 @@ class Debugger {
 	public static function reflectClassProperty($class, $property, $output = true) {
 		$data = '';
 
+		$reflectionClass    = new \ReflectionClass($class);
 		$reflectionProperty = new \ReflectionProperty($class, $property);
+
+		$defaultPropertyValues = $reflectionClass->getDefaultProperties();
 
 		$comment = $reflectionProperty->getDocComment();
 		if (!empty($comment)) {
@@ -157,7 +160,11 @@ class Debugger {
 		$data .= ($reflectionProperty->isPrivate() ? 'private ' : '');
 		$data .= ($reflectionProperty->isProtected() ? 'protected ' : '');
 		$data .= ($reflectionProperty->isStatic() ? 'static ' : '');
-		$data .= '$' . $reflectionProperty->name . ';';
+		$data .= '$' . $reflectionProperty->name;
+		if (isset($defaultPropertyValues[$property])) {
+			$data .= ' = ' . self::getDebugInformation($defaultPropertyValues[$property]);
+		}
+		$data .= ';';
 
 		if ($output) {
 			self::output($data);
