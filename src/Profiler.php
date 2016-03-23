@@ -214,12 +214,11 @@ abstract class Profiler {
 					}
 				}
 
+				$key = implode('', $keyArr);
 				if (count($keyArr) > 1) {
 					$method = array_pop($keyArr);
 					$key    = implode('/', $keyArr);
 					$key .= '::' . $method;
-				} else {
-					$key = implode('', $keyArr);
 				}
 
 				unset($keyArr, $method);
@@ -234,10 +233,6 @@ abstract class Profiler {
 
 		// Set error handler, to convert errors to exceptions
 		set_error_handler(function ($errno, $errstr, $errfile, $errline, array $errcontext) {
-			if (0 === error_reporting()) {
-				return false;
-			}
-
 			throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 		});
 
@@ -512,18 +507,16 @@ abstract class Profiler {
 		} else {
 			// Loop throug items reversed and get the last one matching the given type
 			foreach ($itemKeys as $itemKey) {
-				if (isset($items[$itemKey]['start_time'])) {
-					if (isset($items[$itemKey]['stop_time'])) {
-						if ($type == 'stopped') {
-							$key = $itemKey;
-							break;
-						}
-					} else {
-						if ($type == 'started') {
-							$key = $itemKey;
-							break;
-						}
-					}
+				$itemKeyIntersect = array_values(array_intersect(array_keys($items[$itemKey]), ['start_time', 'stop_time']));
+
+				if ($type == 'stopped' && $itemKeyIntersect == ['start_time', 'stop_time']) {
+					$key = $itemKey;
+					break;
+				}
+
+				if ($type == 'started' && $itemKeyIntersect == ['start_time']) {
+					$key = $itemKey;
+					break;
 				}
 			}
 		}
