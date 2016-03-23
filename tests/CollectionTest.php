@@ -6,27 +6,19 @@ use Xicrow\Debug\Collection;
  */
 class CollectionTest extends PHPUnit_Framework_TestCase {
 	/**
-	 * @var null|Collection
-	 */
-	public $collection = null;
-
-	/**
-	 * @inheritdoc
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 */
-	public function __construct($name = null, array $data = [], $dataName = '') {
-		parent::__construct($name, $data, $dataName);
-
-		$this->collection = new Collection();
-	}
-
-	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
 	 * @covers \Xicrow\Debug\Collection::__toString
 	 */
 	public function testToString() {
+		$collection = new Collection();
+
+		$expected = [];
+		$result   = $collection->getAll();
+		$this->assertEquals($expected, $result);
+
 		$expected = print_r([], true);
-		$result   = (string) $this->collection;
+		$result   = (string) $collection;
 		$this->assertEquals($expected, $result);
 	}
 
@@ -35,8 +27,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::add
 	 */
 	public function testAdd() {
+		$collection = new Collection();
+
 		$expected = true;
-		$result   = $this->collection->add('key', ['foo' => 'bar']);
+		$result   = $collection->add('key', ['foo' => 'bar']);
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -44,11 +38,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 			'index' => 0,
 			'key'   => 'key'
 		];
-		$result   = $this->collection->get('key');
+		$result   = $collection->get('key');
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->add('key', ['foo' => 'bar']);
+		$result   = $collection->add('key', ['foo' => 'bar']);
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -56,11 +50,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 			'index' => 0,
 			'key'   => 'key #1'
 		];
-		$result   = $this->collection->get('key');
+		$result   = $collection->get('key');
 		$this->assertEquals($expected, $result);
 
 		$expected = false;
-		$result   = $this->collection->get('key #1');
+		$result   = $collection->get('key #1');
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -68,10 +62,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 			'index' => 1,
 			'key'   => 'key #2'
 		];
-		$result   = $this->collection->get('key #2');
+		$result   = $collection->get('key #2');
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
 	}
 
 	/**
@@ -79,56 +73,58 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::clear
 	 */
 	public function testClear() {
+		$collection = new Collection();
+
 		$expected = 0;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key1', ['foo' => 'bar']);
+		$collection->add('key1', ['foo' => 'bar']);
 
 		$expected = 1;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key2', ['foo' => 'bar']);
+		$collection->add('key2', ['foo' => 'bar']);
 
 		$expected = 2;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = false;
-		$result   = $this->collection->clear('non-exiting-key');
+		$result   = $collection->clear('non-exiting-key');
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->clear('key1');
+		$result   = $collection->clear('key1');
 		$this->assertEquals($expected, $result);
 
 		$expected = 1;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->clear('key2');
+		$result   = $collection->clear('key2');
 		$this->assertEquals($expected, $result);
 
 		$expected = 0;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key1', ['foo' => 'bar']);
-		$this->collection->add('key2', ['foo' => 'bar']);
-		$this->collection->add('key3', ['foo' => 'bar']);
+		$collection->add('key1', ['foo' => 'bar']);
+		$collection->add('key2', ['foo' => 'bar']);
+		$collection->add('key3', ['foo' => 'bar']);
 
 		$expected = 3;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->clear();
+		$result   = $collection->clear();
 		$this->assertEquals($expected, $result);
 
 		$expected = 0;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -137,23 +133,25 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::count
 	 */
 	public function testCount() {
+		$collection = new Collection();
+
 		$expected = 0;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key', ['foo' => 'bar']);
+		$collection->add('key', ['foo' => 'bar']);
 
 		$expected = 1;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key', ['foo' => 'bar']);
+		$collection->add('key', ['foo' => 'bar']);
 
 		$expected = 2;
-		$result   = $this->collection->count();
+		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
 	}
 
 	/**
@@ -161,17 +159,19 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::exists
 	 */
 	public function testExists() {
+		$collection = new Collection();
+
 		$expected = false;
-		$result   = $this->collection->exists('key');
+		$result   = $collection->exists('key');
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key', ['foo' => 'bar']);
+		$collection->add('key', ['foo' => 'bar']);
 
 		$expected = true;
-		$result   = $this->collection->exists('key');
+		$result   = $collection->exists('key');
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
 	}
 
 	/**
@@ -180,29 +180,31 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::getAll
 	 */
 	public function testGet() {
+		$collection = new Collection();
+
 		$expected = false;
-		$result   = $this->collection->get('non-existing-key');
+		$result   = $collection->get('non-existing-key');
 		$this->assertEquals($expected, $result);
 
-		$this->collection->add('key', ['foo' => 'bar']);
+		$collection->add('key', ['foo' => 'bar']);
 
 		$expected = [
 			'foo'   => 'bar',
 			'index' => 0,
 			'key'   => 'key'
 		];
-		$result   = $this->collection->get('key');
+		$result   = $collection->get('key');
 		$this->assertEquals($expected, $result);
 
 		$expected = 'array';
-		$result   = $this->collection->getAll();
+		$result   = $collection->getAll();
 		$this->assertInternalType($expected, $result);
 
 		$expected = 1;
-		$result   = count($this->collection->getAll());
+		$result   = count($collection->getAll());
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
 	}
 
 	/**
@@ -210,9 +212,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::sort
 	 */
 	public function testSort() {
-		$this->collection->add('key1', ['foo' => 'bar']);
-		$this->collection->add('key2', ['foo' => 'bar']);
-		$this->collection->add('key3', ['foo' => 'bar']);
+		$collection = new Collection();
+
+		$collection->add('key1', ['foo' => 'bar']);
+		$collection->add('key2', ['foo' => 'bar']);
+		$collection->add('key3', ['foo' => 'bar']);
 
 		$expected = [
 			'key1' => [
@@ -231,11 +235,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 				'foo'   => 'bar'
 			]
 		];
-		$result   = $this->collection->getAll();
+		$result   = $collection->getAll();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->sort('key', 'desc');
+		$result   = $collection->sort('key', 'desc');
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -255,11 +259,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 				'foo'   => 'bar'
 			]
 		];
-		$result   = $this->collection->getAll();
+		$result   = $collection->getAll();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->sort('key', 'asc');
+		$result   = $collection->sort('key', 'asc');
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -279,11 +283,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 				'foo'   => 'bar'
 			]
 		];
-		$result   = $this->collection->getAll();
+		$result   = $collection->getAll();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->sort('foo', 'asc');
+		$result   = $collection->sort('foo', 'asc');
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -303,10 +307,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 				'foo'   => 'bar'
 			]
 		];
-		$result   = $this->collection->getAll();
+		$result   = $collection->getAll();
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
 	}
 
 	/**
@@ -314,18 +318,20 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\Debug\Collection::update
 	 */
 	public function testUpdate() {
-		$this->collection->add('key', ['foo' => 'bar']);
+		$collection = new Collection();
+
+		$collection->add('key', ['foo' => 'bar']);
 
 		$expected = [
 			'foo'   => 'bar',
 			'index' => 0,
 			'key'   => 'key'
 		];
-		$result   = $this->collection->get('key');
+		$result   = $collection->get('key');
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
-		$result   = $this->collection->update('key', ['bar' => 'foo']);
+		$result   = $collection->update('key', ['bar' => 'foo']);
 		$this->assertEquals($expected, $result);
 
 		$expected = [
@@ -334,13 +340,67 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 			'key'   => 'key',
 			'bar'   => 'foo'
 		];
-		$result   = $this->collection->get('key');
+		$result   = $collection->get('key');
 		$this->assertEquals($expected, $result);
 
 		$expected = false;
-		$result   = $this->collection->update('non-existing-key', ['bar' => 'foo']);
+		$result   = $collection->update('non-existing-key', ['bar' => 'foo']);
 		$this->assertEquals($expected, $result);
 
-		$this->collection->clear();
+		$collection->clear();
+	}
+
+	/**
+	 * @test
+	 * @covers \Xicrow\Debug\Collection::rewind
+	 * @covers \Xicrow\Debug\Collection::current
+	 * @covers \Xicrow\Debug\Collection::next
+	 * @covers \Xicrow\Debug\Collection::prev
+	 * @covers \Xicrow\Debug\Collection::key
+	 * @covers \Xicrow\Debug\Collection::valid
+	 * @covers \Xicrow\Debug\Collection::count
+	 */
+	public function testInheritedMethods() {
+		$collection = new Collection([1, 2, 3]);
+
+		$expected = 1;
+		$result   = $collection->current();
+		$this->assertEquals($expected, $result);
+
+		$expected = 2;
+		$result   = $collection->next();
+		$this->assertEquals($expected, $result);
+
+		$expected = 3;
+		$result   = $collection->next();
+		$this->assertEquals($expected, $result);
+
+		$expected = false;
+		$result   = $collection->next();
+		$this->assertEquals($expected, $result);
+
+		$expected = 1;
+		$result   = $collection->rewind();
+		$this->assertEquals($expected, $result);
+
+		$expected = 2;
+		$result   = $collection->next();
+		$this->assertEquals($expected, $result);
+
+		$expected = 1;
+		$result   = $collection->prev();
+		$this->assertEquals($expected, $result);
+
+		$expected = 0;
+		$result   = $collection->key();
+		$this->assertEquals($expected, $result);
+
+		$expected = true;
+		$result   = $collection->valid();
+		$this->assertEquals($expected, $result);
+
+		$expected = 3;
+		$result   = $collection->count();
+		$this->assertEquals($expected, $result);
 	}
 }
