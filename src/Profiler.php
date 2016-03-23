@@ -229,40 +229,55 @@ abstract class Profiler {
 			$key = 'callback: ' . $key;
 		}
 
-		// Start output buffer to capture any output
-		ob_start();
+		// Set default return value
+		$returnValue = true;
 
-		// Start profiler
-		static::start($key);
+		// Set error handler, to convert errors to exceptions
+		set_error_handler(function ($errno, $errstr, $errfile, $errline, array $errcontext) {
+			if (0 === error_reporting()) {
+				return false;
+			}
 
-		// Execute callback, and get result
-		$callbackResult = call_user_func_array($callback, $callbackParams);
+			throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+		});
 
-		// Stop profiler
-		static::stop($key);
+		try {
+			// Start output buffer to capture any output
+			ob_start();
 
-		// Get and clean output buffer
-		$callbackOutput = ob_get_clean();
+			// Start profiler
+			static::start($key);
 
-		// If callback was not found
-		if (strpos($callbackOutput, 'call_user_func_array() expects parameter 1 to be a valid callback') !== false) {
+			// Execute callback, and get result
+			$callbackResult = call_user_func_array($callback, $callbackParams);
+
+			// Stop profiler
+			static::stop($key);
+
+			// Get and clean output buffer
+			$callbackOutput = ob_get_clean();
+		} catch (\ErrorException $callbackException) {
+			// Stop and clean output buffer
+			ob_end_clean();
+
 			// Show error message
 			Debugger::output('Invalid callback sent to Profiler::callback: ' . str_replace('callback: ', '', $key));
 
 			// Clear the item from the collection
 			static::$collection->clear($key);
 
-			// Return false
-			return false;
+			// Clear callback result and output
+			unset($callbackResult, $callbackOutput);
+
+			// Set return value to false
+			$returnValue = false;
 		}
 
-		// Return result of the callback, if given
-		if (isset($callbackResult)) {
-			return $callbackResult;
-		}
+		// Restore error handler
+		restore_error_handler();
 
-		// Return true
-		return true;
+		// Return result, output or true
+		return (isset($callbackResult) ? $callbackResult : (!empty($callbackOutput) ? $callbackOutput : $returnValue));
 	}
 
 	/**
