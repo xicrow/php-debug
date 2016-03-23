@@ -329,13 +329,15 @@ abstract class Profiler {
 		// Merge options with default options
 		$options = array_merge([
 			// Show nested (boolean)
-			'nested'         => true,
+			'nested'          => true,
 			// Prefix for nested items (string)
-			'nested_prefix'  => '|-- ',
+			'nested_prefix'   => '|-- ',
 			// Show in one line (boolean)
-			'oneline'        => true,
+			'oneline'         => true,
 			// If oneline, max key length (int)
-			'oneline_length' => 100
+			'oneline_length'  => 100,
+			// Show start stop for the item (boolean)
+			'show_start_stop' => false
 		], $options);
 
 		// If no key is given
@@ -379,17 +381,21 @@ abstract class Profiler {
 				$output .= str_pad($outputName, $options['oneline_length'], ' ');
 				$output .= ' | ';
 				$output .= str_pad(static::getMetricResultFormatted($itemResult), 20, ' ', ($itemResult == 'N/A' ? STR_PAD_RIGHT : STR_PAD_LEFT));
-				$output .= ' | ';
-				$output .= str_pad($itemStart, 19, ' ');
-				$output .= ' | ';
-				$output .= str_pad($itemStop, 19, ' ');
+				if ($options['show_start_stop']) {
+					$output .= ' | ';
+					$output .= str_pad($itemStart, 19, ' ');
+					$output .= ' | ';
+					$output .= str_pad($itemStop, 19, ' ');
+				}
 			} else {
 				// Add item stats
 				$output .= 'Timer   : ' . $item['key'];
-				$output .= "\n";
-				$output .= 'Start   : ' . $itemStart;
-				$output .= "\n";
-				$output .= 'Stop    : ' . $itemStop;
+				if ($options['show_start_stop']) {
+					$output .= "\n";
+					$output .= 'Start   : ' . $itemStart;
+					$output .= "\n";
+					$output .= 'Stop    : ' . $itemStop;
+				}
 				$output .= "\n";
 				$output .= 'Result : ' . static::getMetricResultFormatted($itemResult);
 
