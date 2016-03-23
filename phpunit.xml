@@ -5,11 +5,15 @@
 	beStrictAboutTestsThatDoNotTestAnything="false"
 	beStrictAboutOutputDuringTests="false"
 	checkForUnintentionallyCoveredCode="false"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
 	stopOnError="false"
 	stopOnFailure="false"
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
 	stopOnRisky="false"
+	strict="true"
 	verbose="false"
 	colors="true">
 	<testsuites>
