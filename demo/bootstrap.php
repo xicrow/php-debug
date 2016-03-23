@@ -5,6 +5,11 @@ use \Xicrow\Debug\Debugger;
 use \Xicrow\Debug\Memory;
 use \Xicrow\Debug\Timer;
 
+ini_set('error_reporting', E_ALL | E_STRICT);
+ini_set('display_errors', 1);
+ini_set('html_errors', 1);
+ini_set('log_errors', 0);
+
 // Set debugger options
 Debugger::$documentRoot   = 'E:\\GitHub\\';
 Debugger::$showCalledFrom = false;
