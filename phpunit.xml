@@ -21,9 +21,10 @@
 		</testsuite>
 	</testsuites>
 	<filter>
+		<whitelist>
+			<directory>src</directory>
+		</whitelist>
 		<blacklist>
-			<directory>demo</directory>
-			<directory>tests</directory>
 			<file>src/autoload.php</file>
 		</blacklist>
 	</filter>
