@@ -137,7 +137,6 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 * @covers \Xicrow\Debug\Profiler::callback
-	 * @expectedException PHPUnit_Framework_Error_Warning
 	 */
 	public function testCallback() {
 		Timer::$collection->clear();
