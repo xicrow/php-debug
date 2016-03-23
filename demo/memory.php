@@ -13,17 +13,6 @@ use \Xicrow\Debug\Memory;
 		<?php
 		Memory::start('Total');
 
-		$dataSizeMb = (rand(20, 80) / 100);
-		$dataSizeKb = ($dataSizeMb * 1024);
-		$dataSizeB  = ($dataSizeKb * 1024);
-		Memory::start('Data generation: ' . $dataSizeMb . ' MB');
-		$characters = str_split('abcdefghijklmnopqrstuvwxyzæøå');
-		$data       = '';
-		for ($i = 0; $i <= $dataSizeB; $i++) {
-			$data .= $characters[array_rand($characters)];
-		}
-		Memory::stop();
-
 		// No name test
 		Memory::start();
 		Memory::stop();
@@ -60,7 +49,16 @@ use \Xicrow\Debug\Memory;
 		Memory::custom('5 MB', 0, (5 * 1024 * 1024));
 		Memory::custom('5 GB', 0, (5 * 1024 * 1024 * 1024));
 		Memory::custom('5 TB', 0, (5 * 1024 * 1024 * 1024 * 1024));
-		Memory::custom('5 PB', 0, (5 * 1024 * 1024 * 1024 * 1024 * 1024));
+
+		// Random test
+		$dataSizeMb = (rand(20, 80) / 100);
+		$dataSizeB  = ($dataSizeMb * 1024 * 1024);
+		Memory::start('Random data generation: ' . $dataSizeMb . ' MB');
+		$data = '';
+		for ($i = 0; $i <= $dataSizeB; $i++) {
+			$data .= ' ';
+		}
+		Memory::stop();
 
 		// Show all memories
 		Memory::showAll();
