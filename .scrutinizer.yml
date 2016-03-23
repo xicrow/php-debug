@@ -19,8 +19,6 @@ filter:
 tools:
     sensiolabs_security_checker: true
     external_code_coverage: false
-    php_code_coverage:
-        test_command: vendor/bin/phpunit
 
 build:
     environment:
@@ -28,7 +26,7 @@ build:
     tests:
         override:
             -
-                command: 'phpunit --coverage-clover=code-coverage.xml'
+                command: 'vendor/bin/phpunit --coverage-clover=code-coverage.xml'
                 coverage:
                     file: 'code-coverage.xml'
                     format: 'php-clover'
