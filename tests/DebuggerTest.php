@@ -137,10 +137,24 @@ EXPECT;
 	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClass() {
-		$result = Debugger::reflectClass('\Xicrow\Debug\Collection');
-		$this->assertContains('class Xicrow\Debug\Collection', $result);
-		$this->assertContains('private $items', $result);
-		$this->assertContains('public function __construct(', $result);
+		$result = Debugger::reflectClass('DebuggerTestClass');
+		$this->assertContains('class DebuggerTestClass', $result);
+
+		$this->assertContains('public $publicProperty = "public";', $result);
+		$this->assertContains('private $privateProperty = "private";', $result);
+		$this->assertContains('protected $protectedProperty = "protected";', $result);
+
+		$this->assertContains('public static $publicStaticProperty = "public static";', $result);
+		$this->assertContains('private static $privateStaticProperty = "private static";', $result);
+		$this->assertContains('protected static $protectedStaticProperty = "protected static";', $result);
+
+		$this->assertContains('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		$this->assertContains('private function privateFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		$this->assertContains('protected function protectedFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+
+		$this->assertContains('public static function publicStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		$this->assertContains('private static function privateStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		$this->assertContains('protected static function protectedStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
 	}
 
 	/**
@@ -148,9 +162,8 @@ EXPECT;
 	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
 	 */
 	public function testReflectClassProperty() {
-		$result = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
-		$this->assertContains('@var array', $result);
-		$this->assertContains('private $items', $result);
+		$result = Debugger::reflectClassProperty('DebuggerTestClass', 'publicProperty');
+		$this->assertContains('public $publicProperty = "public"', $result);
 	}
 
 	/**
@@ -158,8 +171,110 @@ EXPECT;
 	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClassMethod() {
-		$result = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
-		$this->assertContains('@param array $items', $result);
-		$this->assertContains('public function __construct(', $result);
+		$result = Debugger::reflectClassMethod('DebuggerTestClass', 'publicFunction');
+		$this->assertContains('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+	}
+}
+
+/**
+ * Class DebuggerTestClass
+ *
+ * @codeCoverageIgnore
+ */
+class DebuggerTestClass {
+	/**
+	 * @var string
+	 */
+	public $publicProperty = 'public';
+
+	/**
+	 * @var string
+	 */
+	private $privateProperty = 'private';
+
+	/**
+	 * @var string
+	 */
+	protected $protectedProperty = 'protected';
+
+	/**
+	 * @var string
+	 */
+	public static $publicStaticProperty = 'public static';
+
+	/**
+	 * @var string
+	 */
+	private static $privateStaticProperty = 'private static';
+
+	/**
+	 * @var string
+	 */
+	protected static $protectedStaticProperty = 'protected static';
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	public function publicFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
+	}
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	private function privateFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
+	}
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	protected function protectedFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
+	}
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	public static function publicStaticFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
+	}
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	private static function privateStaticFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
+	}
+
+	/**
+	 * @param        $param1
+	 * @param null   $param2
+	 * @param bool   $param3
+	 * @param int    $param4
+	 * @param string $param5
+	 * @param array  $param6
+	 */
+	protected static function protectedStaticFunction($param1, $param2 = null, $param3 = true, $param4 = 4, $param5 = '5', $param6 = []) {
 	}
 }
