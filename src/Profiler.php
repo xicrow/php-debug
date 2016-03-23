@@ -13,7 +13,7 @@ abstract class Profiler {
 	public static $collection = null;
 
 	/**
-	 *
+	 * Make sure Collection is set
 	 */
 	public static function init() {
 		if (is_null(static::$collection)) {
@@ -23,6 +23,7 @@ abstract class Profiler {
 
 	/**
 	 * @return int|float
+	 * @codeCoverageIgnore
 	 */
 	abstract public function getMetric();
 
@@ -30,6 +31,7 @@ abstract class Profiler {
 	 * @param int|float $metric
 	 *
 	 * @return mixed
+	 * @codeCoverageIgnore
 	 */
 	abstract public function getMetricFormatted($metric);
 
@@ -38,6 +40,7 @@ abstract class Profiler {
 	 * @param int|float $stop
 	 *
 	 * @return float|int
+	 * @codeCoverageIgnore
 	 */
 	abstract public function getMetricResult($start, $stop);
 
@@ -45,12 +48,15 @@ abstract class Profiler {
 	 * @param float|int $result
 	 *
 	 * @return mixed
+	 * @codeCoverageIgnore
 	 */
 	abstract public function getMetricResultFormatted($result);
 
 	/**
 	 * @param string|null $key
 	 * @param array       $data
+	 *
+	 * @return bool
 	 */
 	public static function add($key = null, $data = []) {
 		static::init();
@@ -75,7 +81,7 @@ abstract class Profiler {
 		}
 
 		// Add item to collection
-		static::$collection->add($key, $data);
+		return static::$collection->add($key, $data);
 	}
 
 	/**
@@ -138,7 +144,11 @@ abstract class Profiler {
 				'stop_time'        => microtime(true),
 				'stop_called_from' => Debugger::getCalledFrom(1)
 			]);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -165,7 +175,7 @@ abstract class Profiler {
 		}
 
 		// Add item to collection
-		static::add($key, $data);
+		return static::add($key, $data);
 	}
 
 	/**
@@ -177,9 +187,6 @@ abstract class Profiler {
 	 */
 	public static function callback($key = null, $callback, ...$callbackParams) {
 		static::init();
-
-		// Start output buffer to capture any output
-		ob_start();
 
 		// Get key if no key is given
 		if (is_null($key)) {
@@ -209,6 +216,9 @@ abstract class Profiler {
 			}
 			$key = 'callback: ' . $key;
 		}
+
+		// Start output buffer to capture any output
+		ob_start();
 
 		// Start profiler
 		static::start($key);
@@ -362,6 +372,18 @@ abstract class Profiler {
 	 * @return string
 	 */
 	public static function getStatsOneline($item, $options = []) {
+		// Merge options with default options
+		$options = array_merge([
+			// Show nested (boolean)
+			'nested'          => true,
+			// Prefix for nested items (string)
+			'nested_prefix'   => '|-- ',
+			// If oneline, max key length (int)
+			'oneline_length'  => 100,
+			// Show start stop for the item (boolean)
+			'show_start_stop' => false
+		], $options);
+
 		// Get item result
 		$itemResult = 'N/A';
 		if (isset($item['start_value']) && isset($item['stop_value'])) {
@@ -400,6 +422,16 @@ abstract class Profiler {
 	 * @return string
 	 */
 	public static function getStatsMultiline($item, $options = []) {
+		// Merge options with default options
+		$options = array_merge([
+			// Show nested (boolean)
+			'nested'          => true,
+			// Prefix for nested items (string)
+			'nested_prefix'   => '|-- ',
+			// Show start stop for the item (boolean)
+			'show_start_stop' => false
+		], $options);
+
 		// Get item result
 		$itemResult = 'N/A';
 		if (isset($item['start_value']) && isset($item['stop_value'])) {
@@ -479,7 +511,7 @@ abstract class Profiler {
 	 *
 	 * @return string
 	 */
-	public static function formatDateTime($unixTimestamp, $showMiliseconds = true) {
+	public static function formatDateTime($unixTimestamp, $showMiliseconds = false) {
 		$formatted = date('Y-m-d H:i:s', $unixTimestamp);
 
 		if ($showMiliseconds) {
