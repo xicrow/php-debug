@@ -60,6 +60,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
 	 * @covers \Xicrow\Debug\Profiler::start
 	 */
 	public function testStart() {
@@ -80,6 +81,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::start
 	 * @covers \Xicrow\Debug\Profiler::stop
 	 */
 	public function testStop() {
@@ -112,6 +115,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
 	 * @covers \Xicrow\Debug\Profiler::custom
 	 */
 	public function testCustom() {
@@ -136,6 +140,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::start
+	 * @covers \Xicrow\Debug\Profiler::stop
 	 * @covers \Xicrow\Debug\Profiler::callback
 	 */
 	public function testCallback() {
@@ -184,7 +191,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::custom
 	 * @covers \Xicrow\Debug\Profiler::getStats
+	 * @covers \Xicrow\Debug\Profiler::getStatsOneline
 	 */
 	public function testGetStats() {
 		Timer::$collection->clear();
@@ -210,6 +220,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::custom
 	 * @covers \Xicrow\Debug\Profiler::getStatsOneline
 	 */
 	public function testGetStatsOneline() {
@@ -232,6 +244,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::custom
 	 * @covers \Xicrow\Debug\Profiler::getStatsMultiline
 	 */
 	public function testGetStatsMultiline() {
@@ -254,6 +268,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\Debug\Profiler::start
+	 * @covers \Xicrow\Debug\Profiler::stop
 	 * @covers \Xicrow\Debug\Profiler::getLastItemName
 	 */
 	public function testGetLastItemName() {
@@ -331,6 +348,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::formatForUnits
 	 * @covers \Xicrow\Debug\Profiler::formatMiliseconds
 	 */
 	public function testFormatMiliseconds() {
@@ -353,6 +371,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Profiler::formatForUnits
 	 * @covers \Xicrow\Debug\Profiler::formatBytes
 	 */
 	public function testFormatBytes() {

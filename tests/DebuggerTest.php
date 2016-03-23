@@ -89,9 +89,11 @@ EXPECT;
 		$result   = Debugger::getDebugInformation($data);
 		$this->assertEquals($expected, $result);
 
+		$resource = fopen(realpath(__DIR__ . '/../README.md'), 'r');
 		$expected = '#Resource id \#[0-9]+ \(stream\)#';
-		$result   = Debugger::getDebugInformation(fopen(realpath(__DIR__ . '/../README.md'), 'r'));
+		$result   = Debugger::getDebugInformation($resource);
 		$this->assertRegExp($expected, $result);
+		fclose($resource);
 	}
 
 	/**
@@ -131,19 +133,14 @@ EXPECT;
 	/**
 	 * @test
 	 * @covers \Xicrow\Debug\Debugger::reflectClass
+	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
+	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClass() {
-		$expected = 'class Xicrow\Debug\Collection';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
-		$this->assertContains($expected, $result);
-
-		$expected = 'private $items';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
-		$this->assertContains($expected, $result);
-
-		$expected = 'public function __construct(';
-		$result   = Debugger::reflectClass('\Xicrow\Debug\Collection');
-		$this->assertContains($expected, $result);
+		$result = Debugger::reflectClass('\Xicrow\Debug\Collection');
+		$this->assertContains('class Xicrow\Debug\Collection', $result);
+		$this->assertContains('private $items', $result);
+		$this->assertContains('public function __construct(', $result);
 	}
 
 	/**
@@ -151,13 +148,9 @@ EXPECT;
 	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
 	 */
 	public function testReflectClassProperty() {
-		$expected = '@var array';
-		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
-		$this->assertContains($expected, $result);
-
-		$expected = 'private $items';
-		$result   = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
-		$this->assertContains($expected, $result);
+		$result = Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
+		$this->assertContains('@var array', $result);
+		$this->assertContains('private $items', $result);
 	}
 
 	/**
@@ -165,12 +158,8 @@ EXPECT;
 	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClassMethod() {
-		$expected = '@param array $items';
-		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
-		$this->assertContains($expected, $result);
-
-		$expected = 'public function __construct(';
-		$result   = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
-		$this->assertContains($expected, $result);
+		$result = Debugger::reflectClassMethod('\Xicrow\Debug\Collection', '__construct');
+		$this->assertContains('@param array $items', $result);
+		$this->assertContains('public function __construct(', $result);
 	}
 }

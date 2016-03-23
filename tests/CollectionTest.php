@@ -9,6 +9,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 * @test
 	 * @covers \Xicrow\Debug\Collection::__construct
 	 * @covers \Xicrow\Debug\Collection::__toString
+	 * @covers \Xicrow\Debug\Collection::getAll
 	 */
 	public function testToString() {
 		$collection = new Collection();
@@ -24,7 +25,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
 	 * @covers \Xicrow\Debug\Collection::add
+	 * @covers \Xicrow\Debug\Collection::get
 	 */
 	public function testAdd() {
 		$collection = new Collection();
@@ -64,13 +67,14 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		];
 		$result   = $collection->get('key #2');
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
 	 * @covers \Xicrow\Debug\Collection::clear
+	 * @covers \Xicrow\Debug\Collection::count
 	 */
 	public function testClear() {
 		$collection = new Collection();
@@ -130,6 +134,8 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
 	 * @covers \Xicrow\Debug\Collection::count
 	 */
 	public function testCount() {
@@ -150,12 +156,12 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = 2;
 		$result   = $collection->count();
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
 	 * @covers \Xicrow\Debug\Collection::exists
 	 */
 	public function testExists() {
@@ -170,12 +176,12 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = true;
 		$result   = $collection->exists('key');
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
 	 * @covers \Xicrow\Debug\Collection::get
 	 * @covers \Xicrow\Debug\Collection::getAll
 	 */
@@ -203,12 +209,13 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = 1;
 		$result   = count($collection->getAll());
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
+	 * @covers \Xicrow\Debug\Collection::getAll
 	 * @covers \Xicrow\Debug\Collection::sort
 	 */
 	public function testSort() {
@@ -309,12 +316,13 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		];
 		$result   = $collection->getAll();
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
+	 * @covers \Xicrow\Debug\Collection::add
+	 * @covers \Xicrow\Debug\Collection::get
 	 * @covers \Xicrow\Debug\Collection::update
 	 */
 	public function testUpdate() {
@@ -346,12 +354,11 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 		$expected = false;
 		$result   = $collection->update('non-existing-key', ['bar' => 'foo']);
 		$this->assertEquals($expected, $result);
-
-		$collection->clear();
 	}
 
 	/**
 	 * @test
+	 * @covers \Xicrow\Debug\Collection::__construct
 	 * @covers \Xicrow\Debug\Collection::rewind
 	 * @covers \Xicrow\Debug\Collection::current
 	 * @covers \Xicrow\Debug\Collection::next
