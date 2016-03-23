@@ -12,6 +12,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	public function __construct($name = null, array $data = [], $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 
+		// Look into mock for Profiler, instead of using the Timer class
+		#$stub = $this->getMockForAbstractClass('\Xicrow\Debug\Collection');
+		#$stub->expects($this->any())->method('abstractMethod')->will($this->returnValue(true));
+
 		// Set debugger options
 		Debugger::$documentRoot   = 'E:\\GitHub\\';
 		Debugger::$showCalledFrom = false;
@@ -172,6 +176,14 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$result   = Timer::callback(null, ['Xicrow\Debug\Debugger', 'getCalledFrom']);
 		$this->assertEquals($expected, $result);
 
+		$dateTime = new DateTime();
+		$dateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$dateTime->setDate(2016, 01, 01);
+		$dateTime->setTime(00, 00, 00);
+		$expected = '2016-01-01 00:00:00';
+		$result   = Timer::callback(null, [$dateTime, 'format'], 'Y-m-d H:i:s');
+		$this->assertEquals($expected, $result);
+
 		$expected = true;
 		$result   = Timer::callback(null, function () {
 			return true;
@@ -234,6 +246,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains($timerName, $result);
 		$this->assertContains('100.0000 MS', $result);
 
+		$result = Timer::getStatsOneline(Timer::$collection->get($timerName), ['show_start_stop' => true]);
+		$this->assertContains(date('Y-m-d H:i'), $result);
+
 		$timerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
 		Timer::custom($timerName, 0.1, 0.2);
 
@@ -257,6 +272,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$result = Timer::getStatsMultiline(Timer::$collection->get($timerName));
 		$this->assertContains($timerName, $result);
 		$this->assertContains('100.0000 MS', $result);
+
+		$result = Timer::getStatsMultiline(Timer::$collection->get($timerName), ['show_start_stop' => true]);
+		$this->assertContains(date('Y-m-d H:i'), $result);
 
 		$timerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
 		Timer::custom($timerName, 0.1, 0.2);
