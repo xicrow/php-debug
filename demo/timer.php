@@ -50,11 +50,16 @@ $scriptStart = microtime(true);
 		});
 
 		// Custom timers
-		Timer::custom('5 seconds', time(), strtotime('+5 seconds'));
-		Timer::custom('5 minutes', time(), strtotime('+5 minutes'));
-		Timer::custom('5 hours', time(), strtotime('+5 hours'));
-		Timer::custom('5 days', time(), strtotime('+5 days'));
-		Timer::custom('5 weeks', time(), strtotime('+5 weeks'));
+		$now              = time();
+		$secondsPerMinute = 60;
+		$secondsPerHour   = ($secondsPerMinute * 60);
+		$secondsPerDay    = ($secondsPerHour * 24);
+		$secondsPerWeek   = ($secondsPerDay * 7);
+		Timer::custom('5 seconds', $now, ($now + 5));
+		Timer::custom('5 minutes', $now, ($now + (5 * $secondsPerMinute)));
+		Timer::custom('5 hours', $now, ($now + (5 * $secondsPerHour)));
+		Timer::custom('5 days', $now, ($now + (5 * $secondsPerDay)));
+		Timer::custom('5 weeks', $now, ($now + (5 * $secondsPerWeek)));
 
 		// Show all timers
 		Timer::showAll();
