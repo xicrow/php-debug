@@ -23,9 +23,9 @@
 	<filter>
 		<whitelist>
 			<directory>src</directory>
+			<exclude>
+				<file>src/autoload.php</file>
+			</exclude>
 		</whitelist>
-		<blacklist>
-			<file>src/autoload.php</file>
-		</blacklist>
 	</filter>
 </phpunit>
