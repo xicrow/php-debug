@@ -171,17 +171,15 @@ abstract class Profiler {
 	/**
 	 * @param string|null           $key
 	 * @param string|array|\Closure $callback
+	 * @param array                 ...$callbackParams
 	 *
-	 * @return bool|mixed
+	 * @return mixed
 	 */
-	public static function callback($key = null, $callback) {
+	public static function callback($key = null, $callback, ...$callbackParams) {
 		static::init();
 
 		// Start output buffer to capture any output
 		ob_start();
-
-		// Get callback parameters
-		$callbackParams = array_slice(func_get_args(), 2);
 
 		// Get key if no key is given
 		if (is_null($key)) {
