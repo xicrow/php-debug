@@ -13,6 +13,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		parent::__construct($name, $data, $dataName);
 
 		// Look into mock for Profiler, instead of using the Timer class
+		// https://phpunit.de/manual/current/en/test-doubles.html#test-doubles.stubs
 		#$stub = $this->getMockForAbstractClass('\Xicrow\Debug\Collection');
 		#$stub->expects($this->any())->method('abstractMethod')->will($this->returnValue(true));
 
