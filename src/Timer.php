@@ -18,7 +18,7 @@ class Timer extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	public function getMetric() {
+	public static function getMetric() {
 		// Return current microtime as float
 		return microtime(true);
 	}
@@ -26,7 +26,7 @@ class Timer extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	public function getMetricFormatted($metric) {
+	public static function getMetricFormatted($metric) {
 		// Return formatted metric
 		return self::formatMiliseconds($metric, 4, self::$forceDisplayUnit);
 	}
@@ -34,7 +34,7 @@ class Timer extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	public function getMetricResult($start, $stop) {
+	public static function getMetricResult($start, $stop) {
 		// Return result in miliseconds
 		return (($stop - $start) * 1000);
 	}
@@ -42,7 +42,7 @@ class Timer extends Profiler {
 	/**
 	 * @inheritdoc
 	 */
-	public function getMetricResultFormatted($result) {
+	public static function getMetricResultFormatted($result) {
 		// Return formatted result
 		return self::formatMiliseconds($result, 4, self::$forceDisplayUnit);
 	}

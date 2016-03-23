@@ -25,7 +25,10 @@ abstract class Profiler {
 	 * @return int|float
 	 * @codeCoverageIgnore
 	 */
-	abstract public function getMetric();
+	public static function getMetric() {
+		// Since we're not able to create abstract static functions, this'll do
+		trigger_error('Implement getMetric() in child class');
+	}
 
 	/**
 	 * @param int|float $metric
@@ -33,7 +36,10 @@ abstract class Profiler {
 	 * @return mixed
 	 * @codeCoverageIgnore
 	 */
-	abstract public function getMetricFormatted($metric);
+	public static function getMetricFormatted($metric) {
+		// Since we're not able to create abstract static functions, this'll do
+		trigger_error('Implement getMetricFormatted() in child class');
+	}
 
 	/**
 	 * @param int|float $start
@@ -42,7 +48,10 @@ abstract class Profiler {
 	 * @return float|int
 	 * @codeCoverageIgnore
 	 */
-	abstract public function getMetricResult($start, $stop);
+	public static function getMetricResult($start, $stop) {
+		// Since we're not able to create abstract static functions, this'll do
+		trigger_error('Implement getMetricResult() in child class');
+	}
 
 	/**
 	 * @param float|int $result
@@ -50,7 +59,10 @@ abstract class Profiler {
 	 * @return mixed
 	 * @codeCoverageIgnore
 	 */
-	abstract public function getMetricResultFormatted($result);
+	public static function getMetricResultFormatted($result) {
+		// Since we're not able to create abstract static functions, this'll do
+		trigger_error('Implement getMetricResultFormatted() in child class');
+	}
 
 	/**
 	 * @param string|null $key
