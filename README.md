@@ -2,14 +2,14 @@
 Debugging tools for PHP
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xicrow/debug/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/xicrow/debug/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/xicrow/debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/build-status/master)
+[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/xicrow/debug/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
+[![Scrutinizer Build Status](https://scrutinizer-ci.com/g/xicrow/debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/build-status/master)
 
-[![Latest Stable Version](https://poser.pugx.org/xicrow/debug/v/stable)](https://packagist.org/packages/xicrow/debug)
-[![Total Downloads](https://poser.pugx.org/xicrow/debug/downloads)](https://packagist.org/packages/xicrow/debug)
+[![Packagist Latest Stable Version](https://poser.pugx.org/xicrow/debug/v/stable)](https://packagist.org/packages/xicrow/debug)
+[![Packagist Total Downloads](https://poser.pugx.org/xicrow/debug/downloads)](https://packagist.org/packages/xicrow/debug)
 
 ## Installation
-The recommended way to install is though [Composer](https://getcomposer.org/).
+The recommended way to install is through [Composer](https://getcomposer.org/).
 ```JSON
 {
     "require": {
@@ -19,9 +19,9 @@ The recommended way to install is though [Composer](https://getcomposer.org/).
 ```
 
 ## Example
-See the examples in the `demo` folder.
+See examples in the `demo` folder.
 
-View the seperate readme for [Timer](Timer.md) and [Memory](Memory.md) in their respective files.
+View the seperate readme for [Timer](Timer.md) and [Memory](Memory.md).
 
 ## TODO
 - ~~Debug functions for displaying variable information, pr(), vd(), etc.~~
