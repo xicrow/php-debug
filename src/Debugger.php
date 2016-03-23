@@ -33,17 +33,14 @@ class Debugger {
 		}
 
 		if (php_sapi_name() == 'cli') {
-			if (self::$showCalledFrom) {
-				$data = self::getCalledFrom(2) . "\n" . $data;
-			}
+			$data = (self::$showCalledFrom ? self::getCalledFrom(2) . "\n" . $data : $data);
+
 			echo $data;
 		} else {
-			if (self::$showCalledFrom) {
-				$data = '<strong>' . self::getCalledFrom(2) . '</strong>' . "\n" . $data;
-			}
+			$data = (self::$showCalledFrom ? '<strong>' . self::getCalledFrom(2) . '</strong>' . "\n" . $data : $data);
 
 			$style   = [];
-			$style[] = 'margin:0;';
+			$style[] = 'margin:5px 0;';
 			$style[] = 'padding:5px 10px;';
 			$style[] = 'font-family:Consolas,​Courier,​monospace;';
 			$style[] = 'font-weight:normal;';
@@ -70,20 +67,21 @@ class Debugger {
 	}
 
 	/**
+	 * @param bool $reverse
+	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function showTrace() {
-		$output = '';
+	public static function showTrace($reverse = false) {
+		$backtrace = ($reverse ? array_reverse(debug_backtrace()) : debug_backtrace());
 
-		$backtrace = debug_backtrace();
+		$output     = '';
+		$traceIndex = ($reverse ? 1 : count($backtrace));
 		foreach ($backtrace as $trace) {
-			if (isset($trace['class'])) {
-				$output .= $trace['class'] . '::' . $trace['function'];
-			} else {
-				$output .= $trace['function'];
-			}
-
+			$output .= $traceIndex . ': ';
+			$output .= self::getCalledFromTrace($trace);
 			$output .= "\n";
+
+			$traceIndex += ($reverse ? 1 : -1);
 		}
 
 		self::output($output);
@@ -91,72 +89,48 @@ class Debugger {
 
 	/**
 	 * @param string $class
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public static function showReflectClass($class) {
-		self::output(self::reflectClass($class));
-	}
-
-	/**
-	 * @param string $class
-	 * @param string $property
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public static function showreflectClassProperty($class, $property) {
-		self::output(self::reflectClassProperty($class, $property));
-	}
-
-	/**
-	 * @param string $class
-	 * @param string $method
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public static function showReflectClassMethod($class, $method) {
-		self::output(self::reflectClassMethod($class, $method));
-	}
-
-	/**
-	 * @param string $class
+	 * @param bool   $output
 	 *
 	 * @return string
 	 */
-	public static function reflectClass($class) {
-		$output = '';
+	public static function reflectClass($class, $output = true) {
+		$data = '';
 
 		$reflectionClass = new \ReflectionClass($class);
 
 		$comment = $reflectionClass->getDocComment();
 		if (!empty($comment)) {
-			$output .= $comment;
-			$output .= "\n";
+			$data .= $comment;
+			$data .= "\n";
 		}
 
-		$output .= 'class ' . $reflectionClass->name . '{';
+		$data .= 'class ' . $reflectionClass->name . '{';
 		$firstElement = true;
 		foreach ($reflectionClass->getProperties() as $reflectionProperty) {
 			if (!$firstElement) {
-				$output .= "\n";
+				$data .= "\n";
 			}
 			$firstElement = false;
 
-			$output .= self::reflectClassProperty($class, $reflectionProperty->name);
+			$data .= self::reflectClassProperty($class, $reflectionProperty->name, false);
 		}
 
 		foreach ($reflectionClass->getMethods() as $reflectionMethod) {
 			if (!$firstElement) {
-				$output .= "\n";
+				$data .= "\n";
 			}
 			$firstElement = false;
 
-			$output .= self::reflectClassMethod($class, $reflectionMethod->name);
+			$data .= self::reflectClassMethod($class, $reflectionMethod->name, false);
 		}
-		$output .= "\n";
-		$output .= '}';
+		$data .= "\n";
+		$data .= '}';
 
-		return $output;
+		if ($output) {
+			self::output($data);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -165,33 +139,37 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function reflectClassProperty($class, $property) {
-		$output = '';
+	public static function reflectClassProperty($class, $property, $output = true) {
+		$data = '';
 
 		$reflectionProperty = new \ReflectionProperty($class, $property);
 
 		$comment = $reflectionProperty->getDocComment();
 		if (!empty($comment)) {
-			$output .= "\n";
-			$output .= "\t";
-			$output .= $comment;
+			$data .= "\n";
+			$data .= "\t";
+			$data .= $comment;
 		}
 
-		$output .= "\n";
-		$output .= "\t";
+		$data .= "\n";
+		$data .= "\t";
 		if ($reflectionProperty->isPublic()) {
-			$output .= 'public ';
+			$data .= 'public ';
 		} elseif ($reflectionProperty->isPrivate()) {
-			$output .= 'private ';
+			$data .= 'private ';
 		} elseif ($reflectionProperty->isProtected()) {
-			$output .= 'protected ';
+			$data .= 'protected ';
 		}
 		if ($reflectionProperty->isStatic()) {
-			$output .= 'static ';
+			$data .= 'static ';
 		}
-		$output .= '$' . $reflectionProperty->name . ';';
+		$data .= '$' . $reflectionProperty->name . ';';
 
-		return $output;
+		if ($output) {
+			self::output($data);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -200,37 +178,37 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function reflectClassMethod($class, $method) {
-		$output = '';
+	public static function reflectClassMethod($class, $method, $output = true) {
+		$data = '';
 
 		$reflectionMethod = new \ReflectionMethod($class, $method);
 
 		$comment = $reflectionMethod->getDocComment();
 		if (!empty($comment)) {
-			$output .= "\n";
-			$output .= "\t";
-			$output .= $comment;
+			$data .= "\n";
+			$data .= "\t";
+			$data .= $comment;
 		}
 
-		$output .= "\n";
-		$output .= "\t";
+		$data .= "\n";
+		$data .= "\t";
 		if ($reflectionMethod->isPublic()) {
-			$output .= 'public ';
+			$data .= 'public ';
 		} elseif ($reflectionMethod->isPrivate()) {
-			$output .= 'private ';
+			$data .= 'private ';
 		} elseif ($reflectionMethod->isProtected()) {
-			$output .= 'protected ';
+			$data .= 'protected ';
 		}
 		if ($reflectionMethod->isStatic()) {
-			$output .= 'static ';
+			$data .= 'static ';
 		}
-		$output .= 'function ' . $reflectionMethod->name . '(';
+		$data .= 'function ' . $reflectionMethod->name . '(';
 		if ($reflectionMethod->getNumberOfParameters()) {
 			foreach ($reflectionMethod->getParameters() as $reflectionMethodParameterIndex => $reflectionMethodParameter) {
 				if ($reflectionMethodParameterIndex > 0) {
-					$output .= ', ';
+					$data .= ', ';
 				}
-				$output .= '$' . $reflectionMethodParameter->name;
+				$data .= '$' . $reflectionMethodParameter->name;
 				if ($reflectionMethodParameter->isDefaultValueAvailable()) {
 					$defaultValue = $reflectionMethodParameter->getDefaultValue();
 					if (is_null($defaultValue)) {
@@ -249,13 +227,17 @@ class Debugger {
 					if (is_array($defaultValue)) {
 						$defaultValue = '[' . implode(', ', $defaultValue) . ']';
 					}
-					$output .= ' = ' . $defaultValue;
+					$data .= ' = ' . $defaultValue;
 				}
 			}
 		}
-		$output .= ') {}';
+		$data .= ') {}';
 
-		return $output;
+		if ($output) {
+			self::output($data);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -263,7 +245,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getCalledFrom($index = 1) {
+	public static function getCalledFrom($index = 0) {
 		$backtrace = debug_backtrace();
 
 		if (!isset($backtrace[$index])) {
@@ -279,24 +261,28 @@ class Debugger {
 	 * @return string
 	 */
 	public static function getCalledFromTrace($trace) {
-		$calledFrom = '';
-
+		// Get file and line number
+		$calledFromFile = '';
 		if (isset($trace['file'])) {
-			// Get file and line number
-			$calledFrom .= $trace['file'] . ' line ' . $trace['line'];
-
-			// Cleanup
-			$calledFrom = str_replace('\\', '/', $calledFrom);
-			$calledFrom = (!empty(self::$documentRoot) ? substr($calledFrom, strlen(self::$documentRoot)) : $calledFrom);
-			$calledFrom = trim($calledFrom, '/');
-		} elseif (isset($trace['function'])) {
-			// Get function call
-			$calledFrom .= (isset($trace['class']) ? $trace['class'] : '');
-			$calledFrom .= (isset($trace['type']) ? $trace['type'] : '');
-			$calledFrom .= $trace['function'];
+			$calledFromFile .= $trace['file'] . ' line ' . $trace['line'];
+			$calledFromFile = str_replace('\\', '/', $calledFromFile);
+			$calledFromFile = (!empty(self::$documentRoot) ? substr($calledFromFile, strlen(self::$documentRoot)) : $calledFromFile);
+			$calledFromFile = trim($calledFromFile, '/');
 		}
 
-		return $calledFrom;
+		// Get function call
+		$calledFromFunction = '';
+		if (isset($trace['function'])) {
+			$calledFromFunction .= (isset($trace['class']) ? $trace['class'] : '');
+			$calledFromFunction .= (isset($trace['type']) ? $trace['type'] : '');
+			$calledFromFunction .= $trace['function'] . '()';
+		}
+
+		if (!empty($calledFromFunction) && !empty($calledFromFile)) {
+			$calledFromFunction = ' > ' . $calledFromFunction;
+		}
+
+		return $calledFromFile . $calledFromFunction;
 	}
 
 	/**
@@ -309,12 +295,11 @@ class Debugger {
 
 		$methodName = 'getDebugInformation' . ucfirst(strtolower($dataType));
 
+		$result = 'No method found supporting data type: ' . $dataType;
 		if ($dataType == 'string') {
 			$result = (string) '"' . $data . '"';
 		} elseif (method_exists('\Xicrow\Debug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data);
-		} else {
-			$result = 'No method found supporting data type: ' . $dataType;
 		}
 
 		if ($indent > 0) {
@@ -327,7 +312,7 @@ class Debugger {
 	/**
 	 * @return string
 	 */
-	public static function getDebugInformationNull() {
+	private static function getDebugInformationNull() {
 		return 'NULL';
 	}
 
@@ -336,7 +321,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationBoolean($data) {
+	private static function getDebugInformationBoolean($data) {
 		return ($data ? 'TRUE' : 'FALSE');
 	}
 
@@ -345,7 +330,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationInteger($data) {
+	private static function getDebugInformationInteger($data) {
 		return (string) $data;
 	}
 
@@ -354,18 +339,18 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationDouble($data) {
+	private static function getDebugInformationDouble($data) {
 		return (string) $data;
 	}
 
 	/**
-	 * @param array|object|resource $data
-	 * @param string                $prefix
-	 * @param string                $suffix
+	 * @param array|object $data
+	 * @param string       $prefix
+	 * @param string       $suffix
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationIterable($data, $prefix = '', $suffix = '') {
+	private static function getDebugInformationIterable($data, $prefix = '', $suffix = '') {
 		$debugInfo = '';
 		$debugInfo .= $prefix;
 
@@ -384,9 +369,6 @@ class Debugger {
 			$i++;
 		}
 
-		$debugInfo .= ($i > 0 ? "\n" : '');
-		$debugInfo .= $suffix;
-
 		if (count($keys)) {
 			$padLength = max(array_map('strlen', $keys));
 			foreach ($keys as $key) {
@@ -394,6 +376,10 @@ class Debugger {
 				$debugInfo = str_replace($key . ' =>', $keyPadded . ' =>', $debugInfo);
 			}
 		}
+
+		$debugInfo .= ($i > 0 ? "\n" : '');
+
+		$debugInfo .= $suffix;
 
 		return $debugInfo;
 	}
@@ -403,7 +389,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationArray($data) {
+	private static function getDebugInformationArray($data) {
 		return self::getDebugInformationIterable($data, '[', ']');
 	}
 
@@ -412,7 +398,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationObject($data) {
+	private static function getDebugInformationObject($data) {
 		return self::getDebugInformationIterable($data, get_class($data) . ' {', '}');
 	}
 
@@ -421,7 +407,7 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformationResource($data) {
-		return self::getDebugInformationIterable($data, get_class($data) . ' {', '}');
+	private static function getDebugInformationResource($data) {
+		return (string) $data . ' (' . get_resource_type($data) . ')';
 	}
 }
