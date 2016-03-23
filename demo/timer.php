@@ -1,5 +1,5 @@
 <?php
-require_once('../src/bootstrap.php');
+require_once('bootstrap.php');
 
 use \Xicrow\Debug\Timer;
 ?>

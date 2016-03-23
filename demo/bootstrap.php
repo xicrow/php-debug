@@ -1,5 +1,5 @@
 <?php
-require_once('autoload.php');
+require_once('../src/autoload.php');
 
 use \Xicrow\Debug\Debugger;
 use \Xicrow\Debug\Memory;

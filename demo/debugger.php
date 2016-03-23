@@ -1,8 +1,7 @@
 <?php
-require_once('../src/bootstrap.php');
+require_once('bootstrap.php');
 
 use \Xicrow\Debug\Debugger;
-use \Xicrow\Debug\Collection;
 ?>
 <html>
 	<head>
@@ -16,7 +15,7 @@ use \Xicrow\Debug\Collection;
 			return true;
 		};
 		$stdClass   = (new stdClass());
-		$collection = (new Collection([1, 2, 3]));
+		$collection = (new \Xicrow\Debug\Collection([1, 2, 3]));
 
 		function foo() {
 			Debugger::showTrace();
