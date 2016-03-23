@@ -153,16 +153,10 @@ class Debugger {
 
 		$data .= "\n";
 		$data .= "\t";
-		if ($reflectionProperty->isPublic()) {
-			$data .= 'public ';
-		} elseif ($reflectionProperty->isPrivate()) {
-			$data .= 'private ';
-		} elseif ($reflectionProperty->isProtected()) {
-			$data .= 'protected ';
-		}
-		if ($reflectionProperty->isStatic()) {
-			$data .= 'static ';
-		}
+		$data .= ($reflectionProperty->isPublic() ? 'public ' : '');
+		$data .= ($reflectionProperty->isPrivate() ? 'private ' : '');
+		$data .= ($reflectionProperty->isProtected() ? 'protected ' : '');
+		$data .= ($reflectionProperty->isStatic() ? 'static ' : '');
 		$data .= '$' . $reflectionProperty->name . ';';
 
 		if ($output) {
@@ -192,41 +186,18 @@ class Debugger {
 
 		$data .= "\n";
 		$data .= "\t";
-		if ($reflectionMethod->isPublic()) {
-			$data .= 'public ';
-		} elseif ($reflectionMethod->isPrivate()) {
-			$data .= 'private ';
-		} elseif ($reflectionMethod->isProtected()) {
-			$data .= 'protected ';
-		}
-		if ($reflectionMethod->isStatic()) {
-			$data .= 'static ';
-		}
+		$data .= ($reflectionMethod->isPublic() ? 'public ' : '');
+		$data .= ($reflectionMethod->isPrivate() ? 'private ' : '');
+		$data .= ($reflectionMethod->isProtected() ? 'protected ' : '');
+		$data .= ($reflectionMethod->isStatic() ? 'static ' : '');
 		$data .= 'function ' . $reflectionMethod->name . '(';
 		if ($reflectionMethod->getNumberOfParameters()) {
 			foreach ($reflectionMethod->getParameters() as $reflectionMethodParameterIndex => $reflectionMethodParameter) {
-				if ($reflectionMethodParameterIndex > 0) {
-					$data .= ', ';
-				}
+				$data .= ($reflectionMethodParameterIndex > 0 ? ', ' : '');
 				$data .= '$' . $reflectionMethodParameter->name;
 				if ($reflectionMethodParameter->isDefaultValueAvailable()) {
-					$defaultValue = $reflectionMethodParameter->getDefaultValue();
-					if (is_null($defaultValue)) {
-						$defaultValue = 'null';
-					}
-					if (is_string($defaultValue)) {
-						$defaultValue = '\'' . $defaultValue . '\'';
-					}
-					if (is_bool($defaultValue)) {
-						if (!$defaultValue) {
-							$defaultValue = 'false';
-						} else {
-							$defaultValue = 'true';
-						}
-					}
-					if (is_array($defaultValue)) {
-						$defaultValue = '[' . implode(', ', $defaultValue) . ']';
-					}
+					$defaultValue = self::getDebugInformation($reflectionMethodParameter->getDefaultValue());
+					$defaultValue = str_replace(["\n", "\t"], '', $defaultValue);
 					$data .= ' = ' . $defaultValue;
 				}
 			}
