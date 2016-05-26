@@ -27,12 +27,12 @@
 	},
 	"autoload"    : {
 		"psr-4": {
-			"Xicrow\PhpDebug\\": "src"
+			"Xicrow\\PhpDebug\\": "src"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Xicrow\PhpDebug\\Test\\": "tests"
+			"Xicrow\\PhpDebug\\Test\\": "tests"
 		}
 	}
 }
