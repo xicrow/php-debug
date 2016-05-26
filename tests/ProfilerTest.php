@@ -25,15 +25,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\PhpDebug\Profiler::init
+	 * @covers \Xicrow\PhpDebug\Profiler::getCollection
 	 */
-	public function testInit() {
-		$expected = null;
-		$result   = Timer::getCollection();
-		$this->assertEquals($expected, $result);
-
-		Timer::init();
-
+	public function testGetCollection() {
 		$expected = '\Xicrow\PhpDebug\Collection';
 		$result   = Timer::getCollection();
 		$this->assertInstanceOf($expected, $result);
