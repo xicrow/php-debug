@@ -10,15 +10,19 @@ abstract class Profiler {
 	/**
 	 * @var Collection
 	 */
-	public static $collection = null;
+	public static $collections = [];
 
 	/**
-	 * Make sure Collection is set
+	 * @return Collection
 	 */
-	public static function init() {
-		if (is_null(static::$collection)) {
-			static::$collection = new Collection();
+	public function getCollection() {
+		$className = static::class;
+
+		if (!isset(static::$collections[$className])) {
+			static::$collections[$className] = new Collection();
 		}
+
+		return static::$collections[$className];
 	}
 
 	/**
@@ -71,8 +75,6 @@ abstract class Profiler {
 	 * @return bool
 	 */
 	public static function add($key = null, $data = []) {
-		static::init();
-
 		// If no key is given
 		if (is_null($key)) {
 			// Set key to file and line
@@ -87,13 +89,13 @@ abstract class Profiler {
 		// Make sure level is set
 		if (!isset($data['level'])) {
 			$data['level'] = 0;
-			if (isset($data['parent']) && $parent = static::$collection->get($data['parent'])) {
+			if (isset($data['parent']) && $parent = static::getCollection()->get($data['parent'])) {
 				$data['level'] = ($parent['level'] + 1);
 			}
 		}
 
 		// Add item to collection
-		return static::$collection->add($key, $data);
+		return static::getCollection()->add($key, $data);
 	}
 
 	/**
@@ -104,8 +106,6 @@ abstract class Profiler {
 	public static function start($key = null) {
 		// Get metric
 		$metric = static::getMetric();
-
-		static::init();
 
 		// Add new item
 		static::add($key, [
@@ -127,8 +127,6 @@ abstract class Profiler {
 		// Get metric
 		$metric = static::getMetric();
 
-		static::init();
-
 		// If no key is given
 		if (is_null($key)) {
 			// Get key of the last started item
@@ -138,8 +136,8 @@ abstract class Profiler {
 		// Check for key duplicates, and find the first one not stopped
 		$originalName = $key;
 		$i            = 1;
-		while (static::$collection->exists($key)) {
-			if (empty(static::$collection->get($key)['stop_value'])) {
+		while (static::getCollection()->exists($key)) {
+			if (empty(static::getCollection()->get($key)['stop_value'])) {
 				break;
 			}
 
@@ -149,9 +147,9 @@ abstract class Profiler {
 		}
 
 		// If item exists in collection
-		if (static::$collection->exists($key)) {
+		if (static::getCollection()->exists($key)) {
 			// Update the item
-			static::$collection->update($key, [
+			static::getCollection()->update($key, [
 				'stop_value'       => $metric,
 				'stop_time'        => microtime(true),
 				'stop_called_from' => Debugger::getCalledFrom(1)
@@ -171,8 +169,6 @@ abstract class Profiler {
 	 * @return bool
 	 */
 	public static function custom($key = null, $startValue = null, $stopValue = null) {
-		static::init();
-
 		// Set data for the item
 		$data = [];
 		if (!is_null($startValue)) {
@@ -198,8 +194,6 @@ abstract class Profiler {
 	 * @return mixed
 	 */
 	public static function callback($key = null, $callback, ...$callbackParams) {
-		static::init();
-
 		// Get key if no key is given
 		if (is_null($key)) {
 			if (is_string($callback)) {
@@ -259,7 +253,7 @@ abstract class Profiler {
 			Debugger::output('Invalid callback sent to Profiler::callback: ' . str_replace('callback: ', '', $key));
 
 			// Clear the item from the collection
-			static::$collection->clear($key);
+			static::getCollection()->clear($key);
 
 			// Clear callback result and output
 			unset($callbackResult, $callbackOutput);
@@ -282,8 +276,6 @@ abstract class Profiler {
 	 * @codeCoverageIgnore
 	 */
 	public static function show($key = null, $options = []) {
-		static::init();
-
 		$output = static::getStats($key, $options);
 
 		if (!empty($output)) {
@@ -297,8 +289,6 @@ abstract class Profiler {
 	 * @codeCoverageIgnore
 	 */
 	public static function showAll($options = []) {
-		static::init();
-
 		// Merge options with default options
 		$options = array_merge([
 			// Sort field: index|key|start|stop|result
@@ -311,7 +301,7 @@ abstract class Profiler {
 		$sortOptions = ['index', 'key', 'start_value', 'stop_value', 'result'];
 
 		// Get copy of collection
-		$collection = clone static::$collection;
+		$collection = clone static::getCollection();
 
 		// Add result to items if needed
 		foreach ($collection as $key => $item) {
@@ -327,7 +317,7 @@ abstract class Profiler {
 					// Stop the item
 					static::stop($key);
 
-					$item = static::$collection->get($key);
+					$item = static::getCollection()->get($key);
 				}
 
 				$collection->update($key, ['result' => static::getMetricResult($item['start_value'], $item['stop_value'])]);
@@ -356,8 +346,6 @@ abstract class Profiler {
 	 * @return string
 	 */
 	public static function getStats($key = null, $options = []) {
-		static::init();
-
 		// Merge options with default options
 		$options = array_merge([
 			// Show nested (boolean)
@@ -376,12 +364,12 @@ abstract class Profiler {
 		$key = (is_null($key) ? static::getLastItemName('stopped') : $key);
 
 		// If item does not exist
-		if (!static::$collection->exists($key)) {
+		if (!static::getCollection()->exists($key)) {
 			return 'Unknow item in with key: ' . $key;
 		}
 
 		// Get item
-		$item = static::$collection->get($key);
+		$item = static::getCollection()->get($key);
 
 		// Return stats
 		return ($options['oneline'] ? self::getStatsOneline($item, $options) : self::getStatsMultiline($item, $options));
@@ -489,13 +477,11 @@ abstract class Profiler {
 	 * @return bool|string
 	 */
 	public static function getLastItemName($type = '') {
-		static::init();
-
 		// Set default key
 		$key = false;
 
 		// Get collection items
-		$items = static::$collection->getAll();
+		$items = static::getCollection()->getAll();
 
 		// Get reverse list of item keys
 		$itemKeys = array_reverse(array_keys($items));
