@@ -15,7 +15,7 @@ abstract class Profiler {
 	/**
 	 * @return Collection
 	 */
-	public function getCollection() {
+	public static function getCollection() {
 		$className = static::class;
 
 		if (!isset(static::$collections[$className])) {

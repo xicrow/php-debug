@@ -29,17 +29,17 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testInit() {
 		$expected = null;
-		$result   = Timer::$collection;
+		$result   = Timer::getCollection();
 		$this->assertEquals($expected, $result);
 
 		Timer::init();
 
 		$expected = '\Xicrow\PhpDebug\Collection';
-		$result   = Timer::$collection;
+		$result   = Timer::getCollection();
 		$this->assertInstanceOf($expected, $result);
 
 		$expected = [];
-		$result   = Timer::$collection->getAll();
+		$result   = Timer::getCollection()->getAll();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -48,10 +48,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::add
 	 */
 	public function testAdd() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = 0;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
@@ -59,7 +59,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = 1;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -69,10 +69,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::start
 	 */
 	public function testStart() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = 0;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
@@ -80,7 +80,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = 1;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -91,10 +91,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::stop
 	 */
 	public function testStop() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = 0;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = false;
@@ -102,7 +102,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = 0;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 
 		$expected = true;
@@ -114,7 +114,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $result);
 
 		$expected = 1;
-		$result   = Timer::$collection->count();
+		$result   = Timer::getCollection()->count();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -124,7 +124,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::custom
 	 */
 	public function testCustom() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = true;
 		$result   = Timer::custom();
@@ -151,7 +151,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::callback
 	 */
 	public function testCallback() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = time();
 		$result   = Timer::callback(null, 'time');
@@ -210,7 +210,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::getStatsOneline
 	 */
 	public function testGetStats() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = 'Unknow item in with key: foo';
 		$result   = Timer::getStats('foo');
@@ -238,22 +238,22 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::getStatsOneline
 	 */
 	public function testGetStatsOneline() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$timerName = 'Foo';
 		Timer::custom($timerName, 0.1, 0.2);
 
-		$result = Timer::getStatsOneline(Timer::$collection->get($timerName));
+		$result = Timer::getStatsOneline(Timer::getCollection()->get($timerName));
 		$this->assertContains($timerName, $result);
 		$this->assertContains('100.0000 MS', $result);
 
-		$result = Timer::getStatsOneline(Timer::$collection->get($timerName), ['show_start_stop' => true]);
+		$result = Timer::getStatsOneline(Timer::getCollection()->get($timerName), ['show_start_stop' => true]);
 		$this->assertContains(date('Y-m-d H:i'), $result);
 
 		$timerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
 		Timer::custom($timerName, 0.1, 0.2);
 
-		$result = Timer::getStatsOneline(Timer::$collection->get($timerName));
+		$result = Timer::getStatsOneline(Timer::getCollection()->get($timerName));
 		$this->assertContains(substr($timerName, -20), $result);
 		$this->assertContains('100.0000 MS', $result);
 	}
@@ -265,22 +265,22 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::getStatsMultiline
 	 */
 	public function testGetStatsMultiline() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$timerName = 'Foo';
 		Timer::custom($timerName, 0.1, 0.2);
 
-		$result = Timer::getStatsMultiline(Timer::$collection->get($timerName));
+		$result = Timer::getStatsMultiline(Timer::getCollection()->get($timerName));
 		$this->assertContains($timerName, $result);
 		$this->assertContains('100.0000 MS', $result);
 
-		$result = Timer::getStatsMultiline(Timer::$collection->get($timerName), ['show_start_stop' => true]);
+		$result = Timer::getStatsMultiline(Timer::getCollection()->get($timerName), ['show_start_stop' => true]);
 		$this->assertContains(date('Y-m-d H:i'), $result);
 
 		$timerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
 		Timer::custom($timerName, 0.1, 0.2);
 
-		$result = Timer::getStatsMultiline(Timer::$collection->get($timerName));
+		$result = Timer::getStatsMultiline(Timer::getCollection()->get($timerName));
 		$this->assertContains($timerName, $result);
 		$this->assertContains('100.0000 MS', $result);
 	}
@@ -293,7 +293,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 	 * @covers \Xicrow\PhpDebug\Profiler::getLastItemName
 	 */
 	public function testGetLastItemName() {
-		Timer::$collection->clear();
+		Timer::getCollection()->clear();
 
 		$expected = false;
 		$result   = Timer::getLastItemName();
