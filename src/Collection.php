@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\Debug;
+namespace Xicrow\PhpDebug;
 
 /**
  * Class Collection
  *
- * @package Xicrow\Debug
+ * @package Xicrow\PhpDebug
  */
 class Collection implements \Iterator, \Countable {
 	/**

@@ -1,9 +1,9 @@
 <?php
 require_once('../src/autoload.php');
 
-use \Xicrow\Debug\Debugger;
-use \Xicrow\Debug\Memory;
-use \Xicrow\Debug\Timer;
+use \Xicrow\PhpDebug\Debugger;
+use \Xicrow\PhpDebug\Memory;
+use \Xicrow\PhpDebug\Timer;
 
 ini_set('error_reporting', E_ALL | E_STRICT);
 ini_set('display_errors', 1);

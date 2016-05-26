@@ -1,7 +1,7 @@
 <?php
 require_once('bootstrap.php');
 
-use \Xicrow\Debug\Memory;
+use \Xicrow\PhpDebug\Memory;
 ?>
 <html>
 	<head>
@@ -38,7 +38,7 @@ use \Xicrow\Debug\Memory;
 		Memory::callback(null, 'array_rand', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Memory::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Memory::callback(null, ['Xicrow\Debug\Debugger', 'getDebugInformation'], [1, 2, 3]);
+		Memory::callback(null, ['Xicrow\PhpDebug\Debugger', 'getDebugInformation'], [1, 2, 3]);
 		Memory::callback(null, function () {
 			return false;
 		});

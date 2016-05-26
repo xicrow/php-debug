@@ -1,19 +1,19 @@
 # Debug
 Debugging tools for PHP
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xicrow/debug/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
-[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/xicrow/debug/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/?branch=master)
-[![Scrutinizer Build Status](https://scrutinizer-ci.com/g/xicrow/debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/debug/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xicrow/php-debug/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xicrow/php-debug/?branch=master)
+[![Scrutinizer Code Coverage](https://scrutinizer-ci.com/g/xicrow/php-debug/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/xicrow/php-debug/?branch=master)
+[![Scrutinizer Build Status](https://scrutinizer-ci.com/g/xicrow/php-debug/badges/build.png?b=master)](https://scrutinizer-ci.com/g/xicrow/php-debug/build-status/master)
 
-[![Packagist Latest Stable Version](https://poser.pugx.org/xicrow/debug/v/stable)](https://packagist.org/packages/xicrow/debug)
-[![Packagist Total Downloads](https://poser.pugx.org/xicrow/debug/downloads)](https://packagist.org/packages/xicrow/debug)
+[![Packagist Latest Stable Version](https://poser.pugx.org/xicrow/php-debug/v/stable)](https://packagist.org/packages/xicrow/php-debug)
+[![Packagist Total Downloads](https://poser.pugx.org/xicrow/php-debug/downloads)](https://packagist.org/packages/xicrow/php-debug)
 
 ## Installation
 The recommended way to install is through [Composer](https://getcomposer.org/).
 ```JSON
 {
     "require": {
-        "xicrow/debug": "~1.0"
+        "xicrow/php-debug": "~1.0"
     }
 }
 ```

@@ -1,5 +1,5 @@
 <?php
-use Xicrow\Debug\Debugger;
+use Xicrow\PhpDebug\Debugger;
 
 /**
  * Class DebuggerTest
@@ -19,15 +19,15 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformation
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationNull
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationBoolean
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationInteger
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationDouble
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationIterable
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationArray
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationObject
-	 * @covers \Xicrow\Debug\Debugger::getDebugInformationResource
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformation
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationNull
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationBoolean
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationInteger
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationDouble
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationIterable
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationArray
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationObject
+	 * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationResource
 	 */
 	public function testGetDebugInformation() {
 		// Make sure string is allways returned
@@ -98,8 +98,8 @@ EXPECT;
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::getCalledFrom
-	 * @covers \Xicrow\Debug\Debugger::getCalledFromTrace
+	 * @covers \Xicrow\PhpDebug\Debugger::getCalledFrom
+	 * @covers \Xicrow\PhpDebug\Debugger::getCalledFromTrace
 	 */
 	public function testGetCalledFrom() {
 		$expected = 'string';
@@ -132,9 +132,9 @@ EXPECT;
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClass
-	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
-	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
+	 * @covers \Xicrow\PhpDebug\Debugger::reflectClass
+	 * @covers \Xicrow\PhpDebug\Debugger::reflectClassProperty
+	 * @covers \Xicrow\PhpDebug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClass() {
 		$result = Debugger::reflectClass('DebuggerTestClass');
@@ -159,7 +159,7 @@ EXPECT;
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClassProperty
+	 * @covers \Xicrow\PhpDebug\Debugger::reflectClassProperty
 	 */
 	public function testReflectClassProperty() {
 		$result = Debugger::reflectClassProperty('DebuggerTestClass', 'publicProperty');
@@ -168,7 +168,7 @@ EXPECT;
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Debugger::reflectClassMethod
+	 * @covers \Xicrow\PhpDebug\Debugger::reflectClassMethod
 	 */
 	public function testReflectClassMethod() {
 		$result = Debugger::reflectClassMethod('DebuggerTestClass', 'publicFunction');

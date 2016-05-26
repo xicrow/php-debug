@@ -1,6 +1,6 @@
 <?php
-use Xicrow\Debug\Debugger;
-use Xicrow\Debug\Timer;
+use Xicrow\PhpDebug\Debugger;
+use Xicrow\PhpDebug\Timer;
 
 /**
  * Class ProfilerTest
@@ -14,7 +14,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 		// Look into mock for Profiler, instead of using the Timer class
 		// https://phpunit.de/manual/current/en/test-doubles.html#test-doubles.stubs
-		#$stub = $this->getMockForAbstractClass('\Xicrow\Debug\Collection');
+		#$stub = $this->getMockForAbstractClass('\Xicrow\PhpDebug\Collection');
 		#$stub->expects($this->any())->method('abstractMethod')->will($this->returnValue(true));
 
 		// Set debugger options
@@ -25,7 +25,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::init
+	 * @covers \Xicrow\PhpDebug\Profiler::init
 	 */
 	public function testInit() {
 		$expected = null;
@@ -34,7 +34,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 		Timer::init();
 
-		$expected = '\Xicrow\Debug\Collection';
+		$expected = '\Xicrow\PhpDebug\Collection';
 		$result   = Timer::$collection;
 		$this->assertInstanceOf($expected, $result);
 
@@ -45,7 +45,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::add
 	 */
 	public function testAdd() {
 		Timer::$collection->clear();
@@ -65,8 +65,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::start
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::start
 	 */
 	public function testStart() {
 		Timer::$collection->clear();
@@ -86,9 +86,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::start
-	 * @covers \Xicrow\Debug\Profiler::stop
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::start
+	 * @covers \Xicrow\PhpDebug\Profiler::stop
 	 */
 	public function testStop() {
 		Timer::$collection->clear();
@@ -120,8 +120,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::custom
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::custom
 	 */
 	public function testCustom() {
 		Timer::$collection->clear();
@@ -145,10 +145,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::start
-	 * @covers \Xicrow\Debug\Profiler::stop
-	 * @covers \Xicrow\Debug\Profiler::callback
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::start
+	 * @covers \Xicrow\PhpDebug\Profiler::stop
+	 * @covers \Xicrow\PhpDebug\Profiler::callback
 	 */
 	public function testCallback() {
 		Timer::$collection->clear();
@@ -173,8 +173,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 		$result   = Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		$this->assertEquals($expected, $result);
 
-		$expected = 'Xicrow\Debug\Debugger::getCalledFrom()';
-		$result   = Timer::callback(null, ['Xicrow\Debug\Debugger', 'getCalledFrom']);
+		$expected = 'Xicrow\PhpDebug\Debugger::getCalledFrom()';
+		$result   = Timer::callback(null, ['Xicrow\PhpDebug\Debugger', 'getCalledFrom']);
 		$this->assertEquals($expected, $result);
 
 		$dateTime = new DateTime();
@@ -204,10 +204,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::custom
-	 * @covers \Xicrow\Debug\Profiler::getStats
-	 * @covers \Xicrow\Debug\Profiler::getStatsOneline
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::custom
+	 * @covers \Xicrow\PhpDebug\Profiler::getStats
+	 * @covers \Xicrow\PhpDebug\Profiler::getStatsOneline
 	 */
 	public function testGetStats() {
 		Timer::$collection->clear();
@@ -233,9 +233,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::custom
-	 * @covers \Xicrow\Debug\Profiler::getStatsOneline
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::custom
+	 * @covers \Xicrow\PhpDebug\Profiler::getStatsOneline
 	 */
 	public function testGetStatsOneline() {
 		Timer::$collection->clear();
@@ -260,9 +260,9 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::custom
-	 * @covers \Xicrow\Debug\Profiler::getStatsMultiline
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::custom
+	 * @covers \Xicrow\PhpDebug\Profiler::getStatsMultiline
 	 */
 	public function testGetStatsMultiline() {
 		Timer::$collection->clear();
@@ -287,10 +287,10 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::add
-	 * @covers \Xicrow\Debug\Profiler::start
-	 * @covers \Xicrow\Debug\Profiler::stop
-	 * @covers \Xicrow\Debug\Profiler::getLastItemName
+	 * @covers \Xicrow\PhpDebug\Profiler::add
+	 * @covers \Xicrow\PhpDebug\Profiler::start
+	 * @covers \Xicrow\PhpDebug\Profiler::stop
+	 * @covers \Xicrow\PhpDebug\Profiler::getLastItemName
 	 */
 	public function testGetLastItemName() {
 		Timer::$collection->clear();
@@ -322,7 +322,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::formatDateTime
+	 * @covers \Xicrow\PhpDebug\Profiler::formatDateTime
 	 */
 	public function testFormatDateTime() {
 		$unix        = microtime(true);
@@ -339,7 +339,7 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::formatForUnits
+	 * @covers \Xicrow\PhpDebug\Profiler::formatForUnits
 	 */
 	public function testFormatForUnits() {
 		$units = [
@@ -367,8 +367,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::formatForUnits
-	 * @covers \Xicrow\Debug\Profiler::formatMiliseconds
+	 * @covers \Xicrow\PhpDebug\Profiler::formatForUnits
+	 * @covers \Xicrow\PhpDebug\Profiler::formatMiliseconds
 	 */
 	public function testFormatMiliseconds() {
 		$expected = '500.00 MS';
@@ -390,8 +390,8 @@ class ProfilerTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Profiler::formatForUnits
-	 * @covers \Xicrow\Debug\Profiler::formatBytes
+	 * @covers \Xicrow\PhpDebug\Profiler::formatForUnits
+	 * @covers \Xicrow\PhpDebug\Profiler::formatBytes
 	 */
 	public function testFormatBytes() {
 		$expected = '500.00 B ';

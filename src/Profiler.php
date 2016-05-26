@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\Debug;
+namespace Xicrow\PhpDebug;
 
 /**
  * Class Profiler
  *
- * @package Xicrow\Debug
+ * @package Xicrow\PhpDebug
  */
 abstract class Profiler {
 	/**

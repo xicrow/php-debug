@@ -1,7 +1,7 @@
 <?php
 require_once('bootstrap.php');
 
-use \Xicrow\Debug\Timer;
+use \Xicrow\PhpDebug\Timer;
 ?>
 <html>
 	<head>
@@ -38,7 +38,7 @@ use \Xicrow\Debug\Timer;
 		Timer::callback(null, 'array_rand', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		Timer::callback(null, ['Xicrow\Debug\Debugger', 'getDebugInformation'], [1, 2, 3]);
+		Timer::callback(null, ['Xicrow\PhpDebug\Debugger', 'getDebugInformation'], [1, 2, 3]);
 		Timer::callback(null, function () {
 			return false;
 		});

@@ -1,7 +1,7 @@
 <?php
 require_once('bootstrap.php');
 
-use \Xicrow\Debug\Debugger;
+use \Xicrow\PhpDebug\Debugger;
 ?>
 <html>
 	<head>
@@ -15,7 +15,7 @@ use \Xicrow\Debug\Debugger;
 			return true;
 		};
 		$stdClass   = (new stdClass());
-		$collection = (new \Xicrow\Debug\Collection([1, 2, 3]));
+		$collection = (new \Xicrow\PhpDebug\Collection([1, 2, 3]));
 
 		function foo() {
 			Debugger::showTrace();
@@ -44,9 +44,9 @@ use \Xicrow\Debug\Debugger;
 		Debugger::debug(Debugger::getCalledFrom());
 		Debugger::debug(Debugger::getCalledFrom(1));
 
-		Debugger::reflectClass('\Xicrow\Debug\Collection');
-		Debugger::reflectClassProperty('\Xicrow\Debug\Collection', 'items');
-		Debugger::reflectClassMethod('\Xicrow\Debug\Collection', 'sort');
+		Debugger::reflectClass('\Xicrow\PhpDebug\Collection');
+		Debugger::reflectClassProperty('\Xicrow\PhpDebug\Collection', 'items');
+		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Collection', 'sort');
 		?>
 	</body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-use Xicrow\Debug\Collection;
+use Xicrow\PhpDebug\Collection;
 
 /**
  * Class CollectionTest
@@ -7,9 +7,9 @@ use Xicrow\Debug\Collection;
 class CollectionTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::__toString
-	 * @covers \Xicrow\Debug\Collection::getAll
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::__toString
+	 * @covers \Xicrow\PhpDebug\Collection::getAll
 	 */
 	public function testToString() {
 		$collection = new Collection();
@@ -25,12 +25,12 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::count
-	 * @covers \Xicrow\Debug\Collection::exists
-	 * @covers \Xicrow\Debug\Collection::get
-	 * @covers \Xicrow\Debug\Collection::update
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::count
+	 * @covers \Xicrow\PhpDebug\Collection::exists
+	 * @covers \Xicrow\PhpDebug\Collection::get
+	 * @covers \Xicrow\PhpDebug\Collection::update
 	 */
 	public function testAdd() {
 		$collection = new Collection();
@@ -74,10 +74,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::clear
-	 * @covers \Xicrow\Debug\Collection::count
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::clear
+	 * @covers \Xicrow\PhpDebug\Collection::count
 	 */
 	public function testClear() {
 		$collection = new Collection();
@@ -137,9 +137,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::count
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::count
 	 */
 	public function testCount() {
 		$collection = new Collection();
@@ -163,9 +163,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::exists
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::exists
 	 */
 	public function testExists() {
 		$collection = new Collection();
@@ -183,10 +183,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::get
-	 * @covers \Xicrow\Debug\Collection::getAll
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::get
+	 * @covers \Xicrow\PhpDebug\Collection::getAll
 	 */
 	public function testGet() {
 		$collection = new Collection();
@@ -216,10 +216,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::getAll
-	 * @covers \Xicrow\Debug\Collection::sort
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::getAll
+	 * @covers \Xicrow\PhpDebug\Collection::sort
 	 */
 	public function testSort() {
 		$collection = new Collection();
@@ -323,10 +323,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::add
-	 * @covers \Xicrow\Debug\Collection::get
-	 * @covers \Xicrow\Debug\Collection::update
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::add
+	 * @covers \Xicrow\PhpDebug\Collection::get
+	 * @covers \Xicrow\PhpDebug\Collection::update
 	 */
 	public function testUpdate() {
 		$collection = new Collection();
@@ -361,14 +361,14 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @covers \Xicrow\Debug\Collection::__construct
-	 * @covers \Xicrow\Debug\Collection::rewind
-	 * @covers \Xicrow\Debug\Collection::current
-	 * @covers \Xicrow\Debug\Collection::next
-	 * @covers \Xicrow\Debug\Collection::prev
-	 * @covers \Xicrow\Debug\Collection::key
-	 * @covers \Xicrow\Debug\Collection::valid
-	 * @covers \Xicrow\Debug\Collection::count
+	 * @covers \Xicrow\PhpDebug\Collection::__construct
+	 * @covers \Xicrow\PhpDebug\Collection::rewind
+	 * @covers \Xicrow\PhpDebug\Collection::current
+	 * @covers \Xicrow\PhpDebug\Collection::next
+	 * @covers \Xicrow\PhpDebug\Collection::prev
+	 * @covers \Xicrow\PhpDebug\Collection::key
+	 * @covers \Xicrow\PhpDebug\Collection::valid
+	 * @covers \Xicrow\PhpDebug\Collection::count
 	 */
 	public function testInheritedMethods() {
 		$collection = new Collection([1, 2, 3]);

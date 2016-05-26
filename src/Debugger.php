@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\Debug;
+namespace Xicrow\PhpDebug;
 
 /**
  * Class Debugger
  *
- * @package Xicrow\Debug
+ * @package Xicrow\PhpDebug
  */
 class Debugger {
 	/**
@@ -276,7 +276,7 @@ class Debugger {
 		$result = 'No method found supporting data type: ' . $dataType;
 		if ($dataType == 'string') {
 			$result = (string) '"' . $data . '"';
-		} elseif (method_exists('\Xicrow\Debug\Debugger', $methodName)) {
+		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data);
 		}
 

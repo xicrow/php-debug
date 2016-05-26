@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\Debug;
+namespace Xicrow\PhpDebug;
 
 /**
  * Class Timer
  *
- * @package Xicrow\Debug
+ * @package Xicrow\PhpDebug
  * @codeCoverageIgnore
  */
 class Timer extends Profiler {

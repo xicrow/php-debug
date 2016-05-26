@@ -1,10 +1,10 @@
 <?php
-namespace Xicrow\Debug;
+namespace Xicrow\PhpDebug;
 
 /**
  * Class Memory
  *
- * @package Xicrow\Debug
+ * @package Xicrow\PhpDebug
  * @codeCoverageIgnore
  */
 class Memory extends Profiler {
