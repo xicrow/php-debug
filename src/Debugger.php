@@ -42,7 +42,7 @@ class Debugger {
 			$style   = [];
 			$style[] = 'margin:5px 0;';
 			$style[] = 'padding:5px;';
-			$style[] = 'font-family:Courier New,​monospace;';
+			$style[] = 'font-family:Consolas,Courier New,​monospace;';
 			$style[] = 'font-weight:normal;';
 			$style[] = 'font-size:13px;';
 			$style[] = 'line-height:1.2;';
