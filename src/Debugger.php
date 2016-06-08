@@ -35,7 +35,10 @@ class Debugger {
 		if (php_sapi_name() == 'cli') {
 			$data = (self::$showCalledFrom ? self::getCalledFrom(2) . "\n" . $data : $data);
 
+			echo '#################### DEBUG ####################';
+			echo "\n";
 			echo $data;
+			echo "\n";
 		} else {
 			$data = (self::$showCalledFrom ? '<strong>' . self::getCalledFrom(2) . '</strong>' . "\n" . $data : $data);
 
@@ -269,7 +272,12 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformation($data, $indent = false) {
+	public static function getDebugInformation($data, array $options = []) {
+		$options = array_merge([
+			'depth'  => 25,
+			'indent' => 0
+		], $options);
+
 		$dataType = gettype($data);
 
 		$methodName = 'getDebugInformation' . ucfirst(strtolower($dataType));
@@ -278,11 +286,10 @@ class Debugger {
 		if ($dataType == 'string') {
 			$result = (string) '"' . $data . '"';
 		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
-			$result = (string) self::$methodName($data);
-		}
-
-		if ($indent > 0) {
-			$result = str_replace("\n", "\n\t", $result);
+			$result = (string) self::$methodName($data, [
+				'depth'  => ($options['depth'] - 1),
+				'indent' => ($options['indent'] + 1)
+			]);
 		}
 
 		return $result;
@@ -323,53 +330,40 @@ class Debugger {
 	}
 
 	/**
-	 * @param array|object $data
-	 * @param string       $prefix
-	 * @param string       $suffix
-	 *
-	 * @return string
-	 */
-	private static function getDebugInformationIterable($data, $prefix = '', $suffix = '') {
-		$debugInfo = '';
-		$debugInfo .= $prefix;
-
-		$keys = [];
-
-		$i = 0;
-		foreach ($data as $k => $v) {
-			$key   = self::getDebugInformation($k);
-			$value = self::getDebugInformation($v, true);
-
-			$keys[] = $key;
-
-			$debugInfo .= ($i > 0 ? ',' : '');
-			$debugInfo .= "\n\t" . $key . ' => ' . $value;
-
-			$i++;
-		}
-
-		if (count($keys)) {
-			$padLength = max(array_map('strlen', $keys));
-			foreach ($keys as $key) {
-				$keyPadded = str_pad($key, $padLength, ' ', STR_PAD_RIGHT);
-				$debugInfo = str_replace($key . ' =>', $keyPadded . ' =>', $debugInfo);
-			}
-		}
-
-		$debugInfo .= ($i > 0 ? "\n" : '');
-
-		$debugInfo .= $suffix;
-
-		return $debugInfo;
-	}
-
-	/**
 	 * @param array $data
 	 *
 	 * @return string
 	 */
-	private static function getDebugInformationArray($data) {
-		return self::getDebugInformationIterable($data, '[', ']');
+	private static function getDebugInformationArray($data, array $options = []) {
+		$options = array_merge([
+			'depth'  => 25,
+			'indent' => 0
+		], $options);
+
+		$debugInfo = "[";
+
+		$break = $end = null;
+		if (!empty($data)) {
+			$break = "\n" . str_repeat("\t", $options['indent']);
+			$end   = "\n" . str_repeat("\t", $options['indent'] - 1);
+		}
+
+		$datas = [];
+		if ($options['depth'] >= 0) {
+			foreach ($data as $key => $val) {
+				// Sniff for globals as !== explodes in < 5.4
+				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
+					$val = '[recursion]';
+				} elseif ($val !== $data) {
+					$val = static::getDebugInformation($val, $options);
+				}
+				$datas[] = $break . static::getDebugInformation($key) . ' => ' . $val;
+			}
+		} else {
+			$datas[] = $break . '[maximum depth reached]';
+		}
+
+		return $debugInfo . implode(',', $datas) . $end . ']';
 	}
 
 	/**
@@ -377,8 +371,67 @@ class Debugger {
 	 *
 	 * @return string
 	 */
-	private static function getDebugInformationObject($data) {
-		return self::getDebugInformationIterable($data, get_class($data) . ' {', '}');
+	private static function getDebugInformationObject($data, array $options = []) {
+		$options = array_merge([
+			'depth'  => 25,
+			'indent' => 0
+		], $options);
+
+		$debugInfo = '';
+		$debugInfo .= 'object(' . get_class($data) . ') {';
+
+		$break = "\n" . str_repeat("\t", $options['indent']);
+		$end   = "\n" . str_repeat("\t", $options['indent'] - 1);
+
+		if ($options['depth'] > 0 && method_exists($data, '__debugInfo')) {
+			try {
+				$debugArray = static::getDebugInformationArray($data->__debugInfo(), array_merge($options, [
+					'depth' => ($options['depth'] - 1)
+				]));
+				$debugInfo .= substr($debugArray, 1, -1);
+
+				return $debugInfo . $end . '}';
+			} catch (\Exception $e) {
+				$message = $e->getMessage();
+
+				return $debugInfo . "\n(unable to export object: $message)\n }";
+			}
+		}
+
+		if ($options['depth'] > 0) {
+			$props      = [];
+			$objectVars = get_object_vars($data);
+			foreach ($objectVars as $key => $value) {
+				$value   = static::getDebugInformation($value, array_merge($options, [
+					'depth' => ($options['depth'] - 1)
+				]));
+				$props[] = "$key => " . $value;
+			}
+
+			$ref     = new \ReflectionObject($data);
+			$filters = [
+				\ReflectionProperty::IS_PROTECTED => 'protected',
+				\ReflectionProperty::IS_PRIVATE   => 'private',
+			];
+			foreach ($filters as $filter => $visibility) {
+				$reflectionProperties = $ref->getProperties($filter);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($data);
+
+					$value   = static::getDebugInformation($property, array_merge($options, [
+						'depth' => ($options['depth'] - 1)
+					]));
+					$key     = $reflectionProperty->name;
+					$props[] = sprintf('[%s] %s => %s', $visibility, $key, $value);
+				}
+			}
+
+			$debugInfo .= $break . implode($break, $props) . $end;
+		}
+		$debugInfo .= '}';
+
+		return $debugInfo;
 	}
 
 	/**
