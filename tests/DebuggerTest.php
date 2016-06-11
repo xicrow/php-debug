@@ -65,28 +65,32 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $result);
 
 		$data     = [1, 2, 3];
-		$expected = <<<EXPECT
-[
-	0 => 1,
-	1 => 2,
-	2 => 3
-]
-EXPECT;
-		$result   = Debugger::getDebugInformation($data);
+		$expected = '[';
+		$expected .= "\n";
+		$expected .= '	0 => 1,';
+		$expected .= "\n";
+		$expected .= '	1 => 2,';
+		$expected .= "\n";
+		$expected .= '	2 => 3';
+		$expected .= "\n";
+		$expected .= ']';
+		$result = Debugger::getDebugInformation($data);
 		$this->assertEquals($expected, $result);
 
 		$data = new DateTime();
 		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
 		$data->setDate(2016, 01, 01);
 		$data->setTime(00, 00, 00);
-		$expected = <<<EXPECT
-DateTime {
-	"date"          => "2016-01-01 00:00:00.000000",
-	"timezone_type" => 3,
-	"timezone"      => "Europe/Copenhagen"
-}
-EXPECT;
-		$result   = Debugger::getDebugInformation($data);
+		$expected = 'object(DateTime) {';
+		$expected .= "\n";
+		$expected .= '	date => "2016-01-01 00:00:00.000000"';
+		$expected .= "\n";
+		$expected .= '	timezone_type => 3';
+		$expected .= "\n";
+		$expected .= '	timezone => "Europe/Copenhagen"';
+		$expected .= "\n";
+		$expected .= '}';
+		$result = Debugger::getDebugInformation($data);
 		$this->assertEquals($expected, $result);
 
 		$resource = fopen(realpath(__DIR__ . '/../README.md'), 'r');
