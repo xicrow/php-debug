@@ -13,7 +13,7 @@ The recommended way to install is through [Composer](https://getcomposer.org/).
 ```JSON
 {
     "require": {
-        "xicrow/php-debug": "~1.0"
+        "xicrow/php-debug": "~2.0"
     }
 }
 ```
@@ -23,7 +23,6 @@ See examples in the `demo` folder.
 
 View the seperate readme for:
 - [Debugger](Debugger.md)
-- [Memory](Memory.md)
 - [Timer](Timer.md)
 
 ## TODO
