@@ -8,9 +8,9 @@ namespace Xicrow\PhpDebug;
  */
 class Debugger {
 	/**
-	 * @var bool
+	 * @var string|null
 	 */
-	public static $output = true;
+	public static $documentRoot = null;
 
 	/**
 	 * @var bool
@@ -18,9 +18,14 @@ class Debugger {
 	public static $showCalledFrom = true;
 
 	/**
-	 * @var string|null
+	 * @var bool
 	 */
-	public static $documentRoot = null;
+	public static $output = true;
+
+	/**
+	 * @var bool
+	 */
+	private static $outputStyles = true;
 
 	/**
 	 * @param string $data
@@ -33,31 +38,48 @@ class Debugger {
 		}
 
 		if (php_sapi_name() == 'cli') {
-			$data = (self::$showCalledFrom ? self::getCalledFrom(2) . "\n" . $data : $data);
-
-			echo '#################### DEBUG ####################';
+			echo '######################### DEBUG #########################';
 			echo "\n";
+			if (self::$showCalledFrom) {
+				echo self::getCalledFrom(2);
+				echo "\n";
+			}
 			echo $data;
 			echo "\n";
 		} else {
-			$data = (self::$showCalledFrom ? '<strong>' . self::getCalledFrom(2) . '</strong>' . "\n" . $data : $data);
-
-			$style   = [];
-			$style[] = 'margin:5px 0;';
-			$style[] = 'padding:5px;';
-			$style[] = 'font-family:Consolas,Courier New,​monospace;';
-			$style[] = 'font-weight:normal;';
-			$style[] = 'font-size:13px;';
-			$style[] = 'line-height:1.2;';
-			$style[] = 'color:#555;';
-			$style[] = 'background:#F9F9F9;';
-			$style[] = 'border:1px solid #CCC;';
-			$style[] = 'display:block;';
-			$style[] = 'overflow:auto;';
-
-			echo '<pre style="' . implode(' ', $style) . '">';
+			echo '<pre class="xicrow-php-debug-debugger">';
+			if (self::$showCalledFrom) {
+				echo '<div class="xicrow-php-debug-debugger__called-from">';
+				echo self::getCalledFrom(2);
+				echo '</div>';
+			}
 			echo $data;
 			echo '</pre>';
+			if (self::$outputStyles) {
+				echo '<style type="text/css">';
+				echo 'pre.xicrow-php-debug-debugger{';
+				echo 'margin:5px 0;';
+				echo 'padding:5px;';
+				echo 'font-family:Consolas,Courier New,​monospace;';
+				echo 'font-weight:normal;';
+				echo 'font-size:13px;';
+				echo 'line-height:1.2;';
+				echo 'color:#555;';
+				echo 'background:#FFF;';
+				echo 'border:1px solid #CCC;';
+				echo 'display:block;';
+				echo 'overflow:auto;';
+				echo '}';
+				echo 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-debugger__called-from{';
+				echo 'margin: 0 0 5px 0;';
+				echo 'padding: 0 0 5px 0;';
+				echo 'border-bottom: 1px solid #CCC;';
+				echo 'font-style: italic;';
+				echo '}';
+				echo '</style>';
+
+				self::$outputStyles = false;
+			}
 		}
 	}
 
@@ -260,11 +282,14 @@ class Debugger {
 			$calledFromFunction .= $trace['function'] . '()';
 		}
 
-		if (!empty($calledFromFunction) && !empty($calledFromFile)) {
-			$calledFromFunction = ' > ' . $calledFromFunction;
+		// Return called from
+		if ($calledFromFile) {
+			return $calledFromFile;
+		} elseif ($calledFromFunction) {
+			return $calledFromFunction;
+		} else {
+			return 'Unable to get called from trace';
 		}
-
-		return $calledFromFile . $calledFromFunction;
 	}
 
 	/**
