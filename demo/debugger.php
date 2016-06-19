@@ -1,7 +1,15 @@
 <?php
-require_once('bootstrap.php');
+ini_set('error_reporting', E_ALL | E_STRICT);
+ini_set('display_errors', 1);
+ini_set('html_errors', 1);
+ini_set('log_errors', 0);
+
+require_once('../src/autoload.php');
 
 use \Xicrow\PhpDebug\Debugger;
+
+Debugger::$documentRoot   = 'E:\\GitHub\\';
+Debugger::$showCalledFrom = true;
 ?>
 <html>
 	<head>
@@ -11,11 +19,10 @@ use \Xicrow\PhpDebug\Debugger;
 
 	<body>
 		<?php
-		$closure    = function () {
+		$closure  = function () {
 			return true;
 		};
-		$stdClass   = (new stdClass());
-		$collection = (new \Xicrow\PhpDebug\Collection([1, 2, 3]));
+		$stdClass = (new stdClass());
 
 		function foo() {
 			Debugger::showTrace();
@@ -34,7 +41,6 @@ use \Xicrow\PhpDebug\Debugger;
 		Debugger::debug([1, 2, 3]);
 		Debugger::debug($closure);
 		Debugger::debug($stdClass);
-		Debugger::debug($collection);
 		Debugger::debug(fopen('../README.md', 'r'));
 
 		Debugger::showTrace();
@@ -44,9 +50,8 @@ use \Xicrow\PhpDebug\Debugger;
 		Debugger::debug(Debugger::getCalledFrom());
 		Debugger::debug(Debugger::getCalledFrom(1));
 
-		Debugger::reflectClass('\Xicrow\PhpDebug\Collection');
-		Debugger::reflectClassProperty('\Xicrow\PhpDebug\Collection', 'items');
-		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Collection', 'sort');
+		Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
+		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
 		?>
 	</body>
 </html>

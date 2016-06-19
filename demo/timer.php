@@ -1,7 +1,23 @@
 <?php
-require_once('bootstrap.php');
+ini_set('error_reporting', E_ALL | E_STRICT);
+ini_set('display_errors', 1);
+ini_set('html_errors', 1);
+ini_set('log_errors', 0);
 
+require_once('../src/autoload.php');
+
+use \Xicrow\PhpDebug\Debugger;
 use \Xicrow\PhpDebug\Timer;
+
+Debugger::$documentRoot   = 'E:\\GitHub\\';
+Debugger::$showCalledFrom = true;
+
+Timer::$forceDisplayUnit = 'MS';
+Timer::$colorThreshold   = [
+	0     => 'green',
+	5000  => 'orange',
+	50000 => 'red'
+];
 ?>
 <html>
 	<head>
