@@ -325,15 +325,17 @@ class Timer {
 		}
 		unset($itemCount);
 
-		$output .= '<style type="text/css">';
-		$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer{';
-		$output .= 'cursor: pointer;';
-		$output .= '}';
-		$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer:hover{';
-		$output .= 'font-weight: bold;';
-		$output .= 'background-color: #EEE;';
-		$output .= '}';
-		$output .= '</style>';
+		if (php_sapi_name() != 'cli') {
+			$output .= '<style type="text/css">';
+			$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer{';
+			$output .= 'cursor: pointer;';
+			$output .= '}';
+			$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer:hover{';
+			$output .= 'font-weight: bold;';
+			$output .= 'background-color: #EEE;';
+			$output .= '}';
+			$output .= '</style>';
+		}
 
 		Debugger::output($output);
 	}
