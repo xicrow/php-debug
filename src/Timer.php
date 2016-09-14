@@ -135,18 +135,22 @@ class Timer {
 			$key = key(self::$runningItems);
 		}
 
-		// Check for key duplicates, and find the first one not stopped
-		if (isset(self::$collection[$key]) && isset(self::$collection[$key]['stop'])) {
-			$originalName = $key;
-			$i            = 1;
-			while (isset(self::$collection[$key])) {
-				if (!isset(self::$collection[$key]['stop'])) {
-					break;
+		// Check for key duplicates, and find the last one not stopped
+		if (isset(self::$collection[$key]) && isset(self::$collection[$key . ' #2'])) {
+			$lastNotStopped = false;
+			$currentKey     = $key;
+			$currentIndex   = 1;
+			while (isset(self::$collection[$currentKey])) {
+				if (!isset(self::$collection[$currentKey]['stop'])) {
+					$lastNotStopped = $currentKey;
 				}
 
-				$key = $originalName . ' #' . ($i + 1);
+				$currentIndex++;
+				$currentKey = $key . ' #' . $currentIndex;
+			}
 
-				$i++;
+			if ($lastNotStopped) {
+				$key = $lastNotStopped;
 			}
 		}
 
