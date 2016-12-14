@@ -37,6 +37,7 @@ View the seperate readme for:
 - ~~Add PHPunit tests~~
 	*Implemented, now remeber to keep them updated*
 - Improve Debugger, foldable tree of arrays/objects
+- Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)
 
 ## License
 Copyright &copy; 2016 Jan Ebsen
