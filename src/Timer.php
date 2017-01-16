@@ -389,7 +389,7 @@ class Timer {
 		}
 
 		// Add item stats
-		$output .= str_pad($outputName, $options['max_key_length'], ' ');
+		$output .= str_pad($outputName, ($options['max_key_length'] + (strlen($outputName) - mb_strlen($outputName))), ' ');
 		$output .= ' | ';
 		$output .= str_pad($itemResultFormatted, 20, ' ', ($itemResult == 'N/A' ? STR_PAD_RIGHT : STR_PAD_LEFT));
 
