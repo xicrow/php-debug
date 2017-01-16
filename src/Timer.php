@@ -384,8 +384,8 @@ class Timer {
 		$outputName = '';
 		$outputName .= ($options['nested'] ? str_repeat($options['nested_prefix'], $item['level']) : '');
 		$outputName .= $item['key'];
-		if (strlen($outputName) > $options['max_key_length']) {
-			$outputName = '~' . substr($item['key'], -($options['max_key_length'] - 1));
+		if (mb_strlen($outputName) > $options['max_key_length']) {
+			$outputName = '~' . mb_substr($item['key'], -($options['max_key_length'] - 1));
 		}
 
 		// Add item stats
