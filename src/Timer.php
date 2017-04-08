@@ -70,11 +70,11 @@ class Timer {
 			if (strpos($item['key'], '#') === false) {
 				self::$collection[$key] = array_merge($item, [
 					'key'   => $key . ' #1',
-					'count' => $itemCount
+					'count' => $itemCount,
 				]);
 			} else {
 				self::$collection[$key] = array_merge($item, [
-					'count' => $itemCount
+					'count' => $itemCount,
 				]);
 			}
 
@@ -110,7 +110,7 @@ class Timer {
 	public static function start($key = null) {
 		// Add new item
 		$key = self::add($key, [
-			'start' => microtime(true)
+			'start' => microtime(true),
 		]);
 
 		// Set current item
@@ -180,7 +180,7 @@ class Timer {
 		// Add new item
 		self::add($key, [
 			'start' => $start,
-			'stop'  => $stop
+			'stop'  => $stop,
 		]);
 
 		// If no stop value is given
@@ -225,7 +225,7 @@ class Timer {
 				if (count($keyArr) > 1) {
 					$method = array_pop($keyArr);
 					$key    = implode('/', $keyArr);
-					$key .= '::' . $method;
+					$key    .= '::' . $method;
 				}
 
 				unset($keyArr, $method);
@@ -358,7 +358,7 @@ class Timer {
 			// Prefix for nested items (string)
 			'nested_prefix'  => '|-- ',
 			// Max key length (int)
-			'max_key_length' => 100
+			'max_key_length' => 100,
 		], $options);
 
 		// If item does not exist
@@ -419,7 +419,7 @@ class Timer {
 			'M'  => 60,
 			'H'  => 60,
 			'D'  => 24,
-			'W'  => 7
+			'W'  => 7,
 		];
 
 		if (is_null($forceUnit)) {

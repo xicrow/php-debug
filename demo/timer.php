@@ -16,7 +16,7 @@ Timer::$forceDisplayUnit = 'MS';
 Timer::$colorThreshold   = [
 	0     => 'green',
 	5000  => 'orange',
-	50000 => 'red'
+	50000 => 'red',
 ];
 ?>
 <html>

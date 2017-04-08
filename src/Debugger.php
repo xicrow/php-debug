@@ -130,7 +130,7 @@ class Debugger {
 			$data .= "\n";
 		}
 
-		$data .= 'class ' . $reflectionClass->name . '{';
+		$data         .= 'class ' . $reflectionClass->name . '{';
 		$firstElement = true;
 		foreach ($reflectionClass->getProperties() as $reflectionProperty) {
 			if (!$firstElement) {
@@ -231,7 +231,7 @@ class Debugger {
 				if ($reflectionMethodParameter->isDefaultValueAvailable()) {
 					$defaultValue = self::getDebugInformation($reflectionMethodParameter->getDefaultValue());
 					$defaultValue = str_replace(["\n", "\t"], '', $defaultValue);
-					$data .= ' = ' . $defaultValue;
+					$data         .= ' = ' . $defaultValue;
 				}
 			}
 		}
@@ -300,7 +300,7 @@ class Debugger {
 	public static function getDebugInformation($data, array $options = []) {
 		$options = array_merge([
 			'depth'  => 25,
-			'indent' => 0
+			'indent' => 0,
 		], $options);
 
 		$dataType = gettype($data);
@@ -317,7 +317,7 @@ class Debugger {
 		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data, [
 				'depth'  => ($options['depth'] - 1),
-				'indent' => ($options['indent'] + 1)
+				'indent' => ($options['indent'] + 1),
 			]);
 		}
 
@@ -366,7 +366,7 @@ class Debugger {
 	private static function getDebugInformationArray($data, array $options = []) {
 		$options = array_merge([
 			'depth'  => 25,
-			'indent' => 0
+			'indent' => 0,
 		], $options);
 
 		$debugInfo = "[";
@@ -403,7 +403,7 @@ class Debugger {
 	private static function getDebugInformationObject($data, array $options = []) {
 		$options = array_merge([
 			'depth'  => 25,
-			'indent' => 0
+			'indent' => 0,
 		], $options);
 
 		$debugInfo = '';
@@ -415,9 +415,9 @@ class Debugger {
 		if ($options['depth'] > 0 && method_exists($data, '__debugInfo')) {
 			try {
 				$debugArray = static::getDebugInformationArray($data->__debugInfo(), array_merge($options, [
-					'depth' => ($options['depth'] - 1)
+					'depth' => ($options['depth'] - 1),
 				]));
-				$debugInfo .= substr($debugArray, 1, -1);
+				$debugInfo  .= substr($debugArray, 1, -1);
 
 				return $debugInfo . $end . '}';
 			} catch (\Exception $e) {
@@ -432,7 +432,7 @@ class Debugger {
 			$objectVars = get_object_vars($data);
 			foreach ($objectVars as $key => $value) {
 				$value   = static::getDebugInformation($value, array_merge($options, [
-					'depth' => ($options['depth'] - 1)
+					'depth' => ($options['depth'] - 1),
 				]));
 				$props[] = "$key => " . $value;
 			}
@@ -449,7 +449,7 @@ class Debugger {
 					$property = $reflectionProperty->getValue($data);
 
 					$value   = static::getDebugInformation($property, array_merge($options, [
-						'depth' => ($options['depth'] - 1)
+						'depth' => ($options['depth'] - 1),
 					]));
 					$key     = $reflectionProperty->name;
 					$props[] = sprintf('[%s] %s => %s', $visibility, $key, $value);

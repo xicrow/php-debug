@@ -74,7 +74,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$expected .= '	2 => 3';
 		$expected .= "\n";
 		$expected .= ']';
-		$result = Debugger::getDebugInformation($data);
+		$result   = Debugger::getDebugInformation($data);
 		$this->assertEquals($expected, $result);
 
 		$data = new DateTime();
@@ -90,7 +90,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$expected .= '	timezone => "Europe/Copenhagen"';
 		$expected .= "\n";
 		$expected .= '}';
-		$result = Debugger::getDebugInformation($data);
+		$result   = Debugger::getDebugInformation($data);
 		$this->assertEquals($expected, $result);
 
 		$resource = fopen(realpath(__DIR__ . '/../README.md'), 'r');
@@ -121,7 +121,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$expected = 'DebuggerTest.php line 86';
 		$result   = Debugger::getCalledFromTrace([
 			'file' => __DIR__ . 'DebuggerTest.php',
-			'line' => 86
+			'line' => 86,
 		]);
 		$this->assertContains($expected, $result);
 
@@ -129,7 +129,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase {
 		$result   = Debugger::getCalledFromTrace([
 			'class'    => 'DebuggerTest',
 			'type'     => '->',
-			'function' => 'testGetCalledFrom'
+			'function' => 'testGetCalledFrom',
 		]);
 		$this->assertContains($expected, $result);
 	}

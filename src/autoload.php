@@ -4,7 +4,7 @@ spl_autoload_register(function ($class) {
 	if ($classes === null) {
 		$classes = [
 			'Xicrow\\PhpDebug\\Debugger' => '/Debugger.php',
-			'Xicrow\\PhpDebug\\Timer'    => '/Timer.php'
+			'Xicrow\\PhpDebug\\Timer'    => '/Timer.php',
 		];
 	}
 	if (isset($classes[$class])) {
