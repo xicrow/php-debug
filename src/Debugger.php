@@ -309,7 +309,11 @@ class Debugger {
 
 		$result = 'No method found supporting data type: ' . $dataType;
 		if ($dataType == 'string') {
-			$result = (string) '"' . $data . '"';
+			if (php_sapi_name() == 'cli') {
+				$result = (string) '"' . $data . '"';
+			} else {
+				$result = (string) '"' . htmlentities($data) . '"';
+			}
 		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data, [
 				'depth'  => ($options['depth'] - 1),
