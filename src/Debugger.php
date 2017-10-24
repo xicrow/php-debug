@@ -310,14 +310,14 @@ class Debugger {
 		$result = 'No method found supporting data type: ' . $dataType;
 		if ($dataType == 'string') {
 			if (php_sapi_name() == 'cli') {
-				$result = (string) $data;
+				$result = '"' . (string) $result . '"';
 			} else {
 				$result = htmlentities($data);
 				if ($data !== '' && $result === '') {
 					$result = htmlentities(utf8_encode($data));
 				}
 
-				$result = (string) $result;
+				$result = '"' . (string) $result . '"';
 			}
 		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data, [
