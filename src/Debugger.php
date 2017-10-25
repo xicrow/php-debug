@@ -310,7 +310,7 @@ class Debugger {
 		$result = 'No method found supporting data type: ' . $dataType;
 		if ($dataType == 'string') {
 			if (php_sapi_name() == 'cli') {
-				$result = '"' . (string) $result . '"';
+				$result = '"' . (string) $data . '"';
 			} else {
 				$result = htmlentities($data);
 				if ($data !== '' && $result === '') {
