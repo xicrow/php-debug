@@ -16,9 +16,7 @@ class TimerTest extends PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
 
         // Set debugger options
-        Debugger::$documentRoot   = 'E:\\GitHub\\';
-        Debugger::$showCalledFrom = false;
-        Debugger::$output         = false;
+        Timer::$output = false;
     }
 
     /**
@@ -159,10 +157,6 @@ class TimerTest extends PHPUnit_Framework_TestCase
 
         $expected = max([1, 2, 3, 4, 5, 6, 7, 8, 9]);
         $result   = Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        $this->assertEquals($expected, $result);
-
-        $expected = 'Xicrow\PhpDebug\Debugger::getCalledFrom()';
-        $result   = Timer::callback(null, ['Xicrow\PhpDebug\Debugger', 'getCalledFrom']);
         $this->assertEquals($expected, $result);
 
         $dateTime = new DateTime();

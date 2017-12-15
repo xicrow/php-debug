@@ -4,19 +4,16 @@ ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('log_errors', 0);
 
+require('../vendor/autoload.php');
 require_once('../src/autoload.php');
 
-use \Xicrow\PhpDebug\Debugger;
 use \Xicrow\PhpDebug\Timer;
 
-Debugger::$documentRoot   = 'E:\\GitHub\\';
-Debugger::$showCalledFrom = true;
-
-Timer::$forceDisplayUnit = 'MS';
-Timer::$colorThreshold   = [
-    0     => 'green',
-    5000  => 'orange',
-    50000 => 'red',
+Timer::$colorThreshold = [
+    0     => '#56DB3A',
+    500   => '#1299DA',
+    5000  => '#FF8400',
+    50000 => '#B729D9',
 ];
 ?>
 <html>
@@ -54,17 +51,20 @@ Timer::$colorThreshold   = [
         Timer::callback(null, 'array_rand', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
         Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
         Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        Timer::callback(null, ['Xicrow\PhpDebug\Debugger', 'getDebugInformation'], [1, 2, 3]);
         Timer::callback(null, function () {
             return false;
         });
 
         // Custom test
+        Timer::custom('500 miliseconds', time(), (time() + 0.5));
         Timer::custom('5 seconds', time(), (time() + 5));
         Timer::custom('5 minutes', time(), (time() + (5 * 60)));
         Timer::custom('5 hours  ', time(), (time() + (5 * 60 * 60)));
-        Timer::custom('5 days   ', time(), (time() + (5 * 60 * 60 * 24)));
-        Timer::custom('5 weeks  ', time(), (time() + (5 * 60 * 60 * 24 * 7)));
+
+        Timer::stop('Total');
+
+        // Show single timer
+        Timer::show('Total');
 
         // Show all timers
         Timer::showAll();
