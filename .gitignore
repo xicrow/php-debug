@@ -3,4 +3,3 @@ build
 code-coverage
 vendor
 composer.phar
-composer.lock
