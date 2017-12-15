@@ -18,40 +18,43 @@ Debugger::$showCalledFrom = true;
 	</head>
 
 	<body>
-		<?php
-		$closure  = function () {
-			return true;
-		};
-		$stdClass = (new stdClass());
+        <?php
+        $closure = function () {
+            return true;
+        };
 
-		function foo() {
-			Debugger::showTrace();
-		}
+        $stdClass = (new stdClass());
 
-		function bar() {
-			foo();
-		}
+        function foo()
+        {
+            Debugger::showTrace();
+        }
 
-		Debugger::debug(null);
-		Debugger::debug(true);
-		Debugger::debug(false);
-		Debugger::debug('string');
-		Debugger::debug(123);
-		Debugger::debug(123.123);
-		Debugger::debug([1, 2, 3]);
-		Debugger::debug($closure);
-		Debugger::debug($stdClass);
-		Debugger::debug(fopen('../README.md', 'r'));
+        function bar()
+        {
+            foo();
+        }
 
-		Debugger::showTrace();
-		foo();
-		bar();
+        Debugger::debug(null);
+        Debugger::debug(true);
+        Debugger::debug(false);
+        Debugger::debug('string');
+        Debugger::debug(123);
+        Debugger::debug(123.123);
+        Debugger::debug([1, 2, 3]);
+        Debugger::debug($closure);
+        Debugger::debug($stdClass);
+        Debugger::debug(fopen('../README.md', 'r'));
 
-		Debugger::debug(Debugger::getCalledFrom());
-		Debugger::debug(Debugger::getCalledFrom(1));
+        Debugger::showTrace();
+        foo();
+        bar();
 
-		Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
-		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
-		?>
+        Debugger::debug(Debugger::getCalledFrom());
+        Debugger::debug(Debugger::getCalledFrom(1));
+
+        Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
+        Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
+        ?>
 	</body>
 </html>
