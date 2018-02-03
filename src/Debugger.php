@@ -23,91 +23,76 @@ class Debugger {
 	public static $output = true;
 
 	/**
-	 * @var bool
-	 */
-	private static $outputStyles = true;
-
-	/**
 	 * @param string $data
+	 * @param array  $options
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function output($data) {
+	public static function output($data, array $options = []) {
+		$options = array_merge([
+			'trace_offset' => 0,
+		], $options);
+
 		if (!self::$output || !is_string($data)) {
 			return;
 		}
 
 		if (php_sapi_name() == 'cli') {
-			echo '######################### DEBUG #########################';
+			echo str_pad(' DEBUG ', 100, '-', STR_PAD_BOTH);
 			echo "\n";
 			if (self::$showCalledFrom) {
-				echo self::getCalledFrom(2);
+				echo self::getCalledFrom($options['trace_offset'] + 2);
 				echo "\n";
 			}
 			echo $data;
 			echo "\n";
 		} else {
-			echo '<pre class="xicrow-php-debug-debugger">';
 			if (self::$showCalledFrom) {
-				echo '<div class="xicrow-php-debug-debugger__called-from">';
-				echo self::getCalledFrom(2);
-				echo '</div>';
+				echo '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; color: #AAAAAA;">';
+                echo self::getCalledFrom($options['trace_offset'] + 2);
+				echo '</pre>';
 			}
+            echo '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; color: #FF8400;">';
 			echo $data;
 			echo '</pre>';
-			if (self::$outputStyles) {
-				echo '<style type="text/css">';
-				echo 'pre.xicrow-php-debug-debugger{';
-				echo 'margin:5px 0;';
-				echo 'padding:5px;';
-				echo 'font-family:Consolas,Courier New,​monospace;';
-				echo 'font-weight:normal;';
-				echo 'font-size:13px;';
-				echo 'line-height:1.2;';
-				echo 'color:#555;';
-				echo 'background:#FFF;';
-				echo 'border:1px solid #CCC;';
-				echo 'display:block;';
-				echo 'overflow:auto;';
-				echo '}';
-				echo 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-debugger__called-from{';
-				echo 'margin: 0 0 5px 0;';
-				echo 'padding: 0 0 5px 0;';
-				echo 'border-bottom: 1px solid #CCC;';
-				echo 'font-style: italic;';
-				echo '}';
-				echo '</style>';
-
-				self::$outputStyles = false;
-			}
 		}
 	}
 
 	/**
 	 * @param mixed $data
+	 * @param array $options
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function debug($data) {
-		self::output(self::getDebugInformation($data));
+	public static function debug($data, array $options = []) {
+		$options = array_merge([
+			'trace_offset' => 0,
+		], $options);
+
+        self::output(self::getDebugInformation($data), $options);
 	}
 
 	/**
-	 * @param bool $reverse
+	 * @param array $options
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function showTrace($reverse = false) {
-		$backtrace = ($reverse ? array_reverse(debug_backtrace()) : debug_backtrace());
+	public static function showTrace(array $options = []) {
+		$options = array_merge([
+			'trace_offset' => 0,
+			'reverse'	  => false,
+		], $options);
 
-		$output     = '';
-		$traceIndex = ($reverse ? 1 : count($backtrace));
+		$backtrace = ($options['reverse'] ? array_reverse(debug_backtrace()) : debug_backtrace());
+
+		$output	 = '';
+		$traceIndex = ($options['reverse'] ? 1 : count($backtrace));
 		foreach ($backtrace as $trace) {
 			$output .= $traceIndex . ': ';
 			$output .= self::getCalledFromTrace($trace);
 			$output .= "\n";
 
-			$traceIndex += ($reverse ? 1 : -1);
+			$traceIndex += ($options['reverse'] ? 1 : -1);
 		}
 
 		self::output($output);
@@ -317,7 +302,7 @@ class Debugger {
 					$result = htmlentities(utf8_encode($data));
 				}
 
-				$result = '"' . (string) $result . '"';
+				$result = '<span style="color: #1299DA;">"</span>' . (string) $result . '<span style="color: #1299DA;">"</span>';
 			}
 		} elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
 			$result = (string) self::$methodName($data, [
