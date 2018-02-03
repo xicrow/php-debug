@@ -12,11 +12,11 @@ use \Xicrow\PhpDebug\Timer;
 Debugger::$documentRoot   = 'E:\\GitHub\\';
 Debugger::$showCalledFrom = true;
 
-Timer::$forceDisplayUnit = 'MS';
-Timer::$colorThreshold   = [
-	0     => 'green',
-	5000  => 'orange',
-	50000 => 'red',
+Timer::$colorThreshold = [
+    0     => '#56DB3A',
+    500   => '#1299DA',
+    5000  => '#FF8400',
+    50000 => '#B729D9',
 ];
 ?>
 <html>
