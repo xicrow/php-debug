@@ -36,14 +36,46 @@ class Timer {
 	 */
 	public static $colorThreshold = [];
 
-	/**
-	 *
-	 */
-	public static function reset() {
-		self::$collection   = [];
-		self::$currentItem  = false;
-		self::$runningItems = [];
-	}
+    /**
+     * @var bool
+     */
+    public static $output = true;
+
+    /**
+     * @param string $data
+     *
+     * @codeCoverageIgnore
+     */
+    public static function output($data)
+    {
+        if (!self::$output || !is_string($data)) {
+            return;
+        }
+
+        if (php_sapi_name() != 'cli') {
+            echo '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; color: #AAAAAA;">';
+            echo Debugger::getCalledFrom(2);
+            echo '</pre>';
+            echo '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; color: #FF8400;">';
+            echo $data;
+            echo '</pre>';
+            echo '<style type="text/css">.xicrow-php-debug-timer:hover{ background-color: #333333; }</style>';
+        } else {
+            echo Debugger::getCalledFrom(2);
+            echo "\n";
+            echo $data;
+        }
+    }
+
+    /**
+     *
+     */
+    public static function reset()
+    {
+        self::$collection   = [];
+        self::$currentItem  = false;
+        self::$runningItems = [];
+    }
 
 	/**
 	 * @param string|null $key
@@ -263,7 +295,7 @@ class Timer {
 			ob_end_clean();
 
 			// Show error message
-			Debugger::output('Invalid callback sent to Timer::callback: ' . str_replace('callback: ', '', $key));
+			self::output('Invalid callback sent to Timer::callback: ' . str_replace('callback: ', '', $key));
 
 			// Clear the item from the collection
 			unset(self::$collection[$key]);
@@ -292,7 +324,7 @@ class Timer {
 		$output = self::getStats($key, $options);
 
 		if (!empty($output)) {
-			Debugger::output($output);
+			self::output($output);
 		}
 	}
 
@@ -329,19 +361,7 @@ class Timer {
 		}
 		unset($itemCount);
 
-		if (php_sapi_name() != 'cli') {
-			$output .= '<style type="text/css">';
-			$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer{';
-			$output .= 'cursor: pointer;';
-			$output .= '}';
-			$output .= 'pre.xicrow-php-debug-debugger div.xicrow-php-debug-timer:hover{';
-			$output .= 'font-weight: bold;';
-			$output .= 'background-color: #EEE;';
-			$output .= '}';
-			$output .= '</style>';
-		}
-
-		Debugger::output($output);
+		self::output($output);
 	}
 
 	/**
