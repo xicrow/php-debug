@@ -4,11 +4,12 @@ ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 ini_set('log_errors', 0);
 
-require('../vendor/autoload.php');
 require_once('../src/autoload.php');
 
 use \Xicrow\PhpDebug\Debugger;
 
+Debugger::$documentRoot   = 'E:\\GitHub\\';
+Debugger::$showCalledFrom = true;
 ?>
 <html>
 	<head>
@@ -17,17 +18,40 @@ use \Xicrow\PhpDebug\Debugger;
 	</head>
 
 	<body>
-        <?php
-        Debugger::debug(null);
-        Debugger::debug(true);
-        Debugger::debug(false);
-        Debugger::debug('string');
-        Debugger::debug(123);
-        Debugger::debug([1, 2, 3]);
-        Debugger::debug(function () {
-            return true;
-        });
-        Debugger::debug(new DateTime());
-        ?>
+		<?php
+		$closure  = function () {
+			return true;
+		};
+		$stdClass = (new stdClass());
+
+		function foo() {
+			Debugger::showTrace();
+		}
+
+		function bar() {
+			foo();
+		}
+
+		Debugger::debug(null);
+		Debugger::debug(true);
+		Debugger::debug(false);
+		Debugger::debug('string');
+		Debugger::debug(123);
+		Debugger::debug(123.123);
+		Debugger::debug([1, 2, 3]);
+		Debugger::debug($closure);
+		Debugger::debug($stdClass);
+		Debugger::debug(fopen('../README.md', 'r'));
+
+		Debugger::showTrace();
+		foo();
+		bar();
+
+		Debugger::debug(Debugger::getCalledFrom());
+		Debugger::debug(Debugger::getCalledFrom(1));
+
+		Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
+		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
+		?>
 	</body>
 </html>
