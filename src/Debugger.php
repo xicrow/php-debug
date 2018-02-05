@@ -23,6 +23,9 @@ class Debugger
      */
     public static $output = true;
 
+    /**
+     * @var array
+     */
     public static $style = [
         'output_format'        => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; color: #FF8400; display: block; z-index: 1000;">%s</pre>',
         'called_from_format'   => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; color: #AAAAAA; display: block; z-index: 1000;">%s</pre>',

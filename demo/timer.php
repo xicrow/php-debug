@@ -60,7 +60,9 @@ Timer::$colorThreshold = [
         });
 
         // Custom test
+        Timer::custom('0.5 seconds', time(), (time() + 0.5));
         Timer::custom('5 seconds', time(), (time() + 5));
+        Timer::custom('50 seconds', time(), (time() + 50));
         Timer::custom('5 minutes', time(), (time() + (5 * 60)));
         Timer::custom('5 hours  ', time(), (time() + (5 * 60 * 60)));
         Timer::custom('5 days   ', time(), (time() + (5 * 60 * 60 * 24)));

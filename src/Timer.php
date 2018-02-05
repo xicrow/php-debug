@@ -43,6 +43,15 @@ class Timer
     public static $output = true;
 
     /**
+     * @var array
+     */
+    public static $style = [
+        'output_format'      => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; color: #FF8400; display: block; z-index: 1000;">%s</pre>',
+        'called_from_format' => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; color: #AAAAAA; display: block; z-index: 1000;">%s</pre>',
+        'hover_style'        => 'background-color: #333333;',
+    ];
+
+    /**
      * @param string $data
      *
      * @codeCoverageIgnore
@@ -54,13 +63,9 @@ class Timer
         }
 
         if (php_sapi_name() != 'cli') {
-            echo '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; color: #AAAAAA;">';
-            echo Debugger::getCalledFrom(2);
-            echo '</pre>';
-            echo '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; color: #FF8400;">';
-            echo $data;
-            echo '</pre>';
-            echo '<style type="text/css">.xicrow-php-debug-timer:hover{ background-color: #333333; }</style>';
+            echo sprintf(self::$style['called_from_format'], Debugger::getCalledFrom(2));
+            echo sprintf(self::$style['output_format'], $data);
+            echo '<style type="text/css">.xicrow-php-debug-timer:hover{ ' . self::$style['hover_style'] . ' }</style>';
         } else {
             echo Debugger::getCalledFrom(2);
             echo "\n";
