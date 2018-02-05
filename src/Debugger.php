@@ -23,6 +23,16 @@ class Debugger
      */
     public static $output = true;
 
+    public static $style = [
+        'output_format'        => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; color: #FF8400; display: block; z-index: 1000;">%s</pre>',
+        'called_from_format'   => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; color: #AAAAAA; display: block; z-index: 1000;">%s</pre>',
+        'debug_null_format'    => '<span style="color: #B729D9;">%s</span>',
+        'debug_boolean_format' => '<span style="color: #B729D9;">%s</span>',
+        'debug_integer_format' => '<span style="color: #1299DA;">%s</span>',
+        'debug_double_format'  => '<span style="color: #1299DA;">%s</span>',
+        'debug_string_format'  => '<span style="color: #1299DA;">"</span>%s<span style="color: #1299DA;">"</span>',
+    ];
+
     /**
      * @param string $data
      * @param array  $options
@@ -50,13 +60,9 @@ class Debugger
             echo "\n";
         } else {
             if (self::$showCalledFrom) {
-                echo '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; color: #AAAAAA;">';
-                echo self::getCalledFrom($options['trace_offset'] + 2);
-                echo '</pre>';
+                echo sprintf(self::$style['called_from_format'], self::getCalledFrom($options['trace_offset'] + 2));
             }
-            echo '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; color: #FF8400;">';
-            echo $data;
-            echo '</pre>';
+            echo sprintf(self::$style['output_format'], $data);
         }
     }
 
@@ -312,13 +318,16 @@ class Debugger
                     $result = htmlentities(utf8_encode($data));
                 }
 
-                $result = '<span style="color: #1299DA;">"</span>' . (string)$result . '<span style="color: #1299DA;">"</span>';
+                $result = sprintf(self::$style['debug_string_format'], (string)$result);
             }
         } elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
             $result = (string)self::$methodName($data, [
                 'depth'  => ($options['depth'] - 1),
                 'indent' => ($options['indent'] + 1),
             ]);
+            if (php_sapi_name() != 'cli' && !empty(self::$style['debug_' . strtolower($dataType) . '_format'])) {
+                $result = sprintf(self::$style['debug_' . strtolower($dataType) . '_format'], $result);
+            }
         }
 
         return $result;
