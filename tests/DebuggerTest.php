@@ -64,7 +64,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase
         $result   = Debugger::getDebugInformation(123.123);
         $this->assertEquals($expected, $result);
 
-        $expected = 'string';
+        $expected = '"string"';
         $result   = Debugger::getDebugInformation('string');
         $this->assertEquals($expected, $result);
 

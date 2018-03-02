@@ -338,7 +338,7 @@ class Debugger
      */
     private static function getDebugInformationString($data)
     {
-        return (string)(php_sapi_name() == 'cli' ? $data : htmlentities($data));
+        return (string)(php_sapi_name() == 'cli' ? '"' . $data . '"' : htmlentities($data));
     }
 
     /**
