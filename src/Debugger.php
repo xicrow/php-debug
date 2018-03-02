@@ -202,6 +202,7 @@ class Debugger
     /**
      * @param string $class
      * @param string $method
+     * @param bool   $output
      *
      * @return string
      */
