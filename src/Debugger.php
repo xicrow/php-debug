@@ -108,7 +108,7 @@ class Debugger
             $traceIndex += ($options['reverse'] ? 1 : -1);
         }
 
-        self::output($output);
+        self::output($output, $options);
     }
 
     /**
