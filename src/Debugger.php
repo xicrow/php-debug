@@ -303,38 +303,42 @@ class Debugger
      */
     public static function getDebugInformation($data, array $options = [])
     {
+        // Merge options with default options
         $options = array_merge([
             'depth'  => 25,
             'indent' => 0,
         ], $options);
 
+        // Get data type
         $dataType = gettype($data);
 
+        // Set name of method to get debug information for data
         $methodName = 'getDebugInformation' . ucfirst(strtolower($dataType));
 
+        // Get result from debug information method
         $result = 'No method found supporting data type: ' . $dataType;
-        if ($dataType == 'string') {
-            if (php_sapi_name() == 'cli') {
-                $result = '"' . (string)$data . '"';
-            } else {
-                $result = htmlentities($data);
-                if ($data !== '' && $result === '') {
-                    $result = htmlentities(utf8_encode($data));
-                }
-
-                $result = sprintf(self::$style['debug_string_format'], (string)$result);
-            }
-        } elseif (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
+        if (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
             $result = (string)self::$methodName($data, [
                 'depth'  => ($options['depth'] - 1),
                 'indent' => ($options['indent'] + 1),
             ]);
-            if (php_sapi_name() != 'cli' && !empty(self::$style['debug_' . strtolower($dataType) . '_format'])) {
-                $result = sprintf(self::$style['debug_' . strtolower($dataType) . '_format'], $result);
-            }
         }
 
+        // Format the result
+        if (php_sapi_name() != 'cli' && !empty(self::$style['debug_' . strtolower($dataType) . '_format'])) {
+            $result = sprintf(self::$style['debug_' . strtolower($dataType) . '_format'], $result);
+        }
+
+        // Return result
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    private static function getDebugInformationString($data)
+    {
+        return (string)(php_sapi_name() == 'cli' ? $data : htmlentities($data));
     }
 
     /**
