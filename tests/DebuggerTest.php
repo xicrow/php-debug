@@ -23,6 +23,7 @@ class DebuggerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      * @covers \Xicrow\PhpDebug\Debugger::getDebugInformation
+     * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationString
      * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationNull
      * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationBoolean
      * @covers \Xicrow\PhpDebug\Debugger::getDebugInformationInteger
