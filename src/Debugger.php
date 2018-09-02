@@ -27,8 +27,8 @@ class Debugger
      * @var array
      */
     public static $style = [
-        'output_format'        => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; color: #FF8400; display: block; z-index: 1000;">%s</pre>',
-        'called_from_format'   => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; color: #AAAAAA; display: block; z-index: 1000;">%s</pre>',
+        'output_format'        => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; border-radius: 0; color: #FF8400; display: block; z-index: 1000; overflow: auto;">%s</pre>',
+        'called_from_format'   => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; border-radius: 0; color: #AAAAAA; display: block; z-index: 1000;  overflow: auto;">%s</pre>',
         'debug_null_format'    => '<span style="color: #B729D9;">%s</span>',
         'debug_boolean_format' => '<span style="color: #B729D9;">%s</span>',
         'debug_integer_format' => '<span style="color: #1299DA;">%s</span>',
