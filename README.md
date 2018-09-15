@@ -9,8 +9,13 @@ Debugging tools for PHP
 [![Packagist Total Downloads](https://poser.pugx.org/xicrow/php-debug/downloads)](https://packagist.org/packages/xicrow/php-debug)
 
 ## Installation
-The recommended way to install is through [Composer](https://getcomposer.org/).
-```JSON
+The recommended way to install is through [Composer](https://getcomposer.org/):
+```
+composer require xicrow/php-debug:~2.0
+```
+
+Optionally add it to your `composer.json` file:
+```
 {
     "require": {
         "xicrow/php-debug": "~2.0"
@@ -26,19 +31,23 @@ View the seperate readme for:
 - [Timer](Timer.md)
 
 ## TODO
-- ~~Debug functions for displaying variable information, pr(), vd(), etc.~~
-	*Implemented, available in `Debugger` class*
-- ~~Collection class for Timer::$timers, and maybe others~~
-	*Implemented, available in `Collection` class*
-- ~~Memory class for measuring memory usage~~
-	*Implemented, available in `Memory` class*
-- ~~Improve Timer and Memory, perhaps a Profiler class~~
-	*Implemented, available in `Profiler` class*
-- ~~Add PHPunit tests~~
-	*Implemented, now remeber to keep them updated*
-- Improve Debugger, foldable tree of arrays/objects
-- Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)
+- ~~Debug functions for displaying variable information, pr(), vd(), etc.~~  
+	*Implemented, available in `Debugger` class*  
+- ~~Collection class for Timer::$timers, and maybe others~~  
+	*Implemented, available in `Collection` class*  
+    *Removed, too memory hungry*  
+- ~~Memory class for measuring memory usage~~  
+	*Implemented, available in `Memory` class*  
+    *Removed, too unreliable*  
+- ~~Improve Timer and Memory, perhaps a Profiler class~~  
+	*Implemented, available in `Profiler` class*  
+    *Removed, along with Memory*  
+- ~~Add PHPunit tests~~  
+	*Implemented, now remeber to keep them updated*  
+- Improve Debugger, foldable tree of arrays/objects  
+- Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)  
+- Update example demo output in Debugger and Timer README
 
 ## License
-Copyright &copy; 2016 Jan Ebsen
+Copyright &copy; 2018 Jan Ebsen
 Licensed under the MIT license.
