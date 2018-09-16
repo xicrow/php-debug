@@ -6,7 +6,7 @@ use Xicrow\PhpDebug\Timer;
 /**
  * Class TimerTest
  */
-class TimerTest extends PHPUnit_Framework_TestCase
+class TimerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @inheritdoc
@@ -185,6 +185,7 @@ class TimerTest extends PHPUnit_Framework_TestCase
         });
         $this->assertEquals($expected, $result);
 
+        $this->expectOutputString('php-debug/tests/TimerTest.php line 190' . "\n" . 'Invalid callback sent to Timer::callback: non_existing_function');
         $expected = false;
         $result   = Timer::callback(null, 'non_existing_function');
         $this->assertEquals($expected, $result);
@@ -222,7 +223,6 @@ class TimerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers \Xicrow\PhpDebug\Timer::formatForUnits
      * @covers \Xicrow\PhpDebug\Timer::formatMiliseconds
      */
     public function testFormatMiliseconds()
