@@ -31,23 +31,24 @@ View the seperate readme for:
 - [Timer](Timer.md)
 
 ## TODO
-- ~~Debug functions for displaying variable information, pr(), vd(), etc.~~
-	*Implemented, available in `Debugger` class*
-- ~~Collection class for Timer::$timers, and maybe others~~
-	*Implemented, available in `Collection` class*
-    *Removed, too memory hungry*
-- ~~Memory class for measuring memory usage~~
-	*Implemented, available in `Memory` class*
-    *Removed, too unreliable*
-- ~~Improve Timer and Memory, perhaps a Profiler class~~
-	*Implemented, available in `Profiler` class*
-    *Removed, along with Memory*
-- ~~Add PHPunit tests~~
-	*Implemented, now remeber to keep them updated*
-- Improve Debugger, foldable tree of arrays/objects
-- Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)
-- Update example demo output in Debugger and Timer README
-- Update to PHP 7.0
+- ~~Debug functions for displaying variable information, pr(), vd(), etc.~~  
+	*Implemented, available in `Debugger` class*  
+- ~~Collection class for Timer::$timers, and maybe others~~  
+	*Implemented, available in `Collection` class*  
+    *Removed, too memory hungry*  
+- ~~Memory class for measuring memory usage~~  
+	*Implemented, available in `Memory` class*  
+    *Removed, too unreliable*  
+- ~~Improve Timer and Memory, perhaps a Profiler class~~  
+	*Implemented, available in `Profiler` class*  
+    *Removed, along with Memory*  
+- ~~Add PHPunit tests~~  
+	*Implemented, now remeber to keep them updated*  
+- ~~Improve Debugger, foldable tree of arrays/objects~~  
+    *Skipped, not sensible to do, clutter with either HTML or JS/CSS*
+- Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)  
+- Update example demo output in Debugger and Timer README  
+- Update to PHP 7.0  
 
 ## License
 Copyright &copy; 2018 Jan Ebsen
