@@ -11,14 +11,14 @@ Debugging tools for PHP
 ## Installation
 The recommended way to install is through [Composer](https://getcomposer.org/):
 ```
-composer require xicrow/php-debug:~2.0
+composer require xicrow/php-debug:~3.0
 ```
 
 Optionally add it to your `composer.json` file:
 ```
 {
     "require": {
-        "xicrow/php-debug": "~2.0"
+        "xicrow/php-debug": "~3.0"
     }
 }
 ```
