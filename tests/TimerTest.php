@@ -16,7 +16,7 @@ class TimerTest extends \PHPUnit\Framework\TestCase
         parent::__construct($name, $data, $dataName);
 
         // Set debugger options
-        Debugger::$documentRoot   = realpath('../');
+        Debugger::$documentRoot   = realpath('.');
         Debugger::$showCalledFrom = false;
         Debugger::$output         = false;
     }
