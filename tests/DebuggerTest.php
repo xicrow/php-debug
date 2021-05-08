@@ -1,10 +1,18 @@
 <?php
+/** @noinspection PhpUnused */
+/** @noinspection PhpUnusedPrivateFieldInspection */
+/** @noinspection PhpUnusedPrivateMethodInspection */
+namespace Xicrow\PhpDebug\Test;
+
+use DateTime;
+use DateTimeZone;
+use PHPUnit\Framework\TestCase;
 use Xicrow\PhpDebug\Debugger;
 
 /**
  * Class DebuggerTest
  */
-class DebuggerTest extends \PHPUnit\Framework\TestCase
+class DebuggerTest extends TestCase
 {
 	/**
 	 * @inheritdoc
@@ -34,38 +42,36 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 	public function testGetDebugInformation()
 	{
 		// Make sure string is allways returned
-		$expected = 'string';
 		$result   = Debugger::getDebugInformation('string');
-		$this->assertInternalType($expected, $result);
+		self::assertIsString($result);
 
-		$expected = 'string';
 		$result   = Debugger::getDebugInformation(123);
-		$this->assertInternalType($expected, $result);
+		self::assertIsString($result);
 
 		// Test all PHP data types
 		$expected = 'NULL';
 		$result   = Debugger::getDebugInformation(null);
-		$this->assertContains($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$expected = 'TRUE';
 		$result   = Debugger::getDebugInformation(true);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$expected = 'FALSE';
 		$result   = Debugger::getDebugInformation(false);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$expected = '123';
 		$result   = Debugger::getDebugInformation(123);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$expected = '123.123';
 		$result   = Debugger::getDebugInformation(123.123);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$expected = '"string"';
 		$result   = Debugger::getDebugInformation('string');
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$data     = [1, 2, 3];
 		$expected = '[';
@@ -78,28 +84,22 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 		$expected .= "\n";
 		$expected .= ']';
 		$result   = Debugger::getDebugInformation($data);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$data = new DateTime();
 		$data->setTimezone(new DateTimeZone('Europe/Copenhagen'));
 		$data->setDate(2016, 01, 01);
 		$data->setTime(00, 00, 00);
-		$expected = 'object(DateTime) {';
-		$expected .= "\n";
-		$expected .= '	date => "2016-01-01 00:00:00.000000"';
-		$expected .= "\n";
-		$expected .= '	timezone_type => 3';
-		$expected .= "\n";
-		$expected .= '	timezone => "Europe/Copenhagen"';
-		$expected .= "\n";
+		$expected = 'object(DateTime) {'."\n";
+		$expected .= "\t\n";
 		$expected .= '}';
 		$result   = Debugger::getDebugInformation($data);
-		$this->assertEquals($expected, $result);
+		self::assertEquals($expected, $result);
 
 		$resource = fopen(realpath(__DIR__ . '/../README.md'), 'r');
 		$expected = '#Resource id \#[0-9]+ \(stream\)#';
 		$result   = Debugger::getDebugInformation($resource);
-		$this->assertRegExp($expected, $result);
+		self::assertMatchesRegularExpression($expected, $result);
 		fclose($resource);
 	}
 
@@ -110,24 +110,23 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testGetCalledFrom()
 	{
-		$expected = 'string';
 		$result   = Debugger::getCalledFrom();
-		$this->assertInternalType($expected, $result);
+		self::assertIsString($result);
 
-		$expected = 'DebuggerTest->testGetCalledFrom';
-		$result   = Debugger::getCalledFrom(1);
-		$this->assertContains($expected, $result);
+		$expected = 'DebuggerTest.php line 117';
+		$result   = Debugger::getCalledFrom(0);
+		self::assertStringContainsString($expected, $result);
 
 		$expected = 'Unknown trace with index: 99';
 		$result   = Debugger::getCalledFrom(99);
-		$this->assertContains($expected, $result);
+		self::assertStringContainsString($expected, $result);
 
 		$expected = 'DebuggerTest.php line 86';
 		$result   = Debugger::getCalledFromTrace([
 			'file' => __DIR__ . 'DebuggerTest.php',
 			'line' => 86,
 		]);
-		$this->assertContains($expected, $result);
+		self::assertStringContainsString($expected, $result);
 
 		$expected = 'DebuggerTest->testGetCalledFrom';
 		$result   = Debugger::getCalledFromTrace([
@@ -135,7 +134,7 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 			'type'     => '->',
 			'function' => 'testGetCalledFrom',
 		]);
-		$this->assertContains($expected, $result);
+		self::assertStringContainsString($expected, $result);
 	}
 
 	/**
@@ -146,24 +145,24 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testReflectClass()
 	{
-		$result = Debugger::reflectClass('DebuggerTestClass');
-		$this->assertContains('class DebuggerTestClass', $result);
+		$result = Debugger::reflectClass(DebuggerTestClass::class);
+		self::assertStringContainsString('Class DebuggerTestClass', $result);
 
-		$this->assertContains('public $publicProperty = "public";', $result);
-		$this->assertContains('private $privateProperty = "private";', $result);
-		$this->assertContains('protected $protectedProperty = "protected";', $result);
+		self::assertStringContainsString('public $publicProperty = "public";', $result);
+		self::assertStringContainsString('private $privateProperty = "private";', $result);
+		self::assertStringContainsString('protected $protectedProperty = "protected";', $result);
 
-		$this->assertContains('public static $publicStaticProperty = "public static";', $result);
-		$this->assertContains('private static $privateStaticProperty = "private static";', $result);
-		$this->assertContains('protected static $protectedStaticProperty = "protected static";', $result);
+		self::assertStringContainsString('public static $publicStaticProperty = "public static";', $result);
+		self::assertStringContainsString('private static $privateStaticProperty = "private static";', $result);
+		self::assertStringContainsString('protected static $protectedStaticProperty = "protected static";', $result);
 
-		$this->assertContains('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
-		$this->assertContains('private function privateFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
-		$this->assertContains('protected function protectedFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('private function privateFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('protected function protectedFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
 
-		$this->assertContains('public static function publicStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
-		$this->assertContains('private static function privateStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
-		$this->assertContains('protected static function protectedStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('public static function publicStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('private static function privateStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		self::assertStringContainsString('protected static function protectedStaticFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
 	}
 
 	/**
@@ -172,8 +171,8 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testReflectClassProperty()
 	{
-		$result = Debugger::reflectClassProperty('DebuggerTestClass', 'publicProperty');
-		$this->assertContains('public $publicProperty = "public"', $result);
+		$result = Debugger::reflectClassProperty(DebuggerTestClass::class, 'publicProperty');
+		self::assertStringContainsString('public $publicProperty = "public"', $result);
 	}
 
 	/**
@@ -182,8 +181,8 @@ class DebuggerTest extends \PHPUnit\Framework\TestCase
 	 */
 	public function testReflectClassMethod()
 	{
-		$result = Debugger::reflectClassMethod('DebuggerTestClass', 'publicFunction');
-		$this->assertContains('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
+		$result = Debugger::reflectClassMethod(DebuggerTestClass::class, 'publicFunction');
+		self::assertStringContainsString('public function publicFunction($param1, $param2 = NULL, $param3 = TRUE, $param4 = 4, $param5 = "5", $param6 = [])', $result);
 	}
 }
 
@@ -197,32 +196,32 @@ class DebuggerTestClass
 	/**
 	 * @var string
 	 */
-	public $publicProperty = 'public';
+	public string $publicProperty = 'public';
 
 	/**
 	 * @var string
 	 */
-	private $privateProperty = 'private';
+	private string $privateProperty = 'private';
 
 	/**
 	 * @var string
 	 */
-	protected $protectedProperty = 'protected';
+	protected string $protectedProperty = 'protected';
 
 	/**
 	 * @var string
 	 */
-	public static $publicStaticProperty = 'public static';
+	public static string $publicStaticProperty = 'public static';
 
 	/**
 	 * @var string
 	 */
-	private static $privateStaticProperty = 'private static';
+	private static string $privateStaticProperty = 'private static';
 
 	/**
 	 * @var string
 	 */
-	protected static $protectedStaticProperty = 'protected static';
+	protected static string $protectedStaticProperty = 'protected static';
 
 	/**
 	 * @param        $param1
