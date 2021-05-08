@@ -1,9 +1,11 @@
 # Debugger
 
 ## Example
+
 See example in [demo/debugger.php](demo/debugger.php).
 
 Example output:
+
 ```
 php-debug/demo/debugger.php line 35
 NULL

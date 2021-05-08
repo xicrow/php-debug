@@ -1,32 +1,31 @@
 # language: php
 
 checks:
-    php:
-        verify_property_names: true
-        verify_argument_usable_as_reference: true
-        verify_access_scope_valid: true
-        variable_existence: true
-        useless_calls: true
-        code_rating: true
-        duplication: true
+  php:
+    verify_property_names: true
+    verify_argument_usable_as_reference: true
+    verify_access_scope_valid: true
+    variable_existence: true
+    useless_calls: true
+    code_rating: true
+    duplication: true
 
 filter:
-    paths:
-        - src/*
-    excluded_paths:
-        - src/autoload.php
+  paths:
+    - src/*
+  excluded_paths:
+    - src/autoload.php
 
 tools:
-    sensiolabs_security_checker: true
-    external_code_coverage: false
+  sensiolabs_security_checker: true
+  external_code_coverage: false
 
 build:
-    environment:
-        php: 5.6
-    tests:
-        override:
-            -
-                command: 'vendor/bin/phpunit --coverage-clover=code-coverage.xml'
-                coverage:
-                    file: 'code-coverage.xml'
-                    format: 'php-clover'
+  environment:
+    php: 5.6
+  tests:
+    override:
+      - command: 'vendor/bin/phpunit --coverage-clover=code-coverage.xml'
+        coverage:
+          file: 'code-coverage.xml'
+          format: 'php-clover'

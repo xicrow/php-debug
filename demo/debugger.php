@@ -6,7 +6,7 @@ ini_set('log_errors', 0);
 
 require_once('../src/autoload.php');
 
-use \Xicrow\PhpDebug\Debugger;
+use Xicrow\PhpDebug\Debugger;
 
 Debugger::$documentRoot   = 'E:\\GitHub\\';
 Debugger::$showCalledFrom = true;
@@ -18,42 +18,42 @@ Debugger::$showCalledFrom = true;
 	</head>
 
 	<body>
-        <?php
-        $closure  = function () {
-            return true;
-        };
-        $stdClass = (new stdClass());
+		<?php
+		$closure  = function () {
+			return true;
+		};
+		$stdClass = (new stdClass());
 
-        function foo()
-        {
-            Debugger::showTrace();
-        }
+		function foo()
+		{
+			Debugger::showTrace();
+		}
 
-        function bar()
-        {
-            foo();
-        }
+		function bar()
+		{
+			foo();
+		}
 
-        Debugger::debug(null);
-        Debugger::debug(true);
-        Debugger::debug(false);
-        Debugger::debug('string');
-        Debugger::debug(123);
-        Debugger::debug(123.123);
-        Debugger::debug([1, 2, 3]);
-        Debugger::debug($closure);
-        Debugger::debug($stdClass);
-        Debugger::debug(fopen('../README.md', 'r'));
+		Debugger::debug(null);
+		Debugger::debug(true);
+		Debugger::debug(false);
+		Debugger::debug('string');
+		Debugger::debug(123);
+		Debugger::debug(123.123);
+		Debugger::debug([1, 2, 3]);
+		Debugger::debug($closure);
+		Debugger::debug($stdClass);
+		Debugger::debug(fopen('../README.md', 'r'));
 
-        Debugger::showTrace();
-        foo();
-        bar();
+		Debugger::showTrace();
+		foo();
+		bar();
 
-        Debugger::debug(Debugger::getCalledFrom());
-        Debugger::debug(Debugger::getCalledFrom(1));
+		Debugger::debug(Debugger::getCalledFrom());
+		Debugger::debug(Debugger::getCalledFrom(1));
 
-        Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
-        Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
-        ?>
+		Debugger::reflectClass('\Xicrow\PhpDebug\Debugger');
+		Debugger::reflectClassMethod('\Xicrow\PhpDebug\Debugger', 'showTrace');
+		?>
 	</body>
 </html>

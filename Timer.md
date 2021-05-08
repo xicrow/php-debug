@@ -1,9 +1,11 @@
 # Timer
 
 ## Example
+
 See example in [demo/timer.php](demo/timer.php).
 
 Example output:
+
 ```
 php-debug/demo/timer.php line 70
 Total                                                                                                |            0.8361 MS
