@@ -1,28 +1,14 @@
 <phpunit
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.2/phpunit.xsd"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
 	bootstrap="src/autoload.php"
-	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	stopOnError="false"
-	stopOnFailure="false"
-	stopOnIncomplete="false"
-	stopOnSkipped="false"
-	stopOnRisky="false"
-	strict="true"
 	verbose="true"
-	colors="true">
+	colors="true"
+	>
 	<testsuites>
 		<testsuite name="All tests">
-			<directory suffix="Test.php" phpVersion="5.6" phpVersionOperator=">=">tests</directory>
+			<directory  phpVersion="7.4" phpVersionOperator=">=">tests</directory>
 		</testsuite>
 	</testsuites>
-	<filter>
-		<whitelist>
-			<directory>src</directory>
-		</whitelist>
-	</filter>
 </phpunit>
