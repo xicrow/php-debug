@@ -1,0 +1,82 @@
+.xicrow-php-debug-box {
+	margin: 5px 0;
+	font-family: Menlo, Monaco, Consolas, monospace;
+	font-weight: normal;
+	font-size: 12px;
+	display: grid;
+	grid-template-rows: min-content 1fr min-content;
+
+	.xicrow-php-debug-box-header {
+		margin: 0;
+		padding: 10px;
+		font: inherit;
+		background-color: #333333;
+		border: none;
+		border-radius: 0;
+		color: #AAAAAA;
+		display: block;
+		z-index: 1000;
+		overflow: auto;
+	}
+
+	.xicrow-php-debug-box-content {
+		margin: 0;
+		padding: 10px;
+		font: inherit;
+		background-color: #222222;
+		border: none;
+		border-radius: 0;
+		color: #CCCCCC;
+		z-index: 1000;
+
+		pre {
+			margin: 0;
+			padding: 0;
+			font: inherit;
+			display: block;
+			overflow: auto;
+			tab-size: 4;
+			-moz-tab-size: 4;
+
+			.xicrow-php-debug-data-type-null {
+				color: #B729D9;
+			}
+
+			.xicrow-php-debug-data-type-boolean {
+				color: #FF8400;
+			}
+
+			.xicrow-php-debug-data-type-integer {
+				color: deepskyblue;
+			}
+
+			.xicrow-php-debug-data-type-double {
+				color: lightgreen;
+			}
+
+			.xicrow-php-debug-data-type-string {
+				color: lightgray;
+			}
+		}
+	}
+
+	.xicrow-php-debug-box-footer {
+		margin: 0;
+		padding: 10px;
+		font: inherit;
+		background-color: #333333;
+		border: none;
+		border-radius: 0;
+		color: #666666;
+		display: block;
+		z-index: 1000;
+		overflow: auto;
+	}
+}
+
+.xicrow-php-debug-compare {
+	display: grid;
+	grid-auto-flow: column;
+	grid-column-gap: 10px;
+	font-family: monospace;
+}
