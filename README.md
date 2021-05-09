@@ -13,17 +13,29 @@ Debugging tools for PHP
 
 The recommended way to install is through [Composer](https://getcomposer.org/):
 
+```bash
+composer require xicrow/php-debug:~4.0
 ```
-composer require xicrow/php-debug:~3.0
+OR
+```bash
+composer require --dev xicrow/php-debug:~4.0
 ```
 
 Optionally add it to your `composer.json` file:
 
-```
+```json
 {
-    "require": {
-        "xicrow/php-debug": "~3.0"
-    }
+	"require": {
+		"xicrow/php-debug": "~4.0"
+	}
+}
+```
+OR
+```json
+{
+	"require-dev": {
+		"xicrow/php-debug": "~4.0"
+	}
 }
 ```
 
@@ -55,7 +67,12 @@ View the seperate readme for:
   *Skipped, not sensible to do, clutter with either HTML or JS/CSS*
 - Groupable timers, timers with the same name will be grouped and min, max and average will be calculated (activate when stopping a timer)
 - Update example demo output in Debugger and Timer README
-- Update to PHP 7.0
+- ~~Update to PHP 7.4~~
+  Done
+  Implemented type declarations, return types, etc.
+  Implemented type prefixed variables
+- Change option arrays to explicit variables or option classes
+  Fixed in most places, just need the rest
 
 ## License
 
