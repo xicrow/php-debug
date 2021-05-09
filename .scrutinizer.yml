@@ -13,8 +13,6 @@ checks:
 filter:
   paths:
     - src/*
-  excluded_paths:
-    - src/autoload.php
 
 tools:
   sensiolabs_security_checker: true
