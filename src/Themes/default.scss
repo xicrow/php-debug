@@ -58,6 +58,12 @@
 				color: lightgray;
 			}
 		}
+
+		.xicrow-php-debug-timer {
+			&:hover {
+				background-color: #333333;
+			}
+		}
 	}
 
 	.xicrow-php-debug-box-footer {

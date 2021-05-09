@@ -8,9 +8,56 @@ namespace Xicrow\PhpDebug;
  */
 class Utility
 {
-	public static bool   $bOutputEnabled     = true;
-	public static bool   $bOutputInlineStyle = true;
-	public static string $bInlineStylePath   = __DIR__ . '/Themes/default.css';
+	public static bool    $bOutputEnabled                       = true;
+	public static bool    $bOutputInlineStyle                   = true;
+	public static string  $bInlineStylePath                     = __DIR__ . '/Themes/default.css';
+	public static ?string $strFormatMilisecondsForceDisplayUnit = null;
+
+	/**
+	 * @param float       $fNumber
+	 * @param int         $iPrecision
+	 * @param null|string $strForceUnit
+	 *
+	 * @return string
+	 */
+	public static function formatMiliseconds(float $fNumber = 0.0, int $iPrecision = 2, ?string $strForceUnit = null): string
+	{
+		$arrUnits = [
+			'MS' => 1,
+			'S'  => 1000,
+			'M'  => 60,
+			'H'  => 60,
+			'D'  => 24,
+			'W'  => 7,
+		];
+
+		if ($strForceUnit === null) {
+			$strForceUnit = self::$strFormatMilisecondsForceDisplayUnit;
+		}
+
+		$fValue = $fNumber;
+		if (!empty($strForceUnit) && array_key_exists($strForceUnit, $arrUnits)) {
+			$strCurrentUnit = $strForceUnit;
+			foreach ($arrUnits as $strUnit => $iValue) {
+				$fValue = ($fValue / $iValue);
+				if ($strCurrentUnit === $strUnit) {
+					break;
+				}
+			}
+		} else {
+			$strCurrentUnit = '';
+			foreach ($arrUnits as $strUnit => $iValue) {
+				if ($strCurrentUnit === '' || ($fValue / $iValue) > 1) {
+					$fValue         = ($fValue / $iValue);
+					$strCurrentUnit = $strUnit;
+				} else {
+					break;
+				}
+			}
+		}
+
+		return sprintf('%0.' . $iPrecision . 'f', $fValue) . ' ' . str_pad($strCurrentUnit, 2, ' ', STR_PAD_RIGHT);
+	}
 
 	/**
 	 * @return bool

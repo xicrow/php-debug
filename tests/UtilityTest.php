@@ -92,4 +92,23 @@ class UtilityTest extends TestCase
 		self::assertEquals('12.34', Utility::wrapDataType('double', '12.34'));
 		self::assertEquals('test', Utility::wrapDataType('string', 'test'));
 	}
+
+	public function testFormatMiliseconds()
+	{
+		$strExpected = '500.00 MS';
+		$strActual   = Utility::formatMiliseconds(500, 2, 'MS');
+		self::assertEquals($strExpected, $strActual);
+
+		$strExpected = '5000.00 MS';
+		$strActual   = Utility::formatMiliseconds(5000, 2, 'MS');
+		self::assertEquals($strExpected, $strActual);
+
+		$strExpected = '5.00 S ';
+		$strActual   = Utility::formatMiliseconds((5 * 1000));
+		self::assertEquals($strExpected, $strActual);
+
+		$strExpected = '5.00 M ';
+		$strActual   = Utility::formatMiliseconds((5 * 1000 * 60));
+		self::assertEquals($strExpected, $strActual);
+	}
 }

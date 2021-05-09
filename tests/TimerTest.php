@@ -3,7 +3,6 @@ namespace Xicrow\PhpDebug\Test;
 
 use DateTime;
 use DateTimeZone;
-use ErrorException;
 use PHPUnit\Framework\TestCase;
 use Xicrow\PhpDebug\Debugger;
 use Xicrow\PhpDebug\Timer;
@@ -16,95 +15,72 @@ class TimerTest extends TestCase
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct($name = null, array $data = [], $dataName = '')
+	public function __construct($strName = null, array $arrData = [], $strDataName = '')
 	{
-		parent::__construct($name, $data, $dataName);
+		parent::__construct($strName, $arrData, $strDataName);
 
 		// Set debugger options
-		Debugger::$documentRoot   = realpath('.');
-		Debugger::$showCalledFrom = false;
-		Debugger::$output         = false;
+		Debugger::$strDocumentRoot = dirname(__DIR__);
+		Debugger::$bShowCalledFrom = false;
 	}
 
 	/**
 	 * @test
 	 * @covers \Xicrow\PhpDebug\Timer::reset
 	 * @covers \Xicrow\PhpDebug\Timer::add
-	 */
-	public function testAdd()
-	{
-		Timer::reset();
-
-		$expected = 0;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
-
-		$expected = 'test';
-		$result   = Timer::add('test');
-		self::assertEquals($expected, $result);
-
-		$expected = 1;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
-	}
-
-	/**
-	 * @test
-	 * @covers \Xicrow\PhpDebug\Timer::reset
-	 * @covers \Xicrow\PhpDebug\Timer::add
-	 * @covers \Xicrow\PhpDebug\Timer::start
+	 * @covers \Xicrow\PhpDebug\Timer::begin
 	 */
 	public function testStart()
 	{
 		Timer::reset();
 
-		$expected = 0;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
+		$iExpected = 0;
+		$iActual   = Timer::count();
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = 'test';
-		$result   = Timer::start('test');
-		self::assertEquals($expected, $result);
+		$strExpected = 'test';
+		$strActual   = Timer::begin('test');
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 1;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
+		$iExpected = 1;
+		$iActual   = Timer::count();
+		self::assertEquals($iExpected, $iActual);
 	}
 
 	/**
 	 * @test
 	 * @covers \Xicrow\PhpDebug\Timer::reset
 	 * @covers \Xicrow\PhpDebug\Timer::add
-	 * @covers \Xicrow\PhpDebug\Timer::start
-	 * @covers \Xicrow\PhpDebug\Timer::stop
+	 * @covers \Xicrow\PhpDebug\Timer::begin
+	 * @covers \Xicrow\PhpDebug\Timer::end
 	 */
 	public function testStop()
 	{
 		Timer::reset();
 
-		$expected = 0;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
+		$iExpected = 0;
+		$iActual   = Timer::count();
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = null;
-		$result   = Timer::stop();
-		self::assertEquals($expected, $result);
+		$strExpected = null;
+		$strActual   = Timer::end();
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 0;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
+		$iExpected = 0;
+		$iActual   = Timer::count();
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = 'test';
-		$result   = Timer::start('test');
-		self::assertEquals($expected, $result);
+		$strExpected = 'test';
+		$strActual   = Timer::begin('test');
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 'test';
-		$result   = Timer::stop('test');
-		self::assertEquals($expected, $result);
+		$strExpected = 'test';
+		$strActual   = Timer::end('test');
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 1;
-		$result   = count(Timer::$collection);
-		self::assertEquals($expected, $result);
+		$iExpected = 1;
+		$iActual   = Timer::count();
+		self::assertEquals($iExpected, $iActual);
 	}
 
 	/**
@@ -117,84 +93,90 @@ class TimerTest extends TestCase
 	{
 		Timer::reset();
 
-		$expected = 'test';
-		$result   = Timer::custom('test');
-		self::assertEquals($expected, $result);
+		$strExpected = 'test';
+		$strActual   = Timer::custom('test');
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 'custom1';
-		$result   = Timer::custom('custom1');
-		self::assertEquals($expected, $result);
+		$strExpected = 'custom1';
+		$strActual   = Timer::custom('custom1');
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 'custom2';
-		$result   = Timer::custom('custom2', time());
-		self::assertEquals($expected, $result);
+		$strExpected = 'custom2';
+		$strActual   = Timer::custom('custom2', time());
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = 'custom3';
-		$result   = Timer::custom('custom3', time(), time());
-		self::assertEquals($expected, $result);
+		$strExpected = 'custom3';
+		$strActual   = Timer::custom('custom3', time(), time());
+		self::assertEquals($strExpected, $strActual);
 	}
 
 	/**
 	 * @test
 	 * @covers \Xicrow\PhpDebug\Timer::reset
 	 * @covers \Xicrow\PhpDebug\Timer::add
-	 * @covers \Xicrow\PhpDebug\Timer::start
-	 * @covers \Xicrow\PhpDebug\Timer::stop
+	 * @covers \Xicrow\PhpDebug\Timer::begin
+	 * @covers \Xicrow\PhpDebug\Timer::end
 	 * @covers \Xicrow\PhpDebug\Timer::callback
-	 * @throws ErrorException
 	 */
 	public function testCallback()
 	{
 		Timer::reset();
 
-		$expected = time();
-		$result   = Timer::callback(null, 'time');
-		self::assertEquals($expected, $result);
+		$iExpected = time();
+		$iActual   = Timer::callback('time');
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = strpos('Hello world', 'world');
-		$result   = Timer::callback(null, 'strpos', 'Hello world', 'world');
-		self::assertEquals($expected, $result);
+		$iExpected = strpos('Hello world', 'world');
+		$iActual   = Timer::callback('strpos', ['Hello world', 'world']);
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = array_sum([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		$result   = Timer::callback(null, 'array_sum', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		self::assertEquals($expected, $result);
+		$iExpected = array_sum([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		$iActual   = Timer::callback('array_sum', [[1, 2, 3, 4, 5, 6, 7, 8, 9]]);
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = min([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		$result   = Timer::callback(null, 'min', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		self::assertEquals($expected, $result);
+		$iExpected = min([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		$iActual   = Timer::callback('min', [[1, 2, 3, 4, 5, 6, 7, 8, 9]]);
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = max([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		$result   = Timer::callback(null, 'max', [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-		self::assertEquals($expected, $result);
+		$iExpected = max([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		$iActual   = Timer::callback('max', [[1, 2, 3, 4, 5, 6, 7, 8, 9]]);
+		self::assertEquals($iExpected, $iActual);
 
-		$expected = 'Xicrow\PhpDebug\Debugger::getCalledFrom()';
-		$result   = Timer::callback(null, ['Xicrow\PhpDebug\Debugger', 'getCalledFrom']);
-		self::assertEquals($expected, $result);
+		$strExpected = 'Xicrow\PhpDebug\Debugger::getCalledFrom()';
+		$strActual   = Timer::callback(['Xicrow\PhpDebug\Debugger', 'getCalledFrom']);
+		self::assertEquals($strExpected, $strActual);
 
-		$dateTime = new DateTime();
-		$dateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
-		$dateTime->setDate(2016, 01, 01);
-		$dateTime->setTime(00, 00, 00);
-		$expected = '2016-01-01 00:00:00';
-		$result   = Timer::callback(null, [$dateTime, 'format'], 'Y-m-d H:i:s');
-		self::assertEquals($expected, $result);
+		$oDateTime = new DateTime();
+		$oDateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$oDateTime->setDate(2016, 01, 01);
+		$oDateTime->setTime(00, 00, 00);
+		$strExpected = '2016-01-01 00:00:00';
+		$strActual   = Timer::callback([$oDateTime, 'format'], ['Y-m-d H:i:s']);
+		self::assertEquals($strExpected, $strActual);
 
-		$expected = true;
-		$result   = Timer::callback(null, function () {
+		$bExpected = true;
+		$bActual   = Timer::callback(static function () {
 			return true;
 		});
-		self::assertEquals($expected, $result);
+		self::assertEquals($bExpected, $bActual);
 
-		$expected = false;
-		$result   = Timer::callback(null, function () {
+		$bExpected = false;
+		$bActual   = Timer::callback(static function () {
 			return false;
 		});
-		self::assertEquals($expected, $result);
+		self::assertEquals($bExpected, $bActual);
 
-		self::expectOutputString('tests/TimerTest.php line 196' . "\n" . 'Invalid callback sent to Timer::callback: non_existing_function');
-		$expected = false;
-		$result   = Timer::callback(null, 'non_existing_function');
-		self::assertEquals($expected, $result);
+		$iLineNo    = __LINE__ + 9;
+		self::expectOutputString(<<<TXT
+		
+		############################################## Error ###############################################
+		Invalid callback sent to Timer::callback(): non_existing_function
+		----------------------------------- tests/TimerTest.php line {$iLineNo} -----------------------------------
+
+		TXT);
+		$bExpected = false;
+		$bActual   = Timer::callback('non_existing_function');
+		self::assertEquals($bExpected, $bActual);
 	}
 
 	/**
@@ -208,45 +190,22 @@ class TimerTest extends TestCase
 	{
 		Timer::reset();
 
-		$expected = 'Unknow item in with key: foo';
-		$result   = Timer::getStats('foo');
-		self::assertEquals($expected, $result);
+		$strExpected = 'Unknown item with key: foo';
+		$strActual   = Timer::getStats('foo');
+		self::assertEquals($strExpected, $strActual);
 
-		$timerName = 'Foo';
-		Timer::custom($timerName, 0.1, 0.2);
+		$strTimerName = 'Foo';
+		Timer::custom($strTimerName, 0.1, 0.2);
 
-		$result = Timer::getStats($timerName);
-		self::assertStringContainsString($timerName, $result);
-		self::assertStringContainsString('100.0000 MS', $result);
+		$strActual = Timer::getStats($strTimerName);
+		self::assertStringContainsString($strTimerName, $strActual);
+		self::assertStringContainsString('100.0000 MS', $strActual);
 
-		$timerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
-		Timer::custom($timerName, 0.1, 0.2);
+		$strTimerName = 'Really, really, really, really, really, really, really, really, really, really, really, really, really long timer name';
+		Timer::custom($strTimerName, 0.1, 0.2);
 
-		$result = Timer::getStats($timerName);
-		self::assertStringContainsString(substr($timerName, -20), $result);
-		self::assertStringContainsString('100.0000 MS', $result);
-	}
-
-	/**
-	 * @test
-	 * @covers \Xicrow\PhpDebug\Timer::formatMiliseconds
-	 */
-	public function testFormatMiliseconds()
-	{
-		$expected = '500.00 MS';
-		$result   = Timer::formatMiliseconds(500, 2, 'MS');
-		self::assertEquals($expected, $result);
-
-		$expected = '5000.00 MS';
-		$result   = Timer::formatMiliseconds(5000, 2, 'MS');
-		self::assertEquals($expected, $result);
-
-		$expected = '5.00 S ';
-		$result   = Timer::formatMiliseconds((5 * 1000));
-		self::assertEquals($expected, $result);
-
-		$expected = '5.00 M ';
-		$result   = Timer::formatMiliseconds((5 * 1000 * 60));
-		self::assertEquals($expected, $result);
+		$strActual = Timer::getStats($strTimerName);
+		self::assertStringContainsString(substr($strTimerName, -20), $strActual);
+		self::assertStringContainsString('100.0000 MS', $strActual);
 	}
 }
