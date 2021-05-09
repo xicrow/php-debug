@@ -1,6 +1,10 @@
 <?php
 namespace Xicrow\PhpDebug;
 
+use Exception;
+use ReflectionObject;
+use ReflectionProperty;
+
 /**
  * Class Debugger
  *
@@ -8,491 +12,339 @@ namespace Xicrow\PhpDebug;
  */
 class Debugger
 {
-	/**
-	 * @var string|null
-	 */
-	public static $documentRoot = null;
+	public static ?string $strDocumentRoot = null;
+	public static bool    $bShowCalledFrom = true;
 
 	/**
-	 * @var bool
-	 */
-	public static $showCalledFrom = true;
-
-	/**
-	 * @var bool
-	 */
-	public static $output = true;
-
-	/**
-	 * @var array
-	 */
-	public static $style = [
-		'output_format'        => '<pre style="margin-top: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: bold; font-size: 12px; background-color: #18171B; border: none; border-radius: 0; color: #FF8400; display: block; z-index: 1000; overflow: auto;">%s</pre>',
-		'called_from_format'   => '<pre style="margin-bottom: 0; padding: 5px; font-family: Menlo, Monaco, Consolas, monospace; font-weight: normal; font-size: 12px; background-color: #18171B; border: none; border-radius: 0; color: #AAAAAA; display: block; z-index: 1000;  overflow: auto;">%s</pre>',
-		'debug_null_format'    => '<span style="color: #B729D9;">%s</span>',
-		'debug_boolean_format' => '<span style="color: #B729D9;">%s</span>',
-		'debug_integer_format' => '<span style="color: #1299DA;">%s</span>',
-		'debug_double_format'  => '<span style="color: #1299DA;">%s</span>',
-		'debug_string_format'  => '<span style="color: #1299DA;">"</span>%s<span style="color: #1299DA;">"</span>',
-	];
-
-	/**
-	 * @param string $data
-	 * @param array  $options
+	 * @param mixed  $mData
+	 * @param string $strHeaderText
+	 * @param int    $iTraceOffset
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function output($data, array $options = [])
+	public static function debug($mData, string $strHeaderText = '', int $iTraceOffset = 0): void
 	{
-		$options = array_merge([
-			'trace_offset' => 0,
-		], $options);
-
-		if (!self::$output || !is_string($data)) {
-			return;
-		}
-
-		if (php_sapi_name() == 'cli') {
-			echo str_pad(' DEBUG ', 100, '-', STR_PAD_BOTH);
-			echo "\n";
-			if (self::$showCalledFrom) {
-				echo self::getCalledFrom($options['trace_offset'] + 2);
-				echo "\n";
-			}
-			echo $data;
-			echo "\n";
-		} else {
-			if (self::$showCalledFrom) {
-				echo sprintf(self::$style['called_from_format'], self::getCalledFrom($options['trace_offset'] + 2));
-			}
-			echo sprintf(self::$style['output_format'], $data);
-		}
+		Utility::outputBox(
+			$strHeaderText,
+			self::getDebugInformation($mData),
+			self::$bShowCalledFrom ? self::getCalledFrom($iTraceOffset + 1) : ''
+		);
 	}
 
 	/**
-	 * @param mixed $data
-	 * @param array $options
+	 * @param array  $arrData
+	 * @param string $strHeaderText
+	 * @param int    $iTraceOffset
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function debug($data, array $options = [])
+	public static function debugMultiple(array $arrData, string $strHeaderText = '', int $iTraceOffset = 0): void
 	{
-		$options = array_merge([
-			'trace_offset' => 0,
-		], $options);
-
-		self::output(self::getDebugInformation($data), $options);
+		foreach ($arrData as $mData) {
+			self::debug($mData, $strHeaderText, $iTraceOffset + 1);
+		}
 	}
 
 	/**
-	 * @param array $options
+	 * @param array  $arrResults
+	 * @param string $strHeaderText
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function showTrace(array $options = [])
+	public static function compare(array $arrResults, string $strHeaderText = 'Result'): void
 	{
-		$options = array_merge([
-			'trace_offset' => 0,
-			'reverse'      => false,
-		], $options);
-
-		$backtrace = ($options['reverse'] ? array_reverse(debug_backtrace()) : debug_backtrace());
-
-		$output     = '';
-		$traceIndex = ($options['reverse'] ? 1 : count($backtrace));
-		foreach ($backtrace as $trace) {
-			$output .= $traceIndex . ': ';
-			$output .= self::getCalledFromTrace($trace);
-			$output .= "\n";
-
-			$traceIndex += ($options['reverse'] ? 1 : -1);
+		$arrBoxes = [];
+		foreach ($arrResults as $iIndex => $mResult) {
+			ob_start();
+			Utility::outputBox(
+				$strHeaderText . ' #' . ($iIndex + 1),
+				self::getDebugInformation($mResult),
+				self::$bShowCalledFrom ? self::getCalledFrom(1) : ''
+			);
+			$arrBoxes[] = ob_get_clean();
 		}
 
-		self::output($output, $options);
+		Utility::outputCompareBoxes(...$arrBoxes);
 	}
 
 	/**
-	 * @param string $class
-	 * @param bool   $output
+	 * @param bool $bReversed
 	 *
-	 * @return string
+	 * @codeCoverageIgnore
 	 */
-	public static function reflectClass($class, $output = true)
+	public static function showTrace(bool $bReversed = false): void
 	{
-		$data = '';
-
-		$reflectionClass = new \ReflectionClass($class);
-
-		$comment = $reflectionClass->getDocComment();
-		if (!empty($comment)) {
-			$data .= $comment;
-			$data .= "\n";
+		$arrBacktrace = debug_backtrace();
+		if ($bReversed) {
+			$arrBacktrace = array_reverse($arrBacktrace);
 		}
 
-		$data         .= 'class ' . $reflectionClass->name . '{';
-		$firstElement = true;
-		foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-			if (!$firstElement) {
-				$data .= "\n";
-			}
-			$firstElement = false;
+		$strOutput   = '';
+		$iTraceIndex = $bReversed ? 1 : count($arrBacktrace);
+		foreach ($arrBacktrace as $arrTrace) {
+			$strOutput .= $iTraceIndex . ': ';
+			$strOutput .= self::getCalledFromTrace($arrTrace);
+			$strOutput .= "\n";
 
-			$data .= self::reflectClassProperty($class, $reflectionProperty->name, false);
+			$iTraceIndex += $bReversed ? 1 : -1;
 		}
 
-		foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-			if (!$firstElement) {
-				$data .= "\n";
-			}
-			$firstElement = false;
-
-			$data .= self::reflectClassMethod($class, $reflectionMethod->name, false);
-		}
-		$data .= "\n";
-		$data .= '}';
-
-		if ($output) {
-			self::output($data);
-		}
-
-		return $data;
+		Utility::outputBox(
+			'Trace',
+			$strOutput,
+			self::$bShowCalledFrom ? self::getCalledFrom(1) : ''
+		);
 	}
 
 	/**
-	 * @param string $class
-	 * @param string $property
+	 * @param int $iIndex
 	 *
 	 * @return string
 	 */
-	public static function reflectClassProperty($class, $property, $output = true)
+	public static function getCalledFrom(int $iIndex = 0): string
 	{
-		$data = '';
+		$arrBacktrace = debug_backtrace();
 
-		$reflectionClass    = new \ReflectionClass($class);
-		$reflectionProperty = new \ReflectionProperty($class, $property);
-
-		$defaultPropertyValues = $reflectionClass->getDefaultProperties();
-
-		$comment = $reflectionProperty->getDocComment();
-		if (!empty($comment)) {
-			$data .= "\n";
-			$data .= "\t";
-			$data .= $comment;
+		if (!isset($arrBacktrace[$iIndex])) {
+			return 'Unknown trace with index: ' . $iIndex;
 		}
 
-		$data .= "\n";
-		$data .= "\t";
-		$data .= ($reflectionProperty->isPublic() ? 'public ' : '');
-		$data .= ($reflectionProperty->isPrivate() ? 'private ' : '');
-		$data .= ($reflectionProperty->isProtected() ? 'protected ' : '');
-		$data .= ($reflectionProperty->isStatic() ? 'static ' : '');
-		$data .= '$' . $reflectionProperty->name;
-		if (isset($defaultPropertyValues[$property])) {
-			$data .= ' = ' . self::getDebugInformation($defaultPropertyValues[$property]);
-		}
-		$data .= ';';
-
-		if ($output) {
-			self::output($data);
-		}
-
-		return $data;
+		return self::getCalledFromTrace($arrBacktrace[$iIndex]);
 	}
 
 	/**
-	 * @param string $class
-	 * @param string $method
-	 * @param bool   $output
+	 * @param array $arrTrace
 	 *
 	 * @return string
 	 */
-	public static function reflectClassMethod($class, $method, $output = true)
-	{
-		$data = '';
-
-		$reflectionMethod = new \ReflectionMethod($class, $method);
-
-		$comment = $reflectionMethod->getDocComment();
-		if (!empty($comment)) {
-			$data .= "\n";
-			$data .= "\t";
-			$data .= $comment;
-		}
-
-		$data .= "\n";
-		$data .= "\t";
-		$data .= ($reflectionMethod->isPublic() ? 'public ' : '');
-		$data .= ($reflectionMethod->isPrivate() ? 'private ' : '');
-		$data .= ($reflectionMethod->isProtected() ? 'protected ' : '');
-		$data .= ($reflectionMethod->isStatic() ? 'static ' : '');
-		$data .= 'function ' . $reflectionMethod->name . '(';
-		if ($reflectionMethod->getNumberOfParameters()) {
-			foreach ($reflectionMethod->getParameters() as $reflectionMethodParameterIndex => $reflectionMethodParameter) {
-				$data .= ($reflectionMethodParameterIndex > 0 ? ', ' : '');
-				$data .= '$' . $reflectionMethodParameter->name;
-				if ($reflectionMethodParameter->isDefaultValueAvailable()) {
-					$defaultValue = self::getDebugInformation($reflectionMethodParameter->getDefaultValue());
-					$defaultValue = str_replace(["\n", "\t"], '', $defaultValue);
-					$data         .= ' = ' . $defaultValue;
-				}
-			}
-		}
-		$data .= ') {}';
-
-		if ($output) {
-			self::output($data);
-		}
-
-		return $data;
-	}
-
-	/**
-	 * @param int $index
-	 *
-	 * @return string
-	 */
-	public static function getCalledFrom($index = 0)
-	{
-		$backtrace = debug_backtrace();
-
-		if (!isset($backtrace[$index])) {
-			return 'Unknown trace with index: ' . $index;
-		}
-
-		return self::getCalledFromTrace($backtrace[$index]);
-	}
-
-	/**
-	 * @param array $trace
-	 *
-	 * @return string
-	 */
-	public static function getCalledFromTrace($trace)
+	public static function getCalledFromTrace(array $arrTrace): string
 	{
 		// Get file and line number
-		$calledFromFile = '';
-		if (isset($trace['file'])) {
-			$calledFromFile .= $trace['file'] . ' line ' . $trace['line'];
-			$calledFromFile = str_replace('\\', '/', $calledFromFile);
-			$calledFromFile = (!empty(self::$documentRoot) ? substr($calledFromFile, strlen(self::$documentRoot)) : $calledFromFile);
-			$calledFromFile = trim($calledFromFile, '/');
+		if (isset($arrTrace['file'])) {
+			$strCalledFrom = $arrTrace['file'] . ' line ' . $arrTrace['line'];
+			$strCalledFrom = str_replace('\\', '/', $strCalledFrom);
+			$strCalledFrom = (!empty(self::$strDocumentRoot) ? substr($strCalledFrom, strlen(self::$strDocumentRoot)) : $strCalledFrom);
+			$strCalledFrom = trim($strCalledFrom, '/');
+
+			return $strCalledFrom;
 		}
 
 		// Get function call
-		$calledFromFunction = '';
-		if (isset($trace['function'])) {
-			$calledFromFunction .= (isset($trace['class']) ? $trace['class'] : '');
-			$calledFromFunction .= (isset($trace['type']) ? $trace['type'] : '');
-			$calledFromFunction .= $trace['function'] . '()';
+		if (isset($arrTrace['function'])) {
+			$strCalledFrom = (isset($arrTrace['class']) ? $arrTrace['class'] : '');
+			$strCalledFrom .= (isset($arrTrace['type']) ? $arrTrace['type'] : '');
+			$strCalledFrom .= $arrTrace['function'] . '()';
+
+			return $strCalledFrom;
 		}
 
-		// Return called from
-		if ($calledFromFile) {
-			return $calledFromFile;
-		} elseif ($calledFromFunction) {
-			return $calledFromFunction;
-		} else {
-			return 'Unable to get called from trace';
-		}
+		return 'Unable to get called from trace';
 	}
 
 	/**
-	 * @param mixed $data
+	 * @param mixed $mData
+	 * @param array $arrOptions
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformation($data, array $options = [])
+	public static function getDebugInformation($mData, array $arrOptions = []): string
 	{
 		// Merge options with default options
-		$options = array_merge([
+		$arrOptions = array_merge([
 			'depth'  => 25,
 			'indent' => 0,
-		], $options);
+		], $arrOptions);
 
 		// Get data type
-		$dataType = gettype($data);
+		$strDataType = gettype($mData);
 
 		// Set name of method to get debug information for data
-		$methodName = 'getDebugInformation' . ucfirst(strtolower($dataType));
+		$strMethodName = 'getDebugInformation' . ucfirst(strtolower($strDataType));
 
 		// Get result from debug information method
-		$result = 'No method found supporting data type: ' . $dataType;
-		if (method_exists('\Xicrow\PhpDebug\Debugger', $methodName)) {
-			$result = (string)self::$methodName($data, [
-				'depth'  => ($options['depth'] - 1),
-				'indent' => ($options['indent'] + 1),
+		$strResult = 'No method found supporting data type: ' . $strDataType;
+		if (method_exists(self::class, $strMethodName)) {
+			$strResult = (string)self::$strMethodName($mData, [
+				'depth'  => ($arrOptions['depth'] - 1),
+				'indent' => ($arrOptions['indent'] + 1),
 			]);
 		}
 
-		// Format the result
-		if (php_sapi_name() != 'cli' && !empty(self::$style['debug_' . strtolower($dataType) . '_format'])) {
-			$result = sprintf(self::$style['debug_' . strtolower($dataType) . '_format'], $result);
-		}
-
 		// Return result
-		return $result;
+		return Utility::wrapDataType($strDataType, $strResult);
 	}
 
 	/**
+	 * @param string $strData
+	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationString($data)
+	private static function getDebugInformationString(string $strData): string
 	{
-		return (string)(php_sapi_name() == 'cli' ? '"' . $data . '"' : htmlentities($data, ENT_SUBSTITUTE));
+		return (string)(Utility::isCli() ? '"' . $strData . '"' : htmlentities($strData, ENT_SUBSTITUTE));
 	}
 
 	/**
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationNull()
+	private static function getDebugInformationNull(): string
 	{
 		return 'NULL';
 	}
 
 	/**
-	 * @param boolean $data
+	 * @param boolean $bData
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationBoolean($data)
+	private static function getDebugInformationBoolean(bool $bData): string
 	{
-		return ($data ? 'TRUE' : 'FALSE');
+		return ($bData ? 'TRUE' : 'FALSE');
 	}
 
 	/**
-	 * @param integer $data
+	 * @param integer $iData
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationInteger($data)
+	private static function getDebugInformationInteger(int $iData): string
 	{
-		return (string)$data;
+		return (string)$iData;
 	}
 
 	/**
-	 * @param double $data
+	 * @param double $fData
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationDouble($data)
+	private static function getDebugInformationDouble(float $fData): string
 	{
-		return (string)$data;
+		return (string)$fData;
 	}
 
 	/**
-	 * @param array $data
+	 * @param array|object $mData
+	 * @param array        $arrOptions
 	 *
 	 * @return string
 	 */
-	private static function getDebugInformationArray($data, array $options = [])
+	private static function getDebugInformationArray($mData, array $arrOptions = []): string
 	{
-		$options = array_merge([
+		$arrOptions = array_merge([
 			'depth'  => 25,
 			'indent' => 0,
-		], $options);
+		], $arrOptions);
 
-		$debugInfo = "[";
+		$strDebugInfo = "[";
 
-		$break = $end = null;
-		if (!empty($data)) {
-			$break = "\n" . str_repeat("\t", $options['indent']);
-			$end   = "\n" . str_repeat("\t", $options['indent'] - 1);
+		$strBreak = $strEnd = '';
+		if (!empty($mData)) {
+			$strBreak = "\n" . str_repeat("\t", $arrOptions['indent']);
+			$strEnd   = "\n" . str_repeat("\t", $arrOptions['indent'] - 1);
 		}
 
-		$datas = [];
-		if ($options['depth'] >= 0) {
-			foreach ($data as $key => $val) {
+		$arrDatas = [];
+		if ($arrOptions['depth'] >= 0) {
+			foreach ($mData as $mKey => $mVal) {
 				// Sniff for globals as !== explodes in < 5.4
-				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
-					$val = '[recursion]';
-				} elseif ($val !== $data) {
-					$val = static::getDebugInformation($val, $options);
+				if ($mKey === 'GLOBALS' && is_array($mVal) && isset($mVal['GLOBALS'])) {
+					$mVal = '[recursion]';
+				} elseif ($mVal !== $mData) {
+					$mVal = static::getDebugInformation($mVal, $arrOptions);
 				}
-				$datas[] = $break . static::getDebugInformation($key) . ' => ' . $val;
+				$arrDatas[] = $strBreak . static::getDebugInformation($mKey) . ' => ' . $mVal;
 			}
 		} else {
-			$datas[] = $break . '[maximum depth reached]';
+			$arrDatas[] = $strBreak . '[maximum depth reached]';
 		}
 
-		return $debugInfo . implode(',', $datas) . $end . ']';
+		return $strDebugInfo . implode(',', $arrDatas) . $strEnd . ']';
 	}
 
 	/**
-	 * @param object $data
+	 * @param object $oData
+	 * @param array  $arrOptions
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationObject($data, array $options = [])
+	private static function getDebugInformationObject(object $oData, array $arrOptions = []): string
 	{
-		$options = array_merge([
+		$arrOptions = array_merge([
 			'depth'  => 25,
 			'indent' => 0,
-		], $options);
+		], $arrOptions);
 
-		$debugInfo = '';
-		$debugInfo .= 'object(' . get_class($data) . ') {';
+		$strDebugInfo = '';
+		$strDebugInfo .= 'object(' . get_class($oData) . ') {';
 
-		$break = "\n" . str_repeat("\t", $options['indent']);
-		$end   = "\n" . str_repeat("\t", $options['indent'] - 1);
+		$strBreak = "\n" . str_repeat("\t", $arrOptions['indent']);
+		$strEnd   = "\n" . str_repeat("\t", $arrOptions['indent'] - 1);
 
-		if ($options['depth'] > 0 && method_exists($data, '__debugInfo')) {
+		if ($arrOptions['depth'] > 0 && method_exists($oData, '__debugInfo')) {
 			try {
-				$debugArray = static::getDebugInformationArray($data->__debugInfo(), array_merge($options, [
-					'depth' => ($options['depth'] - 1),
+				$strDebugArray = static::getDebugInformationArray($oData->__debugInfo(), array_merge($arrOptions, [
+					'depth' => ($arrOptions['depth'] - 1),
 				]));
-				$debugInfo  .= substr($debugArray, 1, -1);
+				$strDebugInfo  .= substr($strDebugArray, 1, -1);
 
-				return $debugInfo . $end . '}';
-			} catch (\Exception $e) {
-				$message = $e->getMessage();
+				return $strDebugInfo . $strEnd . '}';
+			} catch (Exception $oException) {
+				$strMessage = $oException->getMessage();
 
-				return $debugInfo . "\n(unable to export object: $message)\n }";
+				return $strDebugInfo . "\n(unable to export object: $strMessage)\n }";
 			}
 		}
 
-		if ($options['depth'] > 0) {
-			$props      = [];
-			$objectVars = get_object_vars($data);
-			foreach ($objectVars as $key => $value) {
-				$value   = static::getDebugInformation($value, array_merge($options, [
-					'depth' => ($options['depth'] - 1),
+		if ($arrOptions['depth'] > 0) {
+			$arrProperties = [];
+			$arrObjectVars = get_object_vars($oData);
+			foreach ($arrObjectVars as $mKey => $mValue) {
+				$mValue          = static::getDebugInformation($mValue, array_merge($arrOptions, [
+					'depth' => ($arrOptions['depth'] - 1),
 				]));
-				$props[] = "$key => " . $value;
+				$arrProperties[] = "$mKey => " . $mValue;
 			}
 
-			$ref     = new \ReflectionObject($data);
-			$filters = [
-				\ReflectionProperty::IS_PROTECTED => 'protected',
-				\ReflectionProperty::IS_PRIVATE   => 'private',
+			$oReflectionObject = new ReflectionObject($oData);
+			$arrFilters        = [
+				ReflectionProperty::IS_PROTECTED => 'protected',
+				ReflectionProperty::IS_PRIVATE   => 'private',
 			];
-			foreach ($filters as $filter => $visibility) {
-				$reflectionProperties = $ref->getProperties($filter);
-				foreach ($reflectionProperties as $reflectionProperty) {
-					$reflectionProperty->setAccessible(true);
-					$property = $reflectionProperty->getValue($data);
+			foreach ($arrFilters as $iFilter => $strVisibility) {
+				$arrReflectionProperties = $oReflectionObject->getProperties($iFilter);
+				foreach ($arrReflectionProperties as $oReflectionProperty) {
+					$oReflectionProperty->setAccessible(true);
+					$mPropertyValue = $oReflectionProperty->getValue($oData);
 
-					$value   = static::getDebugInformation($property, array_merge($options, [
-						'depth' => ($options['depth'] - 1),
+					$mValue          = static::getDebugInformation($mPropertyValue, array_merge($arrOptions, [
+						'depth' => ($arrOptions['depth'] - 1),
 					]));
-					$key     = $reflectionProperty->name;
-					$props[] = sprintf('[%s] %s => %s', $visibility, $key, $value);
+					$mKey            = $oReflectionProperty->name;
+					$arrProperties[] = sprintf('[%s] %s => %s', $strVisibility, $mKey, $mValue);
 				}
 			}
 
-			$debugInfo .= $break . implode($break, $props) . $end;
+			$strDebugInfo .= $strBreak . implode($strBreak, $arrProperties) . $strEnd;
 		}
-		$debugInfo .= '}';
+		$strDebugInfo .= '}';
 
-		return $debugInfo;
+		return $strDebugInfo;
 	}
 
 	/**
-	 * @param resource $data
+	 * @param resource $rData
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private static function getDebugInformationResource($data)
+	private static function getDebugInformationResource($rData): string
 	{
-		return (string)$data . ' (' . get_resource_type($data) . ')';
+		return (string)$rData . ' (' . get_resource_type($rData) . ')';
 	}
 }
