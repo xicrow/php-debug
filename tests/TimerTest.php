@@ -166,14 +166,16 @@ class TimerTest extends TestCase
 		});
 		self::assertEquals($bExpected, $bActual);
 
-		$iLineNo    = __LINE__ + 9;
-		self::expectOutputString(<<<TXT
+		$iLineNo = __LINE__ + 9;
+		self::expectOutputString(
+			<<<TXT
 		
 		############################################## Error ###############################################
 		Invalid callback sent to Timer::callback(): non_existing_function
 		----------------------------------- tests/TimerTest.php line {$iLineNo} -----------------------------------
 
-		TXT);
+		TXT
+		);
 		$bExpected = false;
 		$bActual   = Timer::callback('non_existing_function');
 		self::assertEquals($bExpected, $bActual);

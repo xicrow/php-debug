@@ -288,9 +288,12 @@ class Debugger
 
 		if ($arrOptions['depth'] > 0 && method_exists($oData, '__debugInfo')) {
 			try {
-				$strDebugArray = static::getDebugInformationArray($oData->__debugInfo(), array_merge($arrOptions, [
-					'depth' => ($arrOptions['depth'] - 1),
-				]));
+				$strDebugArray = static::getDebugInformationArray(
+					$oData->__debugInfo(),
+					array_merge($arrOptions, [
+						'depth' => ($arrOptions['depth'] - 1),
+					])
+				);
 				$strDebugInfo  .= substr($strDebugArray, 1, -1);
 
 				return $strDebugInfo . $strEnd . '}';
@@ -305,9 +308,12 @@ class Debugger
 			$arrProperties = [];
 			$arrObjectVars = get_object_vars($oData);
 			foreach ($arrObjectVars as $mKey => $mValue) {
-				$mValue          = static::getDebugInformation($mValue, array_merge($arrOptions, [
-					'depth' => ($arrOptions['depth'] - 1),
-				]));
+				$mValue          = static::getDebugInformation(
+					$mValue,
+					array_merge($arrOptions, [
+						'depth' => ($arrOptions['depth'] - 1),
+					])
+				);
 				$arrProperties[] = "$mKey => " . $mValue;
 			}
 
@@ -322,9 +328,12 @@ class Debugger
 					$oReflectionProperty->setAccessible(true);
 					$mPropertyValue = $oReflectionProperty->getValue($oData);
 
-					$mValue          = static::getDebugInformation($mPropertyValue, array_merge($arrOptions, [
-						'depth' => ($arrOptions['depth'] - 1),
-					]));
+					$mValue          = static::getDebugInformation(
+						$mPropertyValue,
+						array_merge($arrOptions, [
+							'depth' => ($arrOptions['depth'] - 1),
+						])
+					);
 					$mKey            = $oReflectionProperty->name;
 					$arrProperties[] = sprintf('[%s] %s => %s', $strVisibility, $mKey, $mValue);
 				}

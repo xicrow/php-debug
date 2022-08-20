@@ -5,10 +5,10 @@
 	beStrictAboutOutputDuringTests="true"
 	verbose="true"
 	colors="true"
-	>
+>
 	<testsuites>
 		<testsuite name="All tests">
-			<directory  phpVersion="7.4" phpVersionOperator=">=">tests</directory>
+			<directory phpVersion="7.4" phpVersionOperator=">=">tests</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
