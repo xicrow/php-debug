@@ -30,12 +30,12 @@ $fnClosure = function () {
 };
 $oStdClass = (new stdClass());
 
-function foo()
+function foo(): void
 {
 	Debugger::showTrace();
 }
 
-function bar()
+function bar(): void
 {
 	foo();
 }

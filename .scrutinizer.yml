@@ -20,7 +20,7 @@ tools:
 
 build:
   environment:
-    php: 7.4
+    php: 8.0
   tests:
     override:
       - command: 'vendor/bin/phpunit --coverage-clover=code-coverage.xml'

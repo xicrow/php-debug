@@ -1,32 +1,32 @@
 {
-	"name"        : "xicrow/php-debug",
-	"description" : "PHP debugging tools",
-	"type"        : "library",
-	"keywords"    : [
+	"name": "xicrow/php-debug",
+	"description": "PHP debugging tools",
+	"type": "library",
+	"keywords": [
 		"debug",
 		"tools",
 		"php"
 	],
-	"license"     : "MIT",
-	"authors"     : [
+	"license": "MIT",
+	"authors": [
 		{
-			"name"    : "Jan Ebsen",
-			"email"   : "xicrow@gmail.com",
+			"name": "Jan Ebsen",
+			"email": "xicrow@gmail.com",
 			"homepage": "http://jan-ebsen.dk",
-			"role"    : "developer"
+			"role": "developer"
 		}
 	],
-	"support"     : {
+	"support": {
 		"issues": "https://github.com/xicrow/php-debug/issues"
 	},
-	"require"     : {
-		"php"         : "^7.4",
+	"require": {
+		"php": "^8.0",
 		"ext-mbstring": "*"
 	},
-	"require-dev" : {
+	"require-dev": {
 		"phpunit/phpunit": "9.5.4"
 	},
-	"autoload"    : {
+	"autoload": {
 		"psr-4": {
 			"Xicrow\\PhpDebug\\": "src"
 		}

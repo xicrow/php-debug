@@ -22,7 +22,7 @@ class Debugger
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function debug($mData, string $strHeaderText = '', int $iTraceOffset = 0): void
+	public static function debug(mixed $mData, string $strHeaderText = '', int $iTraceOffset = 0): void
 	{
 		Utility::outputBox(
 			$strHeaderText,
@@ -124,15 +124,14 @@ class Debugger
 			$strCalledFrom = $arrTrace['file'] . ' line ' . $arrTrace['line'];
 			$strCalledFrom = str_replace('\\', '/', $strCalledFrom);
 			$strCalledFrom = (!empty(self::$strDocumentRoot) ? substr($strCalledFrom, strlen(self::$strDocumentRoot)) : $strCalledFrom);
-			$strCalledFrom = trim($strCalledFrom, '/');
 
-			return $strCalledFrom;
+			return trim($strCalledFrom, '/');
 		}
 
 		// Get function call
 		if (isset($arrTrace['function'])) {
-			$strCalledFrom = (isset($arrTrace['class']) ? $arrTrace['class'] : '');
-			$strCalledFrom .= (isset($arrTrace['type']) ? $arrTrace['type'] : '');
+			$strCalledFrom = $arrTrace['class'] ?? '';
+			$strCalledFrom .= $arrTrace['type'] ?? '';
 			$strCalledFrom .= $arrTrace['function'] . '()';
 
 			return $strCalledFrom;
@@ -147,7 +146,7 @@ class Debugger
 	 *
 	 * @return string
 	 */
-	public static function getDebugInformation($mData, array $arrOptions = []): string
+	public static function getDebugInformation(mixed $mData, array $arrOptions = []): string
 	{
 		// Merge options with default options
 		$arrOptions = array_merge([
@@ -182,7 +181,7 @@ class Debugger
 	 */
 	private static function getDebugInformationString(string $strData): string
 	{
-		return (string)(Utility::isCli() ? '"' . $strData . '"' : htmlentities($strData, ENT_SUBSTITUTE));
+		return Utility::isCli() ? '"' . $strData . '"' : htmlentities($strData, ENT_SUBSTITUTE);
 	}
 
 	/**
@@ -228,12 +227,12 @@ class Debugger
 	}
 
 	/**
-	 * @param array|object $mData
+	 * @param object|array $mData
 	 * @param array        $arrOptions
 	 *
 	 * @return string
 	 */
-	private static function getDebugInformationArray($mData, array $arrOptions = []): string
+	private static function getDebugInformationArray(object|array $mData, array $arrOptions = []): string
 	{
 		$arrOptions = array_merge([
 			'depth'  => 25,
@@ -280,8 +279,7 @@ class Debugger
 			'indent' => 0,
 		], $arrOptions);
 
-		$strDebugInfo = '';
-		$strDebugInfo .= 'object(' . get_class($oData) . ') {';
+		$strDebugInfo = 'object(' . get_class($oData) . ') {';
 
 		$strBreak = "\n" . str_repeat("\t", $arrOptions['indent']);
 		$strEnd   = "\n" . str_repeat("\t", $arrOptions['indent'] - 1);
@@ -354,6 +352,6 @@ class Debugger
 	 */
 	private static function getDebugInformationResource($rData): string
 	{
-		return (string)$rData . ' (' . get_resource_type($rData) . ')';
+		return $rData . ' (' . get_resource_type($rData) . ')';
 	}
 }

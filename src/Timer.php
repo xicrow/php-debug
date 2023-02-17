@@ -3,6 +3,7 @@ namespace Xicrow\PhpDebug;
 
 use Closure;
 use ErrorException;
+use TypeError;
 
 /**
  * Class Timer
@@ -43,7 +44,7 @@ class Timer
 			$iItemCount = $oOriginalItem->iCount !== null ? $oOriginalItem->iCount + 1 : 2;
 
 			// Set correct key for the original item
-			if (strpos($oOriginalItem->strKey, '#') === false) {
+			if (!str_contains($oOriginalItem->strKey, '#')) {
 				$oOriginalItem->strKey = $strKey . ' #1';
 				$oOriginalItem->iCount = $iItemCount;
 			} else {
@@ -168,13 +169,13 @@ class Timer
 	}
 
 	/**
-	 * @param string|array|Closure $fnCallback
+	 * @param array|Closure|string $fnCallback
 	 * @param array                $arrCallbackParameters
 	 * @param string|null          $strKey
 	 *
 	 * @return bool|string|mixed
 	 */
-	public static function callback($fnCallback, array $arrCallbackParameters = [], ?string $strKey = null)
+	public static function callback(array|Closure|string $fnCallback, array $arrCallbackParameters = [], ?string $strKey = null): mixed
 	{
 		// Get key if no key is given
 		if ($strKey === null) {
@@ -198,7 +199,7 @@ class Timer
 				}
 
 				unset($arrKeys, $strMethod);
-			} elseif (is_object($fnCallback) && $fnCallback instanceof Closure) {
+			} elseif ($fnCallback instanceof Closure) {
 				$strKey = 'closure';
 			}
 
@@ -228,14 +229,14 @@ class Timer
 
 			// Get and clean output buffer
 			$strCallbackOutput = ob_get_clean();
-		} catch (ErrorException $oCallbackException) {
+		} catch (ErrorException|TypeError $oException) {
 			// Stop and clean output buffer
 			ob_end_clean();
 
 			// Show error message
 			Utility::outputBox(
 				'Error',
-				'Invalid callback sent to Timer::callback(): ' . str_replace('callback: ', '', $strKey),
+				'Invalid callback sent to Timer::callback(): ' . str_replace('callback: ', '', $strKey) . '<br><br>' . $oException->getMessage(),
 				Debugger::getCalledFrom(1)
 			);
 
@@ -256,7 +257,7 @@ class Timer
 		restore_error_handler();
 
 		// Return result, output or true
-		return (isset($mCallbackResult) ? $mCallbackResult : (!empty($strCallbackOutput) ? $strCallbackOutput : $bReturnValue));
+		return $mCallbackResult ?? (!empty($strCallbackOutput) ? $strCallbackOutput : $bReturnValue);
 	}
 
 	/**
@@ -265,7 +266,7 @@ class Timer
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function show(string $strKey, array $arrOptions = [])
+	public static function show(string $strKey, array $arrOptions = []): void
 	{
 		$strStats = self::getStats($strKey, $arrOptions);
 		if ($strStats !== '') {
@@ -288,7 +289,7 @@ class Timer
 	 *
 	 * @codeCoverageIgnore
 	 */
-	public static function showAll(array $arrOptions = [])
+	public static function showAll(array $arrOptions = []): void
 	{
 		// Stop started items
 		if (count(self::$arrRunningItems)) {
@@ -360,8 +361,7 @@ class Timer
 		$strOutput = '';
 
 		// Prep key for output
-		$strOutputName = '';
-		$strOutputName .= ($arrOptions['nested'] ? str_repeat($arrOptions['nested_prefix'], $oItem->iLevel) : '');
+		$strOutputName = ($arrOptions['nested'] ? str_repeat($arrOptions['nested_prefix'], $oItem->iLevel) : '');
 		$strOutputName .= $oItem->strKey;
 		if (mb_strlen($strOutputName) > $arrOptions['max_key_length']) {
 			$strOutputName = '~' . mb_substr($oItem->strKey, -($arrOptions['max_key_length'] - 1));

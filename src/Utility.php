@@ -56,7 +56,7 @@ class Utility
 			}
 		}
 
-		return sprintf('%0.' . $iPrecision . 'f', $fValue) . ' ' . str_pad($strCurrentUnit, 2, ' ', STR_PAD_RIGHT);
+		return sprintf('%0.' . $iPrecision . 'f', $fValue) . ' ' . str_pad($strCurrentUnit, 2);
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Utility
 		}
 
 		if (self::$bOutputInlineStyle && is_file(self::$bInlineStylePath)) {
-			echo '<style type="text/css">' . file_get_contents(self::$bInlineStylePath) . '</style>';
+			echo '<style>' . file_get_contents(self::$bInlineStylePath) . '</style>';
 			self::$bOutputInlineStyle = false;
 		}
 
